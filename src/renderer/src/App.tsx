@@ -79,7 +79,7 @@ export function App() {
       )}
       <Toaster
         theme={uiTheme === 'light' ? 'light' : 'dark'}
-        position="bottom-right"
+        position="bottom-center"
         toastOptions={{
           classNames: {
             toast:

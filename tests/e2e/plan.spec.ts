@@ -50,7 +50,7 @@ test('create a plan, add songs and an announcement, reorder, project', async ({ 
 
   await page.getByRole('button', { name: 'Promítat tento plán' }).click()
   const cue = page.getByRole('list', { name: 'Večer chval' })
-  await expect(cue.getByRole('button')).toHaveCount(3)
+  await expect(cue.getByRole('button', { name: /^Promítnout:/ })).toHaveCount(3)
 })
 
 test('bible passage item shows slides from the bundled Kralice Bible', async ({ page }) => {

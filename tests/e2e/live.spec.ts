@@ -50,7 +50,7 @@ test('the output window receives the frame and never shows chords', async ({ pag
 
   await page.keyboard.press('ArrowRight')
   await expect(root).toContainText('Kdo je unavený')
-  await page.getByRole('button', { name: /Smazat text/ }).click()
+  await page.getByRole('button', { name: /Skrýt text/ }).click()
   await expect(output.locator('[data-overlay="clear"]')).toBeVisible()
   await expect(root).not.toContainText('Kdo je unavený')
 })
@@ -77,4 +77,25 @@ test('alert and countdown appear on the screen', async ({ page }) => {
   await page.getByRole('button', { name: 'Spustit odpočet' }).click()
   await expect(livePreview(page)).toContainText('Začínáme za')
   await expect(livePreview(page)).toContainText(/0[12]:[0-5]\d/)
+  await page.getByRole('button', { name: 'Zastavit odpočet' }).click()
+  await expect(livePreview(page)).not.toContainText('Začínáme za')
+})
+
+test('the clicker keeps working while typing, Shift+arrows move between items', async ({ page }) => {
+  await page
+    .getByRole('button', { name: /Světlo nad městem/ })
+    .first()
+    .click()
+  await page.locator('[data-slide-index="0"]').click()
+  await page.getByLabel('Upozornění').click()
+  await page.keyboard.type('b')
+  await expect(page.getByLabel('Upozornění')).toHaveValue('b')
+  // A letter typed into a field must not black out the screen …
+  await expect(livePreview(page)).toHaveAttribute('data-overlay', 'none')
+  // … but a clicker (PageDown) still advances the slide.
+  await page.keyboard.press('PageDown')
+  await expect(page.locator('[data-slide-index="1"]')).toHaveAttribute('data-state', 'live')
+  await page.getByLabel('Upozornění').blur()
+  await page.keyboard.press('Shift+ArrowDown')
+  await expect(page.getByTestId('live-pill')).not.toContainText('Světlo nad městem')
 })

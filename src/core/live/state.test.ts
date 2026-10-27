@@ -92,4 +92,18 @@ describe('liveReducer', () => {
     const st = liveReducer(initialLiveState, { type: 'goto', itemId: 'c', slideIndex: 9 }, ctx)
     expect(st.slideIndex).toBe(1)
   })
+  it('nextItem / prevItem jump to the first slide of the neighbouring item, skipping empty ones', () => {
+    let st = liveReducer(initialLiveState, { type: 'goto', itemId: 'a', slideIndex: 2 }, ctx)
+    st = liveReducer(st, { type: 'nextItem' }, ctx)
+    expect(st).toMatchObject({ itemId: 'b', slideIndex: 0 })
+    st = liveReducer(st, { type: 'nextItem' }, ctx)
+    expect(st).toMatchObject({ itemId: 'c', slideIndex: 0 })
+    expect(liveReducer(st, { type: 'nextItem' }, ctx)).toBe(st)
+    st = liveReducer(st, { type: 'prevItem' }, ctx)
+    expect(st).toMatchObject({ itemId: 'b', slideIndex: 0 })
+  })
+  it('prevItem inside an item first returns to its first slide', () => {
+    const st = liveReducer(initialLiveState, { type: 'goto', itemId: 'a', slideIndex: 2 }, ctx)
+    expect(liveReducer(st, { type: 'prevItem' }, ctx)).toMatchObject({ itemId: 'a', slideIndex: 0 })
+  })
 })

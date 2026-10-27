@@ -34,7 +34,7 @@ test('typed reference shows the BKR text and adds it to the live plan', async ({
     .getByRole('button', { name: 'Živě' })
     .click()
   const cueList = page.getByRole('complementary', { name: 'Plán' })
-  await expect(cueList.getByRole('button', { name: /Jan 3,16/ })).toBeVisible()
+  await expect(cueList.getByRole('button', { name: /^\d+ Jan 3,16/ })).toBeVisible()
 })
 
 test('book browser: Žalmy → 23 shows the six verses of the chapter', async ({ page }) => {

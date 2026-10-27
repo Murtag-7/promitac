@@ -6,6 +6,7 @@ export interface KeyInput {
   ctrl: boolean
   meta: boolean
   alt: boolean
+  shift?: boolean
 }
 
 const NEXT = new Set(['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter'])
@@ -39,6 +40,10 @@ export function resolveKey(
     if (key === 'v') return { action: { type: 'gotoSection', sectionType: 'verse' }, pending: null }
   }
 
+  if (e.shift && (key === 'ArrowDown' || key === 'ArrowRight'))
+    return { action: { type: 'nextItem' }, pending: null }
+  if (e.shift && (key === 'ArrowUp' || key === 'ArrowLeft'))
+    return { action: { type: 'prevItem' }, pending: null }
   if (NEXT.has(key)) return { action: { type: 'next' }, pending: null }
   if (PREV.has(key)) return { action: { type: 'prev' }, pending: null }
   if (key === 'Escape') return { action: { type: 'cancel' }, pending: null }

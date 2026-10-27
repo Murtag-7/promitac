@@ -17,13 +17,14 @@ never used for anything else.
 | `--raised` | `#24211d` | hover, inputs, cards |
 | `--line` | `#34302a` | hairlines, borders |
 | `--ink` | `#eee8de` | primary text |
-| `--ink-2` | `#a8a093` | secondary text (≥ 4.5:1 on bg) |
+| `--ink-2` | `#b8b0a2` | secondary text |
+| `--ink-3` | `#9a9285` | tertiary text, meta (≥ 4.5:1 on every surface) |
 | `--light` | `#f4ead9` | the accent: primary buttons, focus ring, active nav, selection |
 | `--live` | `#f0584a` | tally red – only "on screen now" |
 | `--next` | `#73c995` | tally green – only "next / preview" |
 | `--warn` | `#e5b45c` | warnings (OCR uncertainty, sync problems) |
 
-Light mode swaps to paper-white surfaces (`#f7f6f3`, `#ffffff`) with ink `#1d1b18`; the accent becomes ink.
+Light mode swaps to paper-white surfaces (`#f7f6f3`, `#ffffff`) with ink `#1d1b18`; the accent becomes ink; tally and warning colours are darkened (`#c2321f`, `#1f7a50`, `#8f5c00`) to keep ≥ 4.5:1.
 
 Section colours (muted, text-on-tint chips): verse `#93a9cf`, chorus `#d6a25c`, pre-chorus `#72bdb3`,
 bridge `#c39ad6`, other (intro, interlude, outro, tag, ending) `#a8a093`.

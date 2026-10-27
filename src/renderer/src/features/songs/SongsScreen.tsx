@@ -1,4 +1,4 @@
-import { Music4, Plus, Sparkles } from 'lucide-react'
+import { Music4, Plus, ScanText } from 'lucide-react'
 import { toast } from 'sonner'
 import { EmptyState } from '@/components/common/EmptyState'
 import { Button } from '@/components/ui/button'
@@ -31,7 +31,7 @@ export function SongsScreen() {
         ) : count === 0 ? (
           <EmptyState icon={Music4} title={cs.songs.emptyLibraryTitle} text={cs.songs.emptyLibraryText}>
             <Button variant="primary" onClick={() => setImportOpen(true)}>
-              <Sparkles aria-hidden />
+              <ScanText aria-hidden />
               {cs.nav.import}
             </Button>
             <Button onClick={() => void createSong()}>

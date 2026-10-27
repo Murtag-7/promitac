@@ -1,4 +1,4 @@
-import type { Slide } from '../slides/model'
+import type { Slide, SlideVerse } from '../slides/model'
 import type { BibleData } from './model'
 import { formatReference, type BibleRef, type RefLang } from './reference'
 
@@ -45,7 +45,12 @@ export interface PassageSlideOptions {
 }
 
 interface Unit {
+  /** Text as it appears in `lines`, verse number included. */
   text: string
+  /** Verse number label – only on the first piece of a verse. */
+  number?: string
+  /** Text without the verse number. */
+  body: string
   chapter: number
   verse: number
 }
@@ -109,9 +114,20 @@ export function passageToSlides(verses: PassageVerse[], ref: BibleRef, opts: Pas
   const units: Unit[] = []
   for (const v of verses) {
     const text = v.text.replace(/\s+/gu, ' ').trim()
-    const prefix = !opts.verseNumbers ? '' : spansChapters ? `${v.chapter}:${v.verse} ` : `${v.verse} `
-    for (const piece of splitText(prefix + text, max))
-      units.push({ text: piece, chapter: v.chapter, verse: v.verse })
+    const sep = (opts.lang ?? 'cs') === 'cs' ? ',' : ':'
+    const number = !opts.verseNumbers ? '' : spansChapters ? `${v.chapter}${sep}${v.verse}` : `${v.verse}`
+    const prefix = number ? `${number} ` : ''
+    splitText(prefix + text, max).forEach((piece, i) => {
+      const first = i === 0 && number !== ''
+      const body = first ? piece.slice(number.length).trimStart() : piece
+      units.push({
+        text: piece,
+        body,
+        number: first ? number : undefined,
+        chapter: v.chapter,
+        verse: v.verse
+      })
+    })
   }
 
   const groups: Unit[][] = []
@@ -135,6 +151,9 @@ export function passageToSlides(verses: PassageVerse[], ref: BibleRef, opts: Pas
       id: `bible#${i}`,
       kind: 'bible',
       lines: [group.map((u) => u.text).join(' ')],
+      verses: group.map((u): SlideVerse =>
+        u.number ? { number: u.number, text: u.body } : { text: u.body }
+      ),
       footer: opts.label ? `${reference} (${opts.label})` : reference
     }
   })

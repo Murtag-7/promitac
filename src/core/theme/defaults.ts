@@ -6,8 +6,8 @@ const baseText: Theme['text'] = {
   font: 'inter',
   weight: 600,
   color: '#ffffff',
-  maxSize: 96,
-  minSize: 44,
+  maxSize: 108,
+  minSize: 48,
   autoFit: true,
   lineHeight: 1.25,
   uppercase: false,
@@ -30,7 +30,7 @@ export const BUILT_IN_THEMES: Theme[] = [
     dim: 0,
     text: { ...baseText },
     safeMargin: 6,
-    footer: { position: 'bottom', size: 30, show: true },
+    footer: { position: 'bottom', size: 38, show: true },
     transition: { kind: 'fade', durationMs: 280 },
     updatedAt: EPOCH
   },
@@ -42,7 +42,7 @@ export const BUILT_IN_THEMES: Theme[] = [
     dim: 0,
     text: { ...baseText, color: '#1d1b18', shadow: 0, font: 'source-serif-4', weight: 560 },
     safeMargin: 7,
-    footer: { position: 'bottom', size: 30, show: true },
+    footer: { position: 'bottom', size: 38, show: true },
     transition: { kind: 'fade', durationMs: 280 },
     updatedAt: EPOCH
   },
@@ -54,7 +54,7 @@ export const BUILT_IN_THEMES: Theme[] = [
     dim: 0,
     text: { ...baseText, font: 'source-sans-3', weight: 600 },
     safeMargin: 6,
-    footer: { position: 'bottom', size: 30, show: true },
+    footer: { position: 'bottom', size: 38, show: true },
     transition: { kind: 'fade', durationMs: 320 },
     updatedAt: EPOCH
   },
@@ -64,9 +64,9 @@ export const BUILT_IN_THEMES: Theme[] = [
     builtIn: true,
     background: { kind: 'color', color: '#000000' },
     dim: 0,
-    text: { ...baseText, color: '#fff7d6', weight: 700, maxSize: 110, minSize: 52, outline: 2, shadow: 0.4 },
+    text: { ...baseText, color: '#fff7d6', weight: 700, maxSize: 120, minSize: 56, outline: 2, shadow: 0.4 },
     safeMargin: 5,
-    footer: { position: 'top', size: 32, show: true },
+    footer: { position: 'top', size: 40, show: true },
     transition: { kind: 'none', durationMs: 0 },
     updatedAt: EPOCH
   }

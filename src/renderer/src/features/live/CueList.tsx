@@ -1,4 +1,13 @@
-import { BookOpen, FileText, Image as ImageIcon, Music4, Pencil, Square, TriangleAlert } from 'lucide-react'
+import {
+  BookOpen,
+  FileText,
+  Image as ImageIcon,
+  Music4,
+  Pencil,
+  Play,
+  Square,
+  TriangleAlert
+} from 'lucide-react'
 import type { PlanItem, ServicePlan } from '@core/plan/model'
 import { Select } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
@@ -36,6 +45,7 @@ export function CueList({
 }) {
   const plans = usePlans((s) => s.plans)
   const setPlan = useLive((s) => s.setPlan)
+  const hidden = useLive((s) => s.live.overlay !== 'none')
   const { upcoming, past } = sortPlans(Object.values(plans))
   const options = [...upcoming, ...past].map((p) => ({
     value: p.id,
@@ -59,46 +69,62 @@ export function CueList({
           const isLive = it.id === liveItemId
           const isSelected = it.id === selectedId
           return (
-            <li key={it.id}>
+            <li key={it.id} className="group relative">
               <button
                 type="button"
                 onClick={() => onSelect(it.id)}
                 onDoubleClick={() => onGoLive(it.id)}
                 aria-current={isSelected ? 'true' : undefined}
                 data-live={isLive || undefined}
+                title={cs.live.goLiveHint}
                 className={cn(
-                  'group flex w-full items-center gap-2.5 rounded-control px-2.5 py-2 text-left hover:bg-raised',
+                  'flex w-full items-center gap-2.5 rounded-control px-2.5 py-2 text-left hover:bg-raised',
                   isSelected && 'bg-raised ring-1 ring-inset ring-line-strong'
                 )}
               >
-                <span className="w-4 shrink-0 text-right text-meta tabular text-ink-3">{idx + 1}</span>
+                <span className="w-4 shrink-0 text-right text-meta tabular text-ink-2">{idx + 1}</span>
                 <Icon
-                  className={cn('size-4 shrink-0', isLive ? 'text-live' : 'text-ink-3')}
+                  className={cn('size-4 shrink-0', isLive ? 'text-live' : 'text-ink-2')}
                   strokeWidth={1.75}
                   aria-hidden
                 />
                 <span className="min-w-0 flex-1">
-                  <span
-                    className={cn('block truncate text-body font-[550]', isLive ? 'text-ink' : 'text-ink')}
-                  >
-                    {it.title}
-                  </span>
+                  <span className="block truncate text-body font-[550] text-ink">{it.title}</span>
                   {it.problem ? (
                     <span className="flex items-center gap-1 text-meta text-warn">
                       <TriangleAlert className="size-3" aria-hidden />
                       {cs.live.itemProblem[it.problem]}
                     </span>
                   ) : it.subtitle ? (
-                    <span className="block truncate text-meta text-ink-3">{it.subtitle}</span>
+                    <span className="block truncate text-meta text-ink-2">{it.subtitle}</span>
                   ) : null}
                 </span>
                 {isLive ? (
                   <span className="flex shrink-0 items-center gap-1 text-meta font-[650] text-live">
-                    <span className="size-1.5 rounded-full bg-live" aria-hidden />
-                    {cs.live.onAir}
+                    <span
+                      className={cn('size-1.5 rounded-full', hidden ? 'ring-1 ring-live' : 'bg-live')}
+                      aria-hidden
+                    />
+                    {hidden ? cs.live.hiddenShort : cs.live.onAir}
                   </span>
-                ) : null}
+                ) : (
+                  <span className="w-7 shrink-0" aria-hidden />
+                )}
               </button>
+              {!isLive && it.slides.length > 0 ? (
+                <button
+                  type="button"
+                  onClick={() => onGoLive(it.id)}
+                  aria-label={`${cs.live.goLiveItem}: ${it.title}`}
+                  title={cs.live.goLiveItem}
+                  className={cn(
+                    'press absolute right-1.5 top-1/2 grid size-8 -translate-y-1/2 place-items-center rounded-control text-ink-2 opacity-0 hover:bg-raised-2 hover:text-ink focus-visible:opacity-100 group-hover:opacity-100',
+                    isSelected && 'opacity-100'
+                  )}
+                >
+                  <Play className="size-4" aria-hidden />
+                </button>
+              ) : null}
             </li>
           )
         })}

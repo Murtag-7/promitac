@@ -12,6 +12,8 @@ export type LiveAction =
   | { type: 'goto'; itemId: string; slideIndex: number }
   | { type: 'next' }
   | { type: 'prev' }
+  | { type: 'nextItem' }
+  | { type: 'prevItem' }
   | { type: 'toggleOverlay'; overlay: Exclude<Overlay, 'none'> }
   | { type: 'cancel' }
   | { type: 'gotoSection'; sectionType: SectionType; number?: number }
@@ -59,6 +61,23 @@ export function liveReducer(state: LiveState, action: LiveAction, ctx: LiveConte
       for (let i = idx - 1; i >= 0; i--) {
         const it = items[i]
         if (it && it.slides.length > 0) return withSlide(state, it.id, it.slides.length - 1)
+      }
+      return state
+    }
+    case 'nextItem': {
+      const start = current ? idx + 1 : 0
+      for (let i = start; i < items.length; i++) {
+        const it = items[i]
+        if (it && it.slides.length > 0) return withSlide(state, it.id, 0)
+      }
+      return state
+    }
+    case 'prevItem': {
+      if (!current) return state
+      if (state.slideIndex > 0) return withSlide(state, current.id, 0)
+      for (let i = idx - 1; i >= 0; i--) {
+        const it = items[i]
+        if (it && it.slides.length > 0) return withSlide(state, it.id, 0)
       }
       return state
     }

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Dialog as D } from 'radix-ui'
-import { FileUp, Image as ImageIcon, Loader2, Paperclip, Sparkles, X } from 'lucide-react'
+import { FileUp, Image as ImageIcon, Loader2, Paperclip, ScanText, X } from 'lucide-react'
 import type { Song } from '@core/chordpro/model'
 import { newId } from '@core/util/id'
 import { Button } from '@/components/ui/button'
@@ -119,7 +119,7 @@ export function ImportPanel({ onClose }: { onClose: () => void }) {
           aria-describedby="import-intro"
         >
           <header className="flex items-center gap-3 border-b border-line px-5 py-3.5">
-            <Sparkles className="size-[18px] text-ink-2" aria-hidden />
+            <ScanText className="size-[18px] text-ink-2" aria-hidden />
             <D.Title className="flex-1 text-title font-[650] text-ink">{cs.import.title}</D.Title>
             <D.Close
               aria-label={cs.common.close}

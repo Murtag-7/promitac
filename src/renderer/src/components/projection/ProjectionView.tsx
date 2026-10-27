@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import type { OutputFrame } from '@core/live/frame'
-import type { Slide } from '@core/slides/model'
+import type { Slide, SlideVerse } from '@core/slides/model'
 import { fitFontSize } from '@core/slides/fit'
 import { CANVAS, FONTS, type Theme, type ThemeBackground } from '@core/theme/model'
 import { cn } from '@/lib/cn'
@@ -397,14 +397,23 @@ function SlideText({ slide, theme }: { slide: Slide; theme: Theme }) {
           </div>
         ) : null}
         <div style={{ ...common, fontSize: fit.size, lineHeight: t.lineHeight }} data-font-size={fit.size}>
-          {lines.map((line, i) => (
-            <div
-              key={i}
-              style={{ whiteSpace: fit.wrap ? 'normal' : 'pre', textWrap: fit.wrap ? 'balance' : undefined }}
-            >
-              {line || '\u00a0'}
+          {slide.kind === 'bible' && slide.verses?.length ? (
+            <div style={{ textWrap: 'pretty' }}>
+              <BibleVerses verses={slide.verses} uppercase={t.uppercase} />
             </div>
-          ))}
+          ) : (
+            lines.map((line, i) => (
+              <div
+                key={i}
+                style={{
+                  whiteSpace: fit.wrap ? 'normal' : 'pre',
+                  textWrap: fit.wrap ? 'balance' : undefined
+                }}
+              >
+                {line || '\u00a0'}
+              </div>
+            ))
+          )}
         </div>
       </div>
       {showFooter && theme.footer.position === 'bottom' ? (
@@ -412,6 +421,40 @@ function SlideText({ slide, theme }: { slide: Slide; theme: Theme }) {
       ) : null}
     </div>
   )
+}
+
+/** Verse numbers set small and raised, each kept on the same line as the first word of its verse. */
+function BibleVerses({ verses, uppercase }: { verses: SlideVerse[]; uppercase: boolean }) {
+  return verses.map((v, i) => {
+    const text = uppercase ? v.text.toLocaleUpperCase('cs') : v.text
+    const space = i > 0 ? ' ' : ''
+    if (!v.number) return <span key={i}>{space + text}</span>
+    const cut = text.search(/\s/u)
+    const first = cut === -1 ? text : text.slice(0, cut)
+    const rest = cut === -1 ? '' : text.slice(cut)
+    return (
+      <span key={i}>
+        {space}
+        <span style={{ whiteSpace: 'nowrap' }}>
+          <span
+            style={{
+              fontSize: '0.56em',
+              verticalAlign: '0.62em',
+              opacity: 0.7,
+              fontWeight: 600,
+              lineHeight: 0
+            }}
+            data-verse-number
+          >
+            {v.number}
+          </span>
+          {'\u202f'}
+          {first}
+        </span>
+        {rest}
+      </span>
+    )
+  })
 }
 
 function Footer({ text, theme }: { text: string; theme: Theme }) {
@@ -423,7 +466,7 @@ function Footer({ text, theme }: { text: string; theme: Theme }) {
         fontSize: theme.footer.size,
         fontWeight: 500,
         color: t.color,
-        opacity: 0.72,
+        opacity: 0.85,
         textAlign: t.align,
         lineHeight: 1.3,
         marginTop: theme.footer.position === 'bottom' ? theme.footer.size * 0.8 : 0,

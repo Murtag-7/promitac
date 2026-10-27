@@ -15,4 +15,14 @@ export interface Slide {
   /** Heading for text/announcement slides. */
   title?: string
   mediaId?: string
+  /**
+   * Bible slides: the same text as `lines`, split into verses so the verse number can be typeset
+   * small and kept with its first word. `number` is absent on the continuation of a split verse.
+   */
+  verses?: SlideVerse[]
+}
+
+export interface SlideVerse {
+  number?: string
+  text: string
 }

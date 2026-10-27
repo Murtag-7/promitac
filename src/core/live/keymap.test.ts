@@ -1,10 +1,14 @@
 import { resolveKey } from './keymap'
 
-const k = (key: string, mods: Partial<{ ctrl: boolean; meta: boolean; alt: boolean }> = {}) => ({
+const k = (
+  key: string,
+  mods: Partial<{ ctrl: boolean; meta: boolean; alt: boolean; shift: boolean }> = {}
+) => ({
   key,
   ctrl: false,
   meta: false,
   alt: false,
+  shift: false,
   ...mods
 })
 
@@ -54,5 +58,17 @@ describe('resolveKey', () => {
   })
   it('unknown keys do nothing', () => {
     expect(resolveKey(k('z'), null)).toEqual({ action: null, pending: null })
+  })
+  it('Shift + arrows move between plan items', () => {
+    expect(resolveKey(k('ArrowDown', { shift: true }), null).action).toEqual({ type: 'nextItem' })
+    expect(resolveKey(k('ArrowRight', { shift: true }), null).action).toEqual({ type: 'nextItem' })
+    expect(resolveKey(k('ArrowUp', { shift: true }), null).action).toEqual({ type: 'prevItem' })
+    expect(resolveKey(k('ArrowLeft', { shift: true }), null).action).toEqual({ type: 'prevItem' })
+  })
+  it('Shift + letters still work (caps)', () => {
+    expect(resolveKey(k('B', { shift: true }), null).action).toEqual({
+      type: 'toggleOverlay',
+      overlay: 'black'
+    })
   })
 })

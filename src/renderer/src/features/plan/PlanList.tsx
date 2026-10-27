@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { CalendarPlus, LayoutTemplate } from 'lucide-react'
+import { CalendarPlus, LayoutTemplate, MonitorPlay } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Field, Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -115,10 +115,10 @@ function PlanGroup({
                 <span className="block text-meta text-ink-3">{cs.common.items(p.items.length)}</span>
               </span>
               {liveId === p.id ? (
-                <span
-                  className="size-2 shrink-0 rounded-full bg-live"
-                  aria-label={cs.live.onAir}
-                  title={cs.live.onAir}
+                <MonitorPlay
+                  className="size-4 shrink-0 text-ink-2"
+                  aria-label={cs.live.livePlanMarker}
+                  strokeWidth={1.75}
                 />
               ) : null}
             </button>

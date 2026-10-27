@@ -1,4 +1,4 @@
-import { BookOpen, Images, ListMusic, MonitorPlay, Music4, Settings2, Sparkles } from 'lucide-react'
+import { BookOpen, Images, ListMusic, MonitorPlay, Music4, Settings2, ScanText } from 'lucide-react'
 import { lazy, Suspense } from 'react'
 import { api } from '@/api/client'
 import { Button } from '@/components/ui/button'
@@ -8,6 +8,7 @@ import { currentLiveItems, useLive } from '@/store/live'
 import { useUi, type View } from '@/store/ui'
 import { SyncIndicator } from './SyncIndicator'
 import { LiveScreen } from '@/features/live/LiveScreen'
+import { useLiveKeys } from '@/live/useLiveKeys'
 
 const PlanScreen = lazy(() => import('@/features/plan/PlanScreen').then((m) => ({ default: m.PlanScreen })))
 const SongsScreen = lazy(() =>
@@ -41,6 +42,7 @@ export function AppShell() {
   const importOpen = useUi((s) => s.importOpen)
   const setImportOpen = useUi((s) => s.setImportOpen)
   const isMac = api().platform === 'darwin'
+  useLiveKeys()
 
   return (
     <div className="flex h-full flex-col bg-bg">
@@ -71,8 +73,13 @@ export function AppShell() {
         <div className="no-drag flex items-center gap-2">
           <LivePill onOpen={() => setView('live')} />
           <SyncIndicator />
-          <Button variant="primary" size="md" onClick={() => setImportOpen(true)}>
-            <Sparkles aria-hidden />
+          {/* During the service the projection, not the import, deserves the brightest pixel. */}
+          <Button
+            variant={view === 'live' ? 'secondary' : 'primary'}
+            size="md"
+            onClick={() => setImportOpen(true)}
+          >
+            <ScanText aria-hidden />
             {cs.nav.import}
           </Button>
         </div>

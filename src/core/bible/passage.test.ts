@@ -83,7 +83,13 @@ describe('passageToSlides', () => {
   it('creates one bible slide with the reference and translation in the footer', () => {
     const slides = passageToSlides(john316, { book: 'JHN', chapter: 3, verseStart: 16 }, opts)
     expect(slides).toEqual([
-      { id: 'bible#0', kind: 'bible', lines: [john316[0]!.text], footer: 'Jan 3,16 (BKR)' }
+      {
+        id: 'bible#0',
+        kind: 'bible',
+        lines: [john316[0]!.text],
+        verses: [{ text: john316[0]!.text }],
+        footer: 'Jan 3,16 (BKR)'
+      }
     ])
   })
 
@@ -122,8 +128,32 @@ describe('passageToSlides', () => {
   it('uses chapter:verse numbers when the passage spans chapters', () => {
     const ref = { book: 'JHN', chapter: 3, verseStart: 36, chapterEnd: 4, verseEnd: 1 }
     const slides = passageToSlides(getVerses(data, ref), ref, { ...opts, verseNumbers: true })
-    expect(slides[0]!.lines).toEqual(['3:36 Text 3:36. 4:1 Text 4:1.'])
+    expect(slides[0]!.lines).toEqual(['3,36 Text 3:36. 4,1 Text 4:1.'])
     expect(slides[0]!.footer).toBe('Jan 3,36–4,1 (BKR)')
+    const en = passageToSlides(getVerses(data, ref), ref, { ...opts, verseNumbers: true, lang: 'en' })
+    expect(en[0]!.lines).toEqual(['3:36 Text 3:36. 4:1 Text 4:1.'])
+  })
+
+  it('keeps verse numbers apart from the text for typesetting', () => {
+    const ref = { book: 'JHN', chapter: 3, verseStart: 16, verseEnd: 17 }
+    const slides = passageToSlides(getVerses(data, ref), ref, { ...opts, verseNumbers: true })
+    expect(slides[0]!.verses).toEqual([
+      { number: '16', text: 'Text 3:16.' },
+      { number: '17', text: 'Text 3:17.' }
+    ])
+    const plain = passageToSlides(getVerses(data, ref), ref, opts)
+    expect(plain[0]!.verses).toEqual([{ text: 'Text 3:16.' }, { text: 'Text 3:17.' }])
+  })
+
+  it('numbers only the first piece of a verse split across slides', () => {
+    const ref = { book: 'JHN', chapter: 3, verseStart: 16 }
+    const verses = [
+      { chapter: 3, verse: 16, text: 'Prvni veta je tady. Druha veta je tady. Treti veta je tady.' }
+    ]
+    const slides = passageToSlides(verses, ref, { ...opts, verseNumbers: true, maxChars: 25 })
+    expect(slides.length).toBeGreaterThan(1)
+    expect(slides[0]!.verses?.[0]).toEqual({ number: '16', text: 'Prvni veta je tady.' })
+    expect(slides[1]!.verses?.[0]?.number).toBeUndefined()
   })
 
   it('keeps the chapter-only reference when a whole chapter fits on one slide', () => {

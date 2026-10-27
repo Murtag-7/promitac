@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo } from 'react'
 import { CalendarPlus, ListMusic } from 'lucide-react'
-import { resolveKey } from '@core/live/keymap'
 import { liveReducer } from '@core/live/state'
 import { EmptyState } from '@/components/common/EmptyState'
 import { Button } from '@/components/ui/button'
@@ -40,13 +39,6 @@ export function useLiveItems() {
   return { plan, items }
 }
 
-function isTypingTarget(el: EventTarget | null): boolean {
-  if (!(el instanceof HTMLElement)) return false
-  if (el.closest('[role="dialog"], [role="menu"], [role="listbox"]')) return true
-  const tag = el.tagName
-  return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el.isContentEditable
-}
-
 export function LiveScreen() {
   const { plan, items } = useLiveItems()
   const live = useLive((s) => s.live)
@@ -55,35 +47,6 @@ export function LiveScreen() {
   const dispatch = useLive((s) => s.dispatch)
   const setView = useUi((s) => s.setView)
   const openPlan = useUi((s) => s.openPlan)
-  const pendingTimer = useRef<number | undefined>(undefined)
-
-  // Keyboard & presentation clicker control. Keyboard actions are never animated in the UI.
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent): void => {
-      if (isTypingTarget(e.target) || e.repeat) return
-      const { pending, setPending } = useLive.getState()
-      const res = resolveKey({ key: e.key, ctrl: e.ctrlKey, meta: e.metaKey, alt: e.altKey }, pending)
-      if (!res.action && !res.pending && !pending) return
-      e.preventDefault()
-      window.clearTimeout(pendingTimer.current)
-      setPending(res.pending)
-      if (res.pending) {
-        pendingTimer.current = window.setTimeout(() => {
-          // "V" alone → next verse
-          if (useLive.getState().pending === 'v') {
-            useLive.getState().dispatch({ type: 'gotoSection', sectionType: 'verse' })
-          }
-          useLive.getState().setPending(null)
-        }, 1200)
-      }
-      if (res.action) dispatch(res.action)
-    }
-    window.addEventListener('keydown', onKey)
-    return () => {
-      window.removeEventListener('keydown', onKey)
-      window.clearTimeout(pendingTimer.current)
-    }
-  }, [dispatch])
 
   const selected =
     items.find((i) => i.id === selectedItemId) ?? items.find((i) => i.id === live.itemId) ?? items[0]
