@@ -174,3 +174,14 @@ test('light appearance', async ({ page }) => {
   await page.waitForTimeout(500)
   await page.screenshot({ path: OUT('zive-svetly') })
 })
+
+test('help dialog', async ({ page }) => {
+  await fresh(page)
+  await page.getByRole('button', { name: 'Nápověda' }).click()
+  await expect(page.getByRole('dialog', { name: 'Nápověda' })).toBeVisible()
+  await page.waitForTimeout(400)
+  await page.screenshot({ path: OUT('napoveda') })
+  await page.getByRole('radio', { name: 'Podrobný návod' }).click()
+  await page.waitForTimeout(300)
+  await page.screenshot({ path: OUT('napoveda-navod') })
+})

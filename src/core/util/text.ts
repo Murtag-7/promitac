@@ -30,3 +30,16 @@ export function expandTabs(line: string, tabSize = 8): string {
   }
   return out
 }
+
+/**
+ * Czech typesetting for projected prose: a one-letter preposition or conjunction (k, s, v, z, o, u,
+ * a, i) never ends a line, and – with `lastWord` – the last line is never a single word. Only spaces
+ * become no-break spaces; the words themselves are untouched.
+ */
+export function czechNoBreaks(text: string, opts: { lastWord?: boolean } = {}): string {
+  let out = text.replace(/(^|[\s(„"'])([ksvzouaiKSVZOUAI]) (?=\S)/gu, '$1$2 ')
+  // A second pass catches neighbours like "a v Bohu", where the first match consumed the space.
+  out = out.replace(/(^|[\s(„"'])([ksvzouaiKSVZOUAI]) (?=\S)/gu, '$1$2 ')
+  if (opts.lastWord) out = out.replace(/ (\S+)\s*$/u, ' $1')
+  return out
+}

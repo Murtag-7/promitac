@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import type { OutputFrame } from '@core/live/frame'
 import type { Slide, SlideVerse } from '@core/slides/model'
 import { fitFontSize } from '@core/slides/fit'
+import { czechNoBreaks } from '@core/util/text'
 import { CANVAS, FONTS, type Theme, type ThemeBackground } from '@core/theme/model'
 import { cn } from '@/lib/cn'
 import './fonts.css'
@@ -410,7 +411,7 @@ function SlideText({ slide, theme }: { slide: Slide; theme: Theme }) {
                   textWrap: fit.wrap ? 'balance' : undefined
                 }}
               >
-                {line || '\u00a0'}
+                {line ? czechNoBreaks(line) : '\u00a0'}
               </div>
             ))
           )}
@@ -426,7 +427,8 @@ function SlideText({ slide, theme }: { slide: Slide; theme: Theme }) {
 /** Verse numbers set small and raised, each kept on the same line as the first word of its verse. */
 function BibleVerses({ verses, uppercase }: { verses: SlideVerse[]; uppercase: boolean }) {
   return verses.map((v, i) => {
-    const text = uppercase ? v.text.toLocaleUpperCase('cs') : v.text
+    const raw = uppercase ? v.text.toLocaleUpperCase('cs') : v.text
+    const text = czechNoBreaks(raw, { lastWord: i === verses.length - 1 })
     const space = i > 0 ? ' ' : ''
     if (!v.number) return <span key={i}>{space + text}</span>
     const cut = text.search(/\s/u)

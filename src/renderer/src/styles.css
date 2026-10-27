@@ -243,3 +243,93 @@ button {
     transition-duration: 1ms !important;
   }
 }
+
+/* The operator guide (docs/NAVOD.md) inside the help dialog: a calm reading column. */
+.guide {
+  max-width: 72ch;
+  font-size: var(--text-body);
+  line-height: 1.6;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+.guide > :first-child {
+  margin-top: 0;
+}
+.guide h1 {
+  font-size: var(--text-hero);
+  line-height: var(--text-hero--line-height);
+  font-weight: 650;
+  color: var(--ink);
+  margin: 0 0 0.75rem;
+}
+.guide h2 {
+  font-size: var(--text-screen);
+  line-height: var(--text-screen--line-height);
+  font-weight: 650;
+  color: var(--ink);
+  margin: 2rem 0 0.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+}
+.guide h3 {
+  font-size: var(--text-title);
+  font-weight: 650;
+  color: var(--ink);
+  margin: 1.5rem 0 0.5rem;
+}
+.guide p,
+.guide ul,
+.guide ol,
+.guide table {
+  margin: 0 0 0.85rem;
+}
+.guide ul,
+.guide ol {
+  padding-left: 1.35rem;
+}
+.guide ul {
+  list-style: disc;
+}
+.guide ol {
+  list-style: decimal;
+}
+.guide li + li {
+  margin-top: 0.3rem;
+}
+.guide li > ul,
+.guide li > ol {
+  margin: 0.3rem 0 0;
+}
+.guide strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.guide code {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.92em;
+  color: var(--ink);
+  background: var(--raised);
+  border-radius: 4px;
+  padding: 0.05em 0.35em;
+}
+.guide table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-small);
+}
+.guide th,
+.guide td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.45rem 0.75rem 0.45rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.guide th {
+  color: var(--ink);
+  font-weight: 600;
+}
+.guide a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

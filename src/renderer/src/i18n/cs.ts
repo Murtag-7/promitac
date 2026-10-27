@@ -36,7 +36,9 @@ export const cs = {
     importTitle: 'Nová píseň',
     importText:
       'Tlačítko Import písně převede text, fotku ze zpěvníku, PDF nebo Word na píseň s akordy. Text se nemění – nejistá místa jsou zvýrazněná ke kontrole.',
-    more: 'Podrobný návod je v souboru NAVOD.md, který je přiložený k aplikaci.'
+    more: 'Otevřít podrobný návod',
+    quickTab: 'Rychlý přehled',
+    guideTab: 'Podrobný návod'
   },
   common: {
     save: 'Uložit',
@@ -173,6 +175,7 @@ export const cs = {
     outputNoDisplay: 'Monitor nepřipojen',
     outputDisabled: 'Vypnuto',
     outputError: 'Chyba výstupu',
+    outputFix: 'Nastavit',
     shortcuts: 'Klávesové zkratky',
     /** [alternatives (each a key combination), action] */
     shortcutList: [
@@ -195,7 +198,7 @@ export const cs = {
       [[['M']], 'Most'],
       [[['I'], ['O'], ['E'], ['T']], 'Předehra / dohra / závěr / tag']
     ] as Array<[string[][], string]>,
-    clickerNote: 'Klikr (PageUp / PageDown) funguje vždy – i když zrovna píšete do pole.',
+    clickerNote: 'Klikr (PageUp / PageDown) v záložce Živě funguje vždy – i když zrovna píšete do pole.',
     overlayActive: {
       black: 'Plátno je zatemněné',
       clear: 'Text je skrytý',

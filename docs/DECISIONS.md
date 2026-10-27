@@ -9,6 +9,7 @@ Rozhodnutí, která jsem udělal sám, protože je zadání neurčovalo. Každé
 - **shadcn/ui komponenty píšu ručně ve stylu shadcn nad balíčkem `radix-ui`** (CLI shadcn stahuje z internetu; výsledek je stejný – zdrojáky komponent v repu).
 - **Vlastní protokol `app://` místo `file://`.** Tesseract.js i pdf.js načítají soubory přes `fetch`, což s `file://` v Chromiu nefunguje; `app://` navíc umí HTTP Range pro přehrávání videí na pozadí.
 - **Main proces je ESM bundle (`out/main/index.js`), preload je CJS (`index.cjs`)**, protože sandboxovaný preload ESM nepodporuje.
+- **Nápověda v aplikaci** (tlačítko „?" v horní liště a F1): čtyři kroky bohoslužby a všechny klávesové zkratky. Podrobný návod zůstává v `docs/NAVOD.md`.
 
 ## Formát písní (ChordPro)
 
@@ -25,11 +26,23 @@ Rozhodnutí, která jsem udělal sám, protože je zadání neurčovalo. Každé
 
 ## Živé promítání
 
-- **Klávesa B = černá obrazovka** (běžná konvence presentérů, klikry posílají „B" nebo „."). Proto most (bridge) je **M** („most"), refrén **R**, předrefrén **P**, sloka **V + číslo** nebo jen číslo, předehra **I**, dohra **O**, závěr **E**, tag **T**. **C** = smazat text, **L** = logo, **Esc** = zrušit černou/logo/smazání.
+- **Klávesa B = černá obrazovka** (běžná konvence presentérů, klikry posílají „B" nebo „."). Proto most (bridge) je **M** („most"), refrén **R**, předrefrén **P**, sloka **V + číslo** nebo jen číslo, předehra **I**, dohra **O**, závěr **E**, tag **T**. **C** = skrýt text („Skrýt", ne „Smazat" – nic se nemaže), **L** = logo, **Esc** = zpět na slajd (zruší černou/logo/skrytý text).
 - **Šipka dál na posledním slajdu** přejde na první slajd další položky plánu (a zpět na poslední slajd předchozí) – operátor nemusí sahat na myš.
+- **Klikr má přednost.** PageUp/PageDown (co posílá presentér) v záložce Živě ovládají slajdy vždy – i když je kurzor v poli upozornění nebo je otevřený import. V jiných záložkách jen když se něco promítá a kurzor není v textovém poli (PageDown v editoru písně dál posouvá text). Ostatní klávesy fungují jen v Živě mimo pole, dialogy a menu, aby psaní „b" nezatemnilo plátno.
+- **Shift + ↓/↑ (a Shift + PageDown/PageUp)** skočí na první slajd další/předchozí položky plánu.
+- **Červená = jen to, co je opravdu na plátně.** Když je plátno černé, s logem nebo se skrytým textem, náhled to ukazuje štítkem a dlaždice slajdu má „Skryto" místo „Živě". Zelená = jen „Další". Krémová = akce a výběr.
+- **Jedna zkratka na sekci:** opakovaný refrén má jeden čip „Refrén ×3"; klik skočí na nejbližší další výskyt po aktuálním slajdu (stejně jako klávesa R).
+- **Upozornění a odpočet** mají po spuštění jednořádkový stav („Na plátně: …", „Odpočet běží · 04:12") s tlačítkem Skrýt/Zastavit, aby se ovládací panel neposouval.
+- **Bible na plátně:** čísla veršů jsou malá a vyzdvižená a drží se prvního slova verše; přes kapitoly se píší česky `3,36`. Jednopísmenné předložky a spojky (k, s, v, z, o, u, a, i) nikdy nekončí řádek a poslední řádek nikdy není jediné slovo (jen mezery se mění na nezlomitelné, text zůstává). Totéž pro zalomené řádky písní.
+- **Větší výchozí písmo:** vestavěné motivy 108 px (min. 48), patička 38 px s vyšší sytostí – čitelnost ze zadní řady má přednost.
+- **Odebrání položky z plánu** jde vrátit z toastu („Vrátit"), proto se nepotvrzuje dialogem.
+- **„Přidat do plánu" je hlavní akce** u písně a Bible, „Promítnout hned" vedlejší – v přípravě je běžnější přidávat, promítnutí mimo plán je výjimka.
 - **„Promítnout hned"** z Písní/Bible přidá položku do aktuálního plánu za právě promítanou a pošle ji na plátno – plán tak odpovídá tomu, co se opravdu promítalo.
 
 ## Účty a synchronizace (Supabase)
+
+- **Kód připojení místo adresy a klíče.** Správce po založení sboru vidí „Kód pro další počítač" (`PROMITAC-` + base64url JSONu s adresou projektu, veřejným anon klíčem a kódem pozvánky). Na novém počítači stačí vložit tento jeden řádek; kód pozvánky se po přihlášení předvyplní. Kód není tajný (obsahuje jen veřejné údaje, přístup chrání účet + pozvánka + RLS). Ruční zadání URL a klíče zůstává pod „Pokročilé – pro správce" pro první nastavení.
+- **Offline není chyba.** Ukazatel synchronizace „Offline" pojmenuje klidně (promítání síť nepotřebuje), jen skutečná chyba synchronizace je zvýrazněná.
 
 - **Jeden sbor na uživatele (v1).** Model sbor → členové s rolemi `admin`/`member`; první uživatel sbor založí, další se připojí pozvánkovým kódem `XXXX-XXXX`. Kód vidí všichni členové (kdokoli z týmu může pozvat dalšího promítače), správce ho může vyměnit a spravovat členy.
 - **Synchronizace porovnává tři strany:** lokální záznam, serverový a stav dohodnutý při posledním syncu. Kurzor stahování je čas serveru (`server_updated_at` z triggeru), časy počítačů se porovnávají jen při skutečném konfliktu – posunuté hodiny nezpůsobí ztrátu úprav.

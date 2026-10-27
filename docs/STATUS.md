@@ -12,13 +12,13 @@ Průběžně aktualizováno po každém milníku. Další session pokračuje odt
 | 4 | Import asistent (text, OCR fotek, PDF, DOCX, OpenLyrics, náhled, nejistá místa) | ✅ |
 | 5 | Bible + Média + záloha | ✅ |
 | 6 | Účty + sync (Supabase, RLS, migrace, lokální režim, keepalive) | ✅ kód + lokální ověření, ⚠️ bez reálného Supabase |
-| 7 | Design polish + přístupnost + screenshoty | ⏳ |
+| 7 | Design polish + přístupnost + screenshoty | ✅ (review 28/40 → opraveno, viz [design-review.md](design-review.md)) |
 | 8 | Buildy Mac/Win v CI + dokumentace | ⏳ workflow hotový, běh v Actions ověřit |
 | 9 | P2 – volitelná AI pro import | ✅ (Gemini, vypnuto ve výchozím stavu, test s mockovaným fetch) |
 
 ## Ověřeno (jak)
 
-- **Unit testy (Vitest):** `npm test` → 61 souborů, 1245 testů zelených (ChordPro parser/serializer včetně round-tripu a fuzz testu, transpozice, slajdy, auto-fit, vyhledávání, import textu se 14 golden fixtures a kontrolou neměnnosti textu, OpenLyrics, Bible odkazy/pasáže/XML formáty a přibalená data, sync engine, sync přes souborové repozitáře mezi dvěma simulovanými počítači včetně konfliktních kopií, úložiště, záloha/obnova včetně zip-slip, live stavový automat a klávesy, výpočet monitoru výstupu).
+- **Unit testy (Vitest):** `npm test` → 63 souborů, 1263 testů zelených (ChordPro parser/serializer včetně round-tripu a fuzz testu, transpozice, slajdy, auto-fit, vyhledávání, import textu se 14 golden fixtures a kontrolou neměnnosti textu, OpenLyrics, Bible odkazy/pasáže/XML formáty a přibalená data, sync engine, sync přes souborové repozitáře mezi dvěma simulovanými počítači včetně konfliktních kopií, úložiště, záloha/obnova včetně zip-slip, live stavový automat a klávesy, výpočet monitoru výstupu).
 - **OCR přesnost:** `npm run test:ocr` (Tesseract.js v Node, stejné traineddata a stejný postup jako v aplikaci) na fixtures vyrenderovaných Playwrightem:
 
   | Fixture | Text (znaky) | Akordy na správné slabice |
@@ -29,8 +29,10 @@ Průběžně aktualizováno po každém milníku. Další session pokračuje odt
 
   Cíl ze zadání (≥ 97 % / ≥ 90 %) splněn. Navíc PDF s textovou vrstvou i DOCX dávají přesně ground truth.
 - **Supabase migrace + RLS:** `bash scripts/test-migrations.sh` na lokálním PostgreSQL 16 se stubem schémat `auth`/`storage`; 13 kontrol (izolace sborů, role, pozvánky, poslední správce, anon jen keepalive, storage politiky). Migrace se aplikuje 2× (idempotence).
-- **UI v prohlížeči (Playwright, mock API):** `npm run test:e2e` → 52 testů (Živě, Plán, Písně, Import včetně OCR fotky v prohlížeči, PDF a DOCX, Bible, Média, Nastavení – výstupy, motivy, obecné, záloha, AI, účet).
-- **Electron e2e:** `npm run test:electron` (Playwright `_electron` pod `xvfb-run`): aplikace startuje, první spuštění vytvoří knihovnu jako `.chordpro` soubory, výstupní okno (režim „v okně", xvfb má jeden monitor) dostane slajd přes IPC, `B` zatemní výstup.
+- **UI v prohlížeči (Playwright, mock API):** `npm run test:e2e` → 57 testů (Živě včetně klikru při psaní a Shift+šipek, Plán včetně „Vrátit" po odebrání, Písně, Import včetně OCR fotky v prohlížeči, PDF a DOCX, Bible, Média, Nápověda, Nastavení – výstupy, motivy, obecné, záloha, AI, sdílená knihovna s kódem připojení).
+- **Electron e2e:** `npm run test:electron` (Playwright `_electron` pod `xvfb-run`) → 5 testů: aplikace startuje, první spuštění vytvoří knihovnu jako `.chordpro` soubory, výstupní okno (režim „v okně", xvfb má jeden monitor) dostane slajd přes IPC a `B` ho zatemní, OCR fotky přímo v Electronu (worker + wasm přes `app://`, ~4 s), média se kopírují do knihovny a servírují přes `app://media`, záloha ZIP a obnova (nativní dialogy nahrazené stubem).
+- **Design review:** impeccable critique (dva nezávislí sub-agenti: design review + detektor/prohlížeč) → 28/40; všechny P1 a P2 nálezy opravené, kontrast a velikosti cílů upravené, screenshoty přegenerované. Podrobně v [design-review.md](design-review.md).
+- **CI (GitHub Actions):** workflow CI (typecheck, lint, unit, migrace na Postgresu, OCR, e2e v prohlížeči, Electron e2e) zelený na větvi `claude/adoring-curie-tju73s`.
 
 ## Neověřeno / známé limity
 

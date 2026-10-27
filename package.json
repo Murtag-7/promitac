@@ -77,6 +77,7 @@
     "globals": "^17.13.0",
     "lucide-react": "^1.62.0",
     "mammoth": "^1.13.0",
+    "marked": "^16.4.2",
     "minisearch": "^7.2.0",
     "pdfjs-dist": "^6.4.299",
     "pngjs": "^7.0.0",

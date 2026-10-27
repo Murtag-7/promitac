@@ -18,4 +18,8 @@ test('help opens from the top bar and with F1', async ({ page }) => {
   await expect(dialog).toBeHidden()
   await page.keyboard.press('F1')
   await expect(dialog).toBeVisible()
+  // The full operator guide is bundled and readable offline.
+  await dialog.getByRole('button', { name: 'Otevřít podrobný návod' }).click()
+  await expect(dialog.getByTestId('guide')).toContainText('Během bohoslužby: záložka Živě')
+  await expect(dialog.getByTestId('guide').getByRole('table').first()).toBeVisible()
 })

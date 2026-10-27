@@ -1,4 +1,4 @@
-import { expandTabs, normalizeInputText } from './text'
+import { czechNoBreaks, expandTabs, normalizeInputText } from './text'
 
 describe('normalizeInputText', () => {
   it('removes BOM, CRLF and non-breaking spaces', () => {
@@ -18,5 +18,26 @@ describe('expandTabs', () => {
     expect(expandTabs('a\tb', 8)).toBe('a       b')
     expect(expandTabs('\tx', 4)).toBe('    x')
     expect(expandTabs('abcd\te', 4)).toBe('abcd    e')
+  })
+})
+
+describe('czechNoBreaks', () => {
+  const NBSP = ' '
+  it('keeps one-letter prepositions and conjunctions with the next word', () => {
+    expect(czechNoBreaks('pase mne, k vodám tichým')).toBe(`pase mne, k${NBSP}vodám tichým`)
+    expect(czechNoBreaks('V počátku a v Bohu i s námi')).toBe(
+      `V${NBSP}počátku a${NBSP}v${NBSP}Bohu i${NBSP}s${NBSP}námi`
+    )
+    expect(czechNoBreaks('(z nebe) u nás o nás')).toBe(`(z${NBSP}nebe) u${NBSP}nás o${NBSP}nás`)
+  })
+
+  it('leaves other words and the last word alone', () => {
+    expect(czechNoBreaks('Hospodin jest můj pastýř')).toBe('Hospodin jest můj pastýř')
+    expect(czechNoBreaks('to je k')).toBe('to je k')
+  })
+
+  it('can also glue the last two words so the last line is never a single word', () => {
+    expect(czechNoBreaks('pro jméno své.', { lastWord: true })).toBe(`pro jméno${NBSP}své.`)
+    expect(czechNoBreaks('slovo', { lastWord: true })).toBe('slovo')
   })
 })

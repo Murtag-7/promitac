@@ -1,7 +1,8 @@
 # Návod pro promítače
 
 Krátký průvodce pro ty, kdo v neděli sedí u počítače. Aplikace má nahoře šest záložek:
-**Živě · Plán · Písně · Bible · Média · Nastavení** a vpravo tlačítko **Import písně**.
+**Živě · Plán · Písně · Bible · Média · Nastavení**, vpravo tlačítko **Import písně** a **?** s nápovědou
+(tento návod je tam celý, i bez internetu; otevře ho také klávesa F1).
 
 Barvy mají vždy stejný význam:
 - 🔴 **červená = je na plátně právě teď** (Živě),
@@ -55,8 +56,9 @@ Tipy: **⋯ → Duplikovat na datum** zkopíruje minulý plán, **Uložit jako �
 | `M` | most (bridge) |
 | `I` / `O` / `E` / `T` | předehra / dohra / závěr / tag |
 
-Běžný bezdrátový presentér (klikr) posílá PageUp/PageDown a funguje bez nastavování – **vždy**, i když
-zrovna píšete upozornění nebo jste v jiné záložce (pokud se něco promítá). Ostatní klávesy fungují
+Běžný bezdrátový presentér (klikr) posílá PageUp/PageDown a funguje bez nastavování – v záložce Živě
+**vždy**, i když zrovna píšete upozornění. V ostatních záložkách funguje, když se něco promítá a nepíšete
+zrovna do textového pole (v editoru písně PageDown dál posouvá text). Ostatní klávesy fungují
 v záložce Živě, když nepíšete do textového pole. Přehled zkratek otevře tlačítko **?** v horní liště.
 
 ### Upozornění a odpočet

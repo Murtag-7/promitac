@@ -483,6 +483,15 @@ function OutputsStatus() {
                     ? cs.live.outputError
                     : cs.live.outputNoDisplay}
             </span>
+            {state === 'error' || state === 'no-display' ? (
+              <button
+                type="button"
+                onClick={() => openSettings('outputs')}
+                className="press ml-auto shrink-0 rounded-control px-2 py-1 text-small font-[550] text-ink underline decoration-line-strong underline-offset-2 hover:bg-raised"
+              >
+                {cs.live.outputFix}
+              </button>
+            ) : null}
           </div>
         )
       })}

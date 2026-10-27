@@ -23,9 +23,10 @@ function isInteractive(el: HTMLElement): boolean {
 
 /**
  * Keyboard and presentation-clicker control of the live output, active in the whole app.
- * - PageUp/PageDown (what clickers send) always work – even while typing an announcement or with
- *   the import panel open – but outside the Živě screen only once something is on screen, so a
- *   PageDown while preparing a plan never starts projecting by surprise.
+ * - PageUp/PageDown (what clickers send) always work on the Živě screen – even while typing an
+ *   announcement or with the import panel open. Elsewhere they work only once something is on
+ *   screen and not inside a text editor, so PageDown in the song editor still scrolls the editor
+ *   and a PageDown while preparing a plan never starts projecting by surprise.
  * - All other keys work on the Živě screen when focus is not in a text field, menu or dialog.
  * - Space/Enter on a focused button press that button instead of advancing.
  */
@@ -39,7 +40,7 @@ export function useLiveKeys(): void {
       const onLiveView = useUi.getState().view === 'live'
 
       if (CLICKER_KEYS.has(e.key) && !e.ctrlKey && !e.metaKey && !e.altKey) {
-        if (!onLiveView && !live.live.itemId) return
+        if (!onLiveView && (!live.live.itemId || isTextEntry(target))) return
         e.preventDefault()
         live.dispatch({
           type: e.key === 'PageDown' ? (e.shiftKey ? 'nextItem' : 'next') : e.shiftKey ? 'prevItem' : 'prev'
