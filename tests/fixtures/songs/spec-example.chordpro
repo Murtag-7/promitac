@@ -1,0 +1,28 @@
+{title: Světlo nad horami}
+{artist: Vymyšlený autor}
+{key: G}
+{ccli: 1234567}
+{tags: chvály, advent}
+{arrangement: V1 C V2 C B C}
+
+{start_of_verse: V1}
+[G]Text první [D]sloky
+[Em]ráno, když se [C]probouzí den,
+[G]světlo jde přes [D]tichou zem
+{end_of_verse}
+
+{start_of_chorus: C}
+[C]Text re[G]frénu
+[Am]zpívej, celá [D]zem,
+[C]světlo nad ho[G]rami
+{end_of_chorus}
+
+{start_of_verse: V2}
+[G]Druhá sloka [D]zní
+[Em]jako potok [C]v jarním dni
+{end_of_verse}
+
+{start_of_bridge: B}
+[Am]Ty jsi [C]blízko, [G]Ty jsi [D]tu
+[Am]Ty jsi [C]blízko, [D]Ty jsi tu
+{end_of_bridge}
