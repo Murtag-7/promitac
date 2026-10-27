@@ -64,3 +64,26 @@ test('bible passage item shows slides from the bundled Kralice Bible', async ({ 
     .click()
   await expect(page.getByRole('complementary', { name: 'Náhled slajdů' })).toContainText('Hospodin')
 })
+
+test('a removed item can be put back from the toast', async ({ page }) => {
+  await page.getByRole('button', { name: 'Nový plán' }).click()
+  await page.getByRole('dialog').getByRole('button', { name: 'Nový plán' }).click()
+  await page.getByRole('button', { name: 'Prázdný slajd' }).click()
+  await page.getByRole('button', { name: 'Text / oznámení' }).click()
+  const items = page.getByTestId('plan-items').locator('li')
+  await expect(items).toHaveCount(2)
+
+  await items.nth(0).getByRole('button', { name: 'Odebrat z plánu' }).click()
+  await expect(items).toHaveCount(1)
+  await page.getByRole('button', { name: 'Vrátit' }).click()
+  await expect(items).toHaveCount(2)
+  await expect(items.nth(0)).toContainText('Prázdný slajd')
+})
+
+test('the long date in the header changes the plan date', async ({ page }) => {
+  await page.getByRole('button', { name: 'Nový plán' }).click()
+  await page.getByRole('dialog').getByRole('button', { name: 'Nový plán' }).click()
+  await expect(page.getByRole('button', { name: /^Změnit datum:/ })).toBeVisible()
+  await page.getByLabel('Datum', { exact: true }).fill('2030-12-24')
+  await expect(page.getByRole('button', { name: /^Změnit datum:/ })).toContainText('24. prosince 2030')
+})

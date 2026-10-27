@@ -95,7 +95,7 @@ export function ArrangementEditor({
               <button
                 type="button"
                 onClick={() => onChange([...effective, s.id])}
-                className="press flex h-7 items-center gap-1 rounded-full px-2 text-small text-ink-2 ring-1 ring-inset ring-dashed ring-line-strong hover:bg-raised hover:text-ink"
+                className="press flex h-8 items-center gap-1 rounded-full px-2.5 text-small text-ink-2 ring-1 ring-inset ring-dashed ring-line-strong hover:bg-raised hover:text-ink"
               >
                 <Plus className="size-3" aria-hidden />
                 {sectionLabel(s.type, s.id, s.label)}
@@ -129,7 +129,7 @@ function Chip({
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
       className={cn(
-        'flex h-7 items-center gap-1.5 rounded-full bg-raised pl-2.5 pr-1 text-small font-[550] text-ink ring-1 ring-inset ring-line',
+        'flex h-8 items-center gap-1.5 rounded-full bg-raised pl-2.5 pr-1 text-small font-[550] text-ink ring-1 ring-inset ring-line',
         isDragging && 'z-10 shadow-overlay ring-light/60',
         missing && 'text-warn ring-warn/40'
       )}
@@ -147,9 +147,9 @@ function Chip({
         type="button"
         onClick={onRemove}
         aria-label={`${cs.common.delete} ${label}`}
-        className="grid size-5 place-items-center rounded-full text-ink-3 hover:bg-raised-2 hover:text-ink"
+        className="grid size-6 place-items-center rounded-full text-ink-2 hover:bg-raised-2 hover:text-ink"
       >
-        <X className="size-3" aria-hidden />
+        <X className="size-3.5" aria-hidden />
       </button>
     </li>
   )

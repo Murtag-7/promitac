@@ -41,6 +41,14 @@ export function SongList({
     return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'cs')).map(([t]) => t)
   }, [songs])
 
+  // Every tag stays reachable without sideways scrolling: the most used first, the rest on request.
+  const [showAllTags, setShowAllTags] = useState(false)
+  const visibleTags =
+    showAllTags || tags.length <= TAG_LIMIT
+      ? tags
+      : [...tags.slice(0, TAG_LIMIT), ...(tag && !tags.slice(0, TAG_LIMIT).includes(tag) ? [tag] : [])]
+  const hiddenTagCount = tags.length - visibleTags.length
+
   const ids = useMemo(() => {
     const base = query.trim() ? songIndex.search(query, 300).map((r) => r.id) : order
     const filtered = tag ? base.filter((id) => songs[id]?.meta.tags.some((t) => fold(t) === fold(tag))) : base
@@ -87,19 +95,20 @@ export function SongList({
           ) : null}
         </div>
         {tags.length > 0 ? (
-          <div
-            className="-mx-1 flex gap-1 overflow-x-auto px-1 pb-0.5"
-            role="group"
-            aria-label={cs.songs.meta.tags}
-          >
+          <div className="flex flex-wrap gap-1" role="group" aria-label={cs.songs.meta.tags}>
             <TagChip active={tag === null} onClick={() => setTag(null)}>
               {cs.songs.allTags}
             </TagChip>
-            {tags.map((t) => (
+            {visibleTags.map((t) => (
               <TagChip key={t} active={tag === t} onClick={() => setTag(tag === t ? null : t)}>
                 {t}
               </TagChip>
             ))}
+            {hiddenTagCount > 0 ? (
+              <TagChip active={false} onClick={() => setShowAllTags(true)}>
+                {cs.songs.moreTags(hiddenTagCount)}
+              </TagChip>
+            ) : null}
           </div>
         ) : null}
       </div>
@@ -157,6 +166,8 @@ export function SongList({
     </aside>
   )
 }
+
+const TAG_LIMIT = 6
 
 function TagChip({
   active,

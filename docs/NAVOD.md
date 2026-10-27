@@ -24,20 +24,23 @@ Tipy: **⋯ → Duplikovat na datum** zkopíruje minulý plán, **Uložit jako �
 
 ## 2. Během bohoslužby: záložka Živě
 
-- **Vlevo** je plán. Kliknutím položku otevřete (zatím se nepromítá), dvojklikem ji rovnou pošlete na plátno.
+- **Vlevo** je plán. Kliknutím položku otevřete (zatím se nepromítá); tlačítkem ▶ u položky nebo dvojklikem ji
+  rovnou pošlete na plátno. Ikona monitoru u plánu v záložce Plán ukazuje, ze kterého plánu se promítá.
 - **Uprostřed** jsou slajdy vybrané položky. **Klik na slajd = poslat na plátno.** Nahoře jsou zkratky na sekce
   (Sloka 1, Refrén, Most…) pro rychlý skok, když kapela změní pořadí.
-- **Vpravo** vidíte, co je **Živě** (červený rámeček) a co je **Další** (zelený).
+- **Vpravo** vidíte, co je **Živě** (červený rámeček) a co je **Další** (zelený). Červená znamená vždy jen
+  „tohle je teď na plátně" – když je plátno černé nebo text skrytý, náhled to ukáže štítkem
+  (např. „Text skrytý · Zpět na slajd Esc"). Klik na náhled **Další** ho pošle na plátno.
 
 ### Rychlá tlačítka
 
 | Tlačítko | Klávesa | Co dělá |
 |---|---|---|
 | **Černá** | `B` nebo `.` | Zatemní celé plátno (např. při kázání). Znovu stisk = zpět. |
-| **Smazat text** | `C` | Text zmizí, pozadí zůstane. |
+| **Skrýt text** | `C` | Text zmizí, pozadí zůstane. |
 | **Logo** | `L` | Zobrazí logo sboru (nastavíte v Médiích). |
 | **Pozadí** | – | Rychle změní pozadí na plátně (obrázek/video z Médií). |
-| – | `Esc` | Zruší černou / logo / smazání a vrátí slajd. |
+| – | `Esc` | Zruší černou / logo / skrytý text a vrátí slajd. |
 
 ### Klávesy a klikr (presenter)
 
@@ -45,19 +48,21 @@ Tipy: **⋯ → Duplikovat na datum** zkopíruje minulý plán, **Uložit jako �
 |---|---|
 | `→`, `↓`, mezerník, PageDown | další slajd (na konci písně pokračuje další položkou plánu) |
 | `←`, `↑`, PageUp | předchozí slajd |
+| `Shift` + `↓` / `↑` | další / předchozí položka plánu |
 | `V` + číslo, nebo jen číslo | sloka (např. `V 2` nebo `2`) |
 | `R` | refrén |
 | `P` | předrefrén |
 | `M` | most (bridge) |
 | `I` / `O` / `E` / `T` | předehra / dohra / závěr / tag |
 
-Běžný bezdrátový presentér (klikr) posílá PageUp/PageDown a funguje bez nastavování.
-Klávesy fungují v záložce Živě, když zrovna nepíšete do textového pole.
+Běžný bezdrátový presentér (klikr) posílá PageUp/PageDown a funguje bez nastavování – **vždy**, i když
+zrovna píšete upozornění nebo jste v jiné záložce (pokud se něco promítá). Ostatní klávesy fungují
+v záložce Živě, když nepíšete do textového pole. Přehled zkratek otevře tlačítko **?** v horní liště.
 
 ### Upozornění a odpočet
 
 - **Upozornění** – napište text (např. „Rodiče dítěte č. 12, přijďte prosím") → **Zobrazit**. Objeví se
-  jako pás dole přes promítání. **Skrýt upozornění** ho schová.
+  jako pás dole přes promítání. Dokud je na plátně, místo pole se ukazuje „Na plátně: …" a tlačítko **Skrýt**.
 - **Odpočet** – zadejte minuty a popisek („Začínáme za") → **Spustit odpočet**. Na plátně běží velký čas.
 
 ### Když se něco pokazí
@@ -114,5 +119,6 @@ Video na pozadí běží ve smyčce bez zvuku.
 - **Motivy** – pozadí, písmo, velikost, stín, zarovnání, přechody. Vestavěné motivy pro úpravu nejdřív
   **duplikujte**. Výchozí motiv je čitelný i ze zadní řady.
 - **Obecné** – výchozí počet řádků na slajd, světlý/tmavý vzhled, název počítače.
-- **Účet a synchronizace** – sdílená knihovna sboru (viz [SUPABASE_SETUP.md](SUPABASE_SETUP.md)).
+- **Sdílená knihovna** – písně, plány a motivy sdílené mezi počítači sboru. Na novém počítači stačí vložit
+  **kód připojení**, který pošle správce (viz [SUPABASE_SETUP.md](SUPABASE_SETUP.md)).
 - **Import, export, záloha** – záloha celé knihovny do ZIPu a obnova, hromadný import souborů písní.

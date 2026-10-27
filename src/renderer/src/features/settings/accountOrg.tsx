@@ -28,6 +28,8 @@ import {
   formatDateTime,
   useAction
 } from './accountUi'
+import { ShareCodeRow } from './accountConnection'
+import { getPendingInvite, setPendingInvite } from './connectionCode'
 import { SettingsGroup, SettingsPage } from './layout'
 
 const s = cs.sync
@@ -89,8 +91,13 @@ export function NoOrgView({ status, refresh }: AccountViewProps) {
           missing={s.codeMissing}
           submitLabel={s.joinOrg}
           normalize={(v) => v.trim().toUpperCase()}
-          action={(v) => api().sync.joinOrg(v)}
+          action={async (v) => {
+            const res = await api().sync.joinOrg(v)
+            if (res.ok) setPendingInvite(null)
+            return res
+          }}
           refresh={refresh}
+          initialValue={getPendingInvite()}
           code
         />
       </div>
@@ -107,6 +114,7 @@ function OrgForm({
   normalize,
   action,
   refresh,
+  initialValue = '',
   code
 }: {
   title: string
@@ -117,9 +125,10 @@ function OrgForm({
   normalize: (v: string) => string
   action: (v: string) => Promise<{ ok: boolean; error?: string }>
   refresh: () => Promise<void>
+  initialValue?: string
   code?: boolean
 }) {
-  const [value, setValue] = useState('')
+  const [value, setValue] = useState(initialValue)
   const [tried, setTried] = useState(false)
   const act = useAction()
   const clean = normalize(value)
@@ -186,6 +195,7 @@ export function OrgView({ status, refresh }: AccountViewProps) {
           </span>
         </div>
         <InviteCodeRow code={org.inviteCode} isAdmin={isAdmin} refresh={refresh} />
+        <ShareCodeRow invite={org.inviteCode} builtIn={status.builtInConfig} />
       </SettingsGroup>
 
       <SyncGroup status={status} />

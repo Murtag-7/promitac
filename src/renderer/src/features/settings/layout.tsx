@@ -15,7 +15,7 @@ export function SettingsPage({
   wide?: boolean
 }) {
   return (
-    <div className={cn('mx-auto flex flex-col gap-6 px-8 py-7', wide ? 'max-w-[1200px]' : 'max-w-[760px]')}>
+    <div className={cn('flex flex-col gap-6 px-8 py-7', wide ? 'max-w-[1200px]' : 'max-w-[760px]')}>
       <header className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-screen font-[650] tracking-[-0.01em] text-ink">{title}</h2>

@@ -48,11 +48,15 @@ jen data svého sboru), funkce pro pozvánky a úložiště souborů `media`.
 
 ## 5. Připojit aplikaci (první – správce)
 
-1. V Promítači: **Nastavení → Účet a synchronizace**.
-2. Vložte **Supabase URL** a **Anon (public) klíč** → **Připojit Supabase**.
+1. V Promítači: **Nastavení → Sdílená knihovna**.
+2. Rozbalte **Pokročilé – pro správce**, vložte **Adresu projektu (Project URL)** a
+   **Veřejný klíč (anon public)** → **Připojit**.
 3. **Vytvořit účet** (e-mail + heslo) → přihlaste se.
 4. **Založit sbor** – napište název sboru. Stanete se správcem.
-5. Zobrazí se **kód pozvánky** (např. `K7QM-3XRP`). Pošlete ho ostatním.
+5. Zobrazí se **kód pozvánky** (např. `K7QM-3XRP`) a pod ním **Kód pro další počítač**
+   (dlouhý řádek začínající `PROMITAC-`). Ten druhý obsahuje adresu, veřejný klíč i pozvánku –
+   stačí poslat jen jeho (tlačítko **Zkopírovat kód připojení**). Není tajný: bez vlastního účtu
+   a pozvánky nikomu nic nezpřístupní.
 6. Knihovna z tohoto počítače se nahraje do sdílené knihovny. Stav ukazuje ikona mráčku v horní liště
    (Synchronizováno / Offline / Chyba).
 
@@ -61,8 +65,10 @@ jen data svého sboru), funkce pro pozvánky a úložiště souborů `media`.
 Každý člověk má vlastní účet:
 
 1. Nainstalujte Promítač ([INSTALL.md](INSTALL.md)).
-2. **Nastavení → Účet a synchronizace** → stejná URL a klíč → **Připojit Supabase**.
-3. **Vytvořit účet** → přihlásit → **Připojit se ke sboru** → zadat kód pozvánky.
+2. **Nastavení → Sdílená knihovna** → vložte **Kód připojení** od správce → **Připojit**.
+   (Kdo kód nemá, může v části **Pokročilé – pro správce** zadat adresu a klíč ručně.)
+3. **Vytvořit účet** → přihlásit → **Připojit se ke sboru** – kód pozvánky je už předvyplněný
+   z kódu připojení (jinak ho opište).
 4. Za chvíli se stáhnou písně, plány, motivy a média sboru.
 
 Správce může ve stejné obrazovce měnit role (Správce / Člen), odebírat členy a vygenerovat nový kód
@@ -84,7 +90,7 @@ Když se projekt přesto uspí: v Supabase dashboardu klikněte **Restore projec
 
 ## 8. (Volitelné) Zapéct připojení do buildu
 
-Aby lidé nemuseli opisovat URL a klíč, lze je vložit přímo do buildu aplikace:
+Aby lidé nemuseli vkládat ani kód připojení, lze je vložit přímo do buildu aplikace:
 
 1. **Settings → Secrets and variables → Actions** → secrets `PROMITAC_SUPABASE_URL` a
    `PROMITAC_SUPABASE_ANON_KEY` (stejné hodnoty jako výše).

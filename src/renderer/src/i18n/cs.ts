@@ -16,13 +16,34 @@ export const cs = {
     bible: 'Bible',
     media: 'Média',
     settings: 'Nastavení',
-    import: 'Import písně'
+    import: 'Import písně',
+    help: 'Nápověda'
+  },
+  help: {
+    title: 'Nápověda',
+    description: 'Jak promítat bohoslužbu a klávesové zkratky.',
+    stepsTitle: 'Bohoslužba ve čtyřech krocích',
+    steps: [
+      [
+        'Připravte plán',
+        'V záložce Plán přidejte písně, čtení z Bible, oznámení a média ve správném pořadí.'
+      ],
+      ['Zapněte plátno', 'Nastavení → Výstupy: vyberte projektor. Test obrazu ukáže, které plátno je které.'],
+      ['Promítejte', 'Záložka Živě: klik na slajd ho pošle na plátno. Klikr nebo šipky jdou dál.'],
+      ['V nouzi černá', 'Klávesa B zatemní plátno, Esc vrátí poslední slajd. Nic se nesmaže.']
+    ] as Array<[string, string]>,
+    shortcutsTitle: 'Klávesové zkratky v záložce Živě',
+    importTitle: 'Nová píseň',
+    importText:
+      'Tlačítko Import písně převede text, fotku ze zpěvníku, PDF nebo Word na píseň s akordy. Text se nemění – nejistá místa jsou zvýrazněná ke kontrole.',
+    more: 'Podrobný návod je v souboru NAVOD.md, který je přiložený k aplikaci.'
   },
   common: {
     save: 'Uložit',
     saved: 'Uloženo',
     cancel: 'Zrušit',
     close: 'Zavřít',
+    undo: 'Vrátit',
     delete: 'Smazat',
     edit: 'Upravit',
     duplicate: 'Duplikovat',
@@ -71,8 +92,10 @@ export const cs = {
     }
   },
   songs: {
+    moreTags: (n: number) => `+ ${n} ${n >= 5 ? 'dalších' : 'další'}`,
+    addedToPlan: (t: string) => `„${t}“ je v plánu`,
     title: 'Písně',
-    searchPlaceholder: 'Hledat název, první řádek, text, autora…',
+    searchPlaceholder: 'Hledat píseň nebo slova…',
     allTags: 'Všechny štítky',
     newSong: 'Nová píseň',
     emptyLibraryTitle: 'Knihovna je zatím prázdná',
@@ -151,20 +174,28 @@ export const cs = {
     outputDisabled: 'Vypnuto',
     outputError: 'Chyba výstupu',
     shortcuts: 'Klávesové zkratky',
+    /** [alternatives (each a key combination), action] */
     shortcutList: [
-      ['→ / mezerník / PageDown', 'Další slajd'],
-      ['← / PageUp', 'Předchozí slajd (klikr funguje i při psaní)'],
-      ['B nebo .', 'Černá obrazovka'],
-      ['C', 'Skrýt text'],
-      ['Shift + ↓ / ↑', 'Další / předchozí položka plánu'],
-      ['L', 'Logo'],
-      ['Esc', 'Zrušit černou / logo / skrytý text'],
-      ['V + číslo nebo číslo', 'Sloka'],
-      ['R', 'Refrén'],
-      ['P', 'Předrefrén'],
-      ['M', 'Most'],
-      ['I / O / E / T', 'Předehra / Dohra / Závěr / Tag']
-    ] as Array<[string, string]>,
+      [[['→'], ['Mezerník'], ['PageDown']], 'Další slajd'],
+      [[['←'], ['PageUp']], 'Předchozí slajd'],
+      [
+        [
+          ['Shift', '↓'],
+          ['Shift', '↑']
+        ],
+        'Další / předchozí položka plánu'
+      ],
+      [[['B'], ['.']], 'Černá obrazovka'],
+      [[['C']], 'Skrýt text'],
+      [[['L']], 'Logo'],
+      [[['Esc']], 'Zpět na slajd'],
+      [[['V', '2'], ['2']], 'Sloka 2 (V a číslo, nebo jen číslo)'],
+      [[['R']], 'Refrén'],
+      [[['P']], 'Předrefrén'],
+      [[['M']], 'Most'],
+      [[['I'], ['O'], ['E'], ['T']], 'Předehra / dohra / závěr / tag']
+    ] as Array<[string[][], string]>,
+    clickerNote: 'Klikr (PageUp / PageDown) funguje vždy – i když zrovna píšete do pole.',
     overlayActive: {
       black: 'Plátno je zatemněné',
       clear: 'Text je skrytý',
@@ -219,7 +250,9 @@ export const cs = {
     noPlansHint: 'Vytvořte plán na neděli – stačí vybrat datum a přidat písně.',
     planTitle: 'Název',
     date: 'Datum',
+    changeDate: 'Změnit datum',
     defaultTitle: 'Bohoslužba',
+    addLabel: 'Přidat:',
     addSong: 'Píseň',
     addBible: 'Bible',
     addMedia: 'Médium',
@@ -237,6 +270,7 @@ export const cs = {
     deletePlanText: (t: string) => `Plán „${t}“ bude smazán.`,
     projectPlan: 'Promítat tento plán',
     removeItem: 'Odebrat z plánu',
+    itemRemoved: (t: string) => `„${t}“ odebráno z plánu`,
     dragItem: (t: string) => `Přesunout: ${t}`,
     pickSong: 'Vyberte píseň',
     pickMedia: 'Vyberte médium',
@@ -355,7 +389,7 @@ export const cs = {
       outputs: 'Výstupy',
       themes: 'Motivy',
       general: 'Obecné',
-      account: 'Účet a synchronizace',
+      account: 'Sdílená knihovna',
       backup: 'Import, export, záloha',
       ai: 'Asistent importu'
     },
@@ -403,7 +437,7 @@ export const cs = {
       name: 'Název',
       background: 'Pozadí',
       bgColor: 'Barva',
-      bgGradient: 'Přechod',
+      bgGradient: 'Barevný přechod',
       bgImage: 'Obrázek',
       bgVideo: 'Video',
       color: 'Barva',
@@ -615,14 +649,15 @@ export const cs = {
     synced: 'Synchronizováno',
     offline: 'Offline',
     error: 'Chyba synchronizace',
+    errorShort: 'Chyba sync',
     lastSynced: (t: string) => `Naposledy ${t}`,
-    title: 'Účet a sdílená knihovna',
+    title: 'Sdílená knihovna sboru',
     localHint:
-      'Aplikace funguje plně i bez účtu. Účet umožní sdílet písně, plány a motivy mezi počítači sboru.',
+      'Promítač funguje celý i bez internetu a bez účtu. Sdílená knihovna je volitelná: písně, plány a motivy se pak samy přenášejí mezi počítači vašeho sboru.',
     connect: 'Připojit Supabase',
-    url: 'Supabase URL',
-    anonKey: 'Anon (public) klíč',
-    connectHint: 'Najdete je v Supabase → Project Settings → API. Návod je v docs/SUPABASE_SETUP.md.',
+    url: 'Adresa projektu (Project URL)',
+    anonKey: 'Veřejný klíč (anon public)',
+    connectHint: 'Obojí najdete v Supabase → Project Settings → API.',
     disconnect: 'Odpojit',
     email: 'E-mail',
     password: 'Heslo',
@@ -635,7 +670,7 @@ export const cs = {
     orgName: 'Název sboru',
     joinOrg: 'Připojit se ke sboru',
     inviteCode: 'Kód pozvánky',
-    inviteHint: 'Kód pošlete dalším členům – zadají ho po přihlášení.',
+    inviteHint: 'Členové ho zadají po přihlášení. Kód pro další počítač níže ho už obsahuje.',
     rotateCode: 'Vygenerovat nový kód',
     members: 'Členové',
     roleAdmin: 'Správce',
@@ -648,10 +683,25 @@ export const cs = {
     noOrg: 'Zatím nejste v žádném sboru.',
     noOrgHint: 'Založte nový sbor, nebo zadejte kód pozvánky, který vám poslal správce.',
     connectAction: 'Připojit',
-    connectTitle: 'Připojení k Supabase',
+    connectionCode: 'Kód připojení',
+    connectionCodePlaceholder: 'PROMITAC-…',
+    connectionCodeHint:
+      'Kód vám pošle správce sboru. Najde ho na svém počítači v Nastavení → Sdílená knihovna.',
+    connectionCodeMissing: 'Vložte kód připojení.',
+    connectionCodeInvalid:
+      'Tohle nevypadá jako celý kód připojení. Zkopírujte ho prosím znovu – začíná PROMITAC-.',
+    advancedTitle: 'Pokročilé – pro správce',
+    advancedHint:
+      'Zakládáte sdílenou knihovnu poprvé? Postup je v návodu „Sdílená knihovna přes Supabase“ (zdarma, asi 15 minut). Pak sem zadejte adresu projektu a veřejný klíč.',
+    shareCodeTitle: 'Kód pro další počítač',
+    shareCodeHint:
+      'Vložte ho na dalším počítači v Nastavení → Sdílená knihovna. Obsahuje i pozvánku do sboru.',
+    shareCodeHintNoOrg: 'Vložte ho na dalším počítači v Nastavení → Sdílená knihovna.',
+    copyConnectionCode: 'Zkopírovat kód připojení',
+    connectTitle: 'Připojit ke knihovně sboru',
     urlPlaceholder: 'https://abcd.supabase.co',
     urlInvalid: 'Zadejte adresu začínající https://, například https://abcd.supabase.co.',
-    keyMissing: 'Vložte anon (public) klíč.',
+    keyMissing: 'Vložte veřejný klíč.',
     configureFailed: 'Připojení se nepodařilo. Zkontrolujte adresu a klíč.',
     webUnavailable: 'V ukázce v prohlížeči není synchronizace dostupná.',
     actionFailed: 'Akce se nepovedla. Zkuste to prosím znovu.',

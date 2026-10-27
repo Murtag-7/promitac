@@ -155,7 +155,7 @@ test('settings screens', async ({ page }) => {
   await page.getByRole('button', { name: 'Motivy', exact: true }).click()
   await page.waitForTimeout(500)
   await page.screenshot({ path: OUT('nastaveni-motivy') })
-  await page.getByRole('button', { name: 'Účet a synchronizace', exact: true }).click()
+  await page.getByRole('button', { name: 'Sdílená knihovna', exact: true }).click()
   await page.waitForTimeout(300)
   await page.screenshot({ path: OUT('nastaveni-ucet') })
 })

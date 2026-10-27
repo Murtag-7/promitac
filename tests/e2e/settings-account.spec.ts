@@ -9,40 +9,60 @@ async function openAccount(page: Page): Promise<void> {
     .click()
   await page
     .getByRole('navigation', { name: 'Nastavení', exact: true })
-    .getByRole('button', { name: 'Účet a synchronizace', exact: true })
+    .getByRole('button', { name: 'Sdílená knihovna', exact: true })
     .click()
-  await expect(page.getByRole('heading', { name: 'Účet a sdílená knihovna' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Sdílená knihovna sboru' })).toBeVisible()
 }
 
 test.describe('browser mock (no sync available)', () => {
-  test('shows the connect form with validation', async ({ page }) => {
+  test('the connection code is the main way in and is validated', async ({ page }) => {
     await openAccount(page)
-    await expect(page.getByText('Aplikace funguje plně i bez účtu.', { exact: false })).toBeVisible()
-    const url = page.getByLabel('Supabase URL')
-    const key = page.getByLabel('Anon (public) klíč')
+    await expect(page.getByText('Promítač funguje celý i bez internetu', { exact: false })).toBeVisible()
+    const codeForm = page.getByRole('form', { name: 'Připojit ke knihovně sboru' })
+    await codeForm.getByRole('button', { name: 'Připojit', exact: true }).click()
+    await expect(page.getByText('Vložte kód připojení.')).toBeVisible()
+    await page.getByLabel('Kód připojení').fill('nesmysl')
+    await expect(page.getByText('Tohle nevypadá jako celý kód připojení', { exact: false })).toBeVisible()
+
+    // A valid code reaches the backend (the browser preview has none and says so).
+    const code = await page.evaluate(() => {
+      const json = JSON.stringify({
+        u: 'https://abcd.supabase.co',
+        k: 'eyJhbGciOiJIUzI1NiJ9.demo',
+        i: 'HVRA-4821'
+      })
+      return 'PROMITAC-' + btoa(json).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+    })
+    await page.getByLabel('Kód připojení').fill(code)
+    await codeForm.getByRole('button', { name: 'Připojit', exact: true }).click()
+    await expect(page.getByRole('alert')).toHaveText('V ukázce v prohlížeči není synchronizace dostupná.')
+  })
+
+  test('advanced: address and key for the administrator, with validation', async ({ page }) => {
+    await openAccount(page)
+    const url = page.getByLabel('Adresa projektu (Project URL)')
+    await expect(url).toBeHidden()
+    await page.getByText('Pokročilé – pro správce').click()
+    const key = page.getByLabel('Veřejný klíč (anon public)')
     await expect(url).toBeVisible()
     await expect(key).toBeVisible()
-    await expect(page.getByText('docs/SUPABASE_SETUP.md', { exact: false })).toBeVisible()
 
-    await page.getByRole('button', { name: 'Připojit', exact: true }).click()
+    const manual = page.getByRole('form', { name: 'Připojit Supabase' })
+    await manual.getByRole('button', { name: 'Připojit', exact: true }).click()
     await expect(page.getByText('Zadejte adresu začínající https://', { exact: false })).toBeVisible()
-    await expect(page.getByText('Vložte anon (public) klíč.')).toBeVisible()
+    await expect(page.getByText('Vložte veřejný klíč.')).toBeVisible()
     await expect(url).toHaveAttribute('aria-invalid', 'true')
 
     await url.fill('http://abcd.supabase.co')
     await key.fill('eyJhbGciOiJIUzI1NiJ9.demo')
     await expect(page.getByText('Zadejte adresu začínající https://', { exact: false })).toBeVisible()
-    await expect(page.getByText('Vložte anon (public) klíč.')).toHaveCount(0)
-  })
+    await expect(page.getByText('Vložte veřejný klíč.')).toHaveCount(0)
 
-  test('valid URL and key show an inline error from the mock', async ({ page }) => {
-    await openAccount(page)
-    await page.getByLabel('Supabase URL').fill('https://abcd.supabase.co')
-    await page.getByLabel('Anon (public) klíč').fill('eyJhbGciOiJIUzI1NiJ9.demo')
-    await page.getByRole('button', { name: 'Připojit', exact: true }).click()
+    await url.fill('https://abcd.supabase.co')
+    await manual.getByRole('button', { name: 'Připojit', exact: true }).click()
     await expect(page.getByRole('alert')).toHaveText('V ukázce v prohlížeči není synchronizace dostupná.')
     // Still in the connect state, values kept so the user can fix them.
-    await expect(page.getByLabel('Supabase URL')).toHaveValue('https://abcd.supabase.co')
+    await expect(url).toHaveValue('https://abcd.supabase.co')
   })
 })
 
@@ -234,6 +254,15 @@ test.describe('with a sync backend', () => {
     await expect(page.getByRole('radio', { name: 'Přihlásit se' })).toHaveAttribute('aria-checked', 'true')
   })
 
+  test('an invite carried by the connection code is prefilled after signing in', async ({ page }) => {
+    await page.addInitScript(() => sessionStorage.setItem('promitac.pendingInvite', 'HVRA-4821'))
+    await installFakeApi(page, 'no-org')
+    await openAccount(page)
+    await expect(page.getByLabel('Kód pozvánky')).toHaveValue('HVRA-4821')
+    await page.getByRole('button', { name: 'Připojit se ke sboru' }).click()
+    await expect(page.getByText('Sbor v Horní Vsi')).toBeVisible()
+  })
+
   test('join with a wrong code shows the error, create org enters it', async ({ page }) => {
     await installFakeApi(page, 'no-org')
     await openAccount(page)
@@ -256,9 +285,18 @@ test.describe('with a sync backend', () => {
 
     await expect(page.getByText('Sbor v Horní Vsi')).toBeVisible()
     await expect(page.getByText('Vaše role: Správce', { exact: false })).toBeVisible()
-    await page.getByRole('button', { name: 'Zkopírovat kód' }).click()
+    await page.getByRole('button', { name: 'Zkopírovat kód', exact: true }).click()
     await expect(page.getByRole('button', { name: 'Zkopírováno' })).toBeVisible()
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('HVRA-4821')
+
+    // The code for another computer carries the address, key and the invite.
+    await page.getByRole('button', { name: 'Zkopírovat kód připojení' }).click()
+    const shared = await page.evaluate(() => navigator.clipboard.readText())
+    expect(shared.startsWith('PROMITAC-')).toBe(true)
+    const decoded = JSON.parse(
+      Buffer.from(shared.slice('PROMITAC-'.length).replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString()
+    ) as { u: string; k: string; i: string }
+    expect(decoded).toEqual({ u: 'https://horni-ves.supabase.co', k: 'demo', i: 'HVRA-4821' })
 
     await page.getByRole('button', { name: 'Vygenerovat nový kód' }).click()
     await page.getByRole('dialog').getByRole('button', { name: 'Vygenerovat nový kód' }).click()

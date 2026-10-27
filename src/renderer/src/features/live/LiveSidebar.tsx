@@ -21,6 +21,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Kbd } from '@/components/ui/kbd'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { ShortcutList } from '@/components/common/ShortcutList'
 import { cs } from '@/i18n/cs'
 import { cn } from '@/lib/cn'
 import { latestFrame, onLocalFrame } from '@/live/engine'
@@ -497,21 +498,15 @@ function ShortcutsHelp() {
           type="button"
           aria-label={cs.live.shortcuts}
           title={cs.live.shortcuts}
-          className="press ml-auto grid size-7 place-items-center rounded-control text-ink-3 hover:bg-raised hover:text-ink"
+          className="press ml-auto grid size-8 place-items-center rounded-control text-ink-2 hover:bg-raised hover:text-ink"
         >
           <Keyboard className="size-4" aria-hidden />
         </button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-[340px]">
+      <PopoverContent align="end" className="w-[380px]">
         <div className="mb-2 text-small font-[650] text-ink">{cs.live.shortcuts}</div>
-        <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-small">
-          {cs.live.shortcutList.map(([k, v]) => (
-            <div key={k} className="contents">
-              <dt className="font-[550] text-ink">{k}</dt>
-              <dd className="text-ink-2">{v}</dd>
-            </div>
-          ))}
-        </dl>
+        <ShortcutList />
+        <p className="mt-3 text-meta text-ink-2">{cs.live.clickerNote}</p>
       </PopoverContent>
     </Popover>
   )

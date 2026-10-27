@@ -103,13 +103,6 @@ export function SongEditor({ songId }: { songId: string }) {
         </div>
         <Button
           variant="secondary"
-          onClick={() => void addToLivePlan({ type: 'song', songId }).then(() => toast(cs.common.addToPlan))}
-        >
-          <ListPlus aria-hidden />
-          {cs.common.addToPlan}
-        </Button>
-        <Button
-          variant="primary"
           disabled={slides.length === 0}
           onClick={async () => {
             await save(text)
@@ -119,6 +112,19 @@ export function SongEditor({ songId }: { songId: string }) {
         >
           <Play aria-hidden />
           {cs.common.projectNow}
+        </Button>
+        <Button
+          variant="primary"
+          onClick={() =>
+            void addToLivePlan({ type: 'song', songId }).then(() =>
+              toast(cs.songs.addedToPlan(meta?.title || cs.common.untitled), {
+                action: { label: cs.bible.showInLive, onClick: () => setView('live') }
+              })
+            )
+          }
+        >
+          <ListPlus aria-hidden />
+          {cs.common.addToPlan}
         </Button>
         <Menu>
           <MenuTrigger asChild>

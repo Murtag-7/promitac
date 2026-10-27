@@ -17,6 +17,9 @@ type NewItem = PlanItem extends infer T ? (T extends unknown ? Omit<T, 'id'> : n
 export function AddItemBar({ onAdd }: { onAdd: (item: NewItem) => void }) {
   return (
     <div className="flex flex-wrap items-center gap-2" role="toolbar" aria-label={cs.common.add}>
+      <span className="mr-1 text-small font-[600] text-ink-2" aria-hidden>
+        {cs.plan.addLabel}
+      </span>
       <SongPicker onPick={(songId) => onAdd({ type: 'song', songId })} />
       <BiblePicker
         onPick={(reference, translationId) => onAdd({ type: 'bible', reference, translationId })}
@@ -26,7 +29,7 @@ export function AddItemBar({ onAdd }: { onAdd: (item: NewItem) => void }) {
         <FileText aria-hidden />
         {cs.plan.addText}
       </Button>
-      <Button variant="ghost" onClick={() => onAdd({ type: 'blank' })}>
+      <Button onClick={() => onAdd({ type: 'blank' })}>
         <Square aria-hidden />
         {cs.plan.addBlank}
       </Button>
@@ -52,7 +55,7 @@ function SongPicker({ onPick }: { onPick: (songId: string) => void }) {
       }}
     >
       <PopoverTrigger asChild>
-        <Button variant="primary">
+        <Button>
           <Music4 aria-hidden />
           {cs.plan.addSong}
         </Button>

@@ -6,6 +6,7 @@ import { cs } from '@/i18n/cs'
 import { cn } from '@/lib/cn'
 import { currentLiveItems, useLive } from '@/store/live'
 import { useUi, type View } from '@/store/ui'
+import { HelpButton } from './HelpDialog'
 import { SyncIndicator } from './SyncIndicator'
 import { LiveScreen } from '@/features/live/LiveScreen'
 import { useLiveKeys } from '@/live/useLiveKeys'
@@ -73,6 +74,7 @@ export function AppShell() {
         <div className="no-drag flex items-center gap-2">
           <LivePill onOpen={() => setView('live')} />
           <SyncIndicator />
+          <HelpButton />
           {/* During the service the projection, not the import, deserves the brightest pixel. */}
           <Button
             variant={view === 'live' ? 'secondary' : 'primary'}

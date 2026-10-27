@@ -1,6 +1,15 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
-import { CalendarPlus, Copy, LayoutTemplate, ListMusic, MoreHorizontal, Play, Trash2 } from 'lucide-react'
+import {
+  CalendarDays,
+  CalendarPlus,
+  Copy,
+  LayoutTemplate,
+  ListMusic,
+  MoreHorizontal,
+  Play,
+  Trash2
+} from 'lucide-react'
 import { SlideTile } from '@/components/common/SlideTile'
 import { EmptyState } from '@/components/common/EmptyState'
 import { Button } from '@/components/ui/button'
@@ -45,6 +54,39 @@ export function PlanScreen() {
       ) : (
         <EmptyState icon={ListMusic} title={cs.plan.noPlans} text={cs.plan.noPlansHint} />
       )}
+    </div>
+  )
+}
+
+/** The long date is the control: a click opens the system date picker. */
+function PlanDate({ date, onChange }: { date: string; onChange: (date: string) => void }) {
+  const ref = useRef<HTMLInputElement>(null)
+  return (
+    <div className="relative -mx-1.5 self-start">
+      <button
+        type="button"
+        onClick={() => {
+          try {
+            ref.current?.showPicker()
+          } catch {
+            ref.current?.focus()
+          }
+        }}
+        className="press flex h-8 items-center gap-1.5 rounded-control px-1.5 text-body text-ink-2 hover:bg-raised hover:text-ink"
+        aria-label={`${cs.plan.changeDate}: ${formatPlanDateLong(date)}`}
+      >
+        <CalendarDays className="size-4" aria-hidden />
+        <span className="inline-block first-letter:uppercase">{formatPlanDateLong(date)}</span>
+      </button>
+      <input
+        ref={ref}
+        type="date"
+        tabIndex={-1}
+        aria-label={cs.plan.date}
+        value={date}
+        onChange={(e) => e.target.value && onChange(e.target.value)}
+        className="pointer-events-none absolute bottom-0 left-0 h-px w-px opacity-0"
+      />
     </div>
   )
 }
@@ -95,16 +137,7 @@ function PlanEditor({ planId }: { planId: string }) {
             {plan.isTemplate ? (
               <span className="text-small text-ink-2">{cs.plan.templates}</span>
             ) : (
-              <label className="flex items-center gap-2 text-small text-ink-2">
-                <span className="sr-only">{cs.plan.date}</span>
-                <input
-                  type="date"
-                  value={plan.date}
-                  onChange={(e) => e.target.value && void save({ ...plan, date: e.target.value })}
-                  className="rounded-control bg-transparent px-1 py-0.5 text-small text-ink-2 hover:bg-raised focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-light"
-                />
-                <span className="text-ink-3">{formatPlanDateLong(plan.date)}</span>
-              </label>
+              <PlanDate date={plan.date} onChange={(date) => void save({ ...plan, date })} />
             )}
           </div>
           {!plan.isTemplate ? (
@@ -177,7 +210,26 @@ function PlanEditor({ planId }: { planId: string }) {
               onSelect={(id) => setSelectedItemId(id === selectedItemId ? null : id)}
               onReorder={(items) => void setItems(plan.id, items)}
               onUpdate={(item) => void updateItem(plan.id, item)}
-              onRemove={(id) => void removeItem(plan.id, id)}
+              onRemove={(id) => {
+                const index = plan.items.findIndex((i) => i.id === id)
+                const removed = plan.items[index]
+                if (!removed) return
+                const title = liveItems.find((i) => i.id === id)?.title ?? cs.common.untitled
+                if (selectedItemId === id) setSelectedItemId(null)
+                void removeItem(plan.id, id)
+                toast(cs.plan.itemRemoved(title), {
+                  action: {
+                    label: cs.common.undo,
+                    onClick: () => {
+                      const current = usePlans.getState().plans[plan.id]
+                      if (!current || current.items.some((i) => i.id === id)) return
+                      const items = [...current.items]
+                      items.splice(Math.min(index, items.length), 0, removed)
+                      void setItems(plan.id, items)
+                    }
+                  }
+                })
+              }}
             />
           )}
         </div>

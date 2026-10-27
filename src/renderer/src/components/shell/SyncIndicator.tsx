@@ -20,11 +20,14 @@ export function SyncIndicator() {
     'signed-out': { icon: CloudOff, label: cs.sync.signedOut, tone: 'text-ink-3' },
     syncing: { icon: Loader2, label: cs.sync.syncing, tone: 'text-ink-2' },
     synced: { icon: Cloud, label: cs.sync.synced, tone: 'text-ink-2' },
-    offline: { icon: CloudOff, label: cs.sync.offline, tone: 'text-warn' },
+    offline: { icon: CloudOff, label: cs.sync.offline, tone: 'text-ink-2' },
     error: { icon: TriangleAlert, label: cs.sync.error, tone: 'text-warn' }
   } as const
   const entry = map[status.state]
   const Icon = entry.icon
+  // Offline is normal (projection never needs the network) – it is named, but calmly; only a real
+  // sync error asks for attention.
+  const worded = status.state === 'offline' || status.state === 'error'
   const detail =
     status.state === 'error' && status.error
       ? status.error
@@ -46,12 +49,19 @@ export function SyncIndicator() {
         onClick={() => openSettings('account')}
         aria-label={entry.label}
         data-testid="sync-indicator"
-        className={cn('press grid size-8 place-items-center rounded-control hover:bg-raised', entry.tone)}
+        className={cn(
+          'press flex h-8 items-center gap-1.5 rounded-control hover:bg-raised',
+          worded ? 'px-2.5 text-small font-[550]' : 'w-8 justify-center',
+          status.state === 'error' && 'bg-warn-soft',
+          entry.tone
+        )}
       >
         <Icon
-          className={cn('size-[17px]', status.state === 'syncing' && 'animate-spin')}
+          className={cn('size-[17px] shrink-0', status.state === 'syncing' && 'animate-spin')}
           strokeWidth={1.75}
+          aria-hidden
         />
+        {worded ? <span>{status.state === 'offline' ? cs.sync.offline : cs.sync.errorShort}</span> : null}
       </button>
     </Tip>
   )
