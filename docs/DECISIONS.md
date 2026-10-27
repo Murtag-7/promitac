@@ -28,3 +28,15 @@ Rozhodnutí, která jsem udělal sám, protože je zadání neurčovalo. Každé
 - **Klávesa B = černá obrazovka** (běžná konvence presentérů, klikry posílají „B" nebo „."). Proto most (bridge) je **M** („most"), refrén **R**, předrefrén **P**, sloka **V + číslo** nebo jen číslo, předehra **I**, dohra **O**, závěr **E**, tag **T**. **C** = smazat text, **L** = logo, **Esc** = zrušit černou/logo/smazání.
 - **Šipka dál na posledním slajdu** přejde na první slajd další položky plánu (a zpět na poslední slajd předchozí) – operátor nemusí sahat na myš.
 - **„Promítnout hned"** z Písní/Bible přidá položku do aktuálního plánu za právě promítanou a pošle ji na plátno – plán tak odpovídá tomu, co se opravdu promítalo.
+
+## Účty a synchronizace (Supabase)
+
+- **Jeden sbor na uživatele (v1).** Model sbor → členové s rolemi `admin`/`member`; první uživatel sbor založí, další se připojí pozvánkovým kódem `XXXX-XXXX`. Kód vidí všichni členové (kdokoli z týmu může pozvat dalšího promítače), správce ho může vyměnit a spravovat členy.
+- **Synchronizace porovnává tři strany:** lokální záznam, serverový a stav dohodnutý při posledním syncu. Kurzor stahování je čas serveru (`server_updated_at` z triggeru), časy počítačů se porovnávají jen při skutečném konfliktu – posunuté hodiny nezpůsobí ztrátu úprav.
+- **Úprava vždy vyhraje nad smazáním**, i když je smazání novější – nikdy nepřijdeme o obsah. Kopie „(konflikt – verze z počítače X)" vzniká jen u písní; plány, motivy a média řeší „vyhrává novější".
+- **Změny se nejdřív zapíší lokálně** a hned se uloží stav, teprve potom se nahrávají; při výpadku sítě další běh jen dokončí upload a nevzniknou duplicitní kopie.
+- **Supabase klient bez automatického opakování, timeout 60 s;** sync se opakuje každou minutu a 5 s po lokální změně, stav „offline" se ukáže hned.
+- **V databázi se nemaže natvrdo** (jen `deleted = true`), anonymní přístup má jen `keepalive()`. RLS chrání data, explicitní granty jsou druhá vrstva. Záznamy s id, které není UUID (vestavěné motivy), se nesynchronizují.
+- **Média ve Storage** jako `<org_id>/<media_id>-<název bez diakritiky>` (Storage nepovoluje všechny znaky), limit 50 MB na soubor (free tier) – větší soubory zůstávají „jen na tomto počítači".
+- **Chybové hlášky:** 401 → „Přihlášení vypršelo – přihlaste se znovu."; odmítnutí přes RLS při platném přihlášení → „Nemáte přístup ke knihovně sboru…".
+- **Migrace ověřené lokálně** na PostgreSQL 16 se stubem Supabase schémat `auth`/`storage` (`scripts/test-migrations.sh`), migrace jsou idempotentní (spouští se 2×).

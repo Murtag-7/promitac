@@ -8,6 +8,9 @@ describe('directives', () => {
     expect(readDirective('{x_id abc}', 'x_id')).toBe('abc')
     expect(readDirective(SONG, 'artist')).toBeNull()
     expect(readTitle('{t: Krátký}')).toBe('Krátký')
+    expect(readTitle('{tags: chvály}\n{tempo: 90}')).toBe('')
+    expect(readDirective('{x_idx: 1}', 'x_id')).toBeNull()
+    expect(readDirective('{x_id}', 'x_id')).toBe('')
   })
   it('replaces an existing directive in place', () => {
     expect(setDirective(SONG, 'key', 'A')).toBe(SONG.replace('{key: G}', '{key: A}'))
