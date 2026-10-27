@@ -16,6 +16,12 @@ export function resolveOutputDisplay(
   if (config.displayId === 'auto') {
     const external = displays.find((dd) => !dd.primary && dd.id !== controlDisplayId)
     if (external) return external
+    // The system may have made the projector the primary display while the operator works on the
+    // laptop screen: any display other than the control one is then the wall.
+    if (controlDisplayId !== null && displays.length > 1) {
+      const other = displays.find((dd) => dd.id !== controlDisplayId)
+      if (other) return other
+    }
     if (config.windowed) return displays.find((dd) => dd.id === controlDisplayId) ?? displays[0] ?? null
     return null
   }

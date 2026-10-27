@@ -11,9 +11,15 @@ export function sundayTemplate(updatedAt: string): ServicePlan {
     isTemplate: true,
     updatedAt,
     items: [
-      { id: newId(), type: 'text', title: 'Vítejte', body: 'Vítejte na bohoslužbě' },
-      { id: newId(), type: 'blank' },
-      { id: newId(), type: 'text', title: 'Oznámení', body: '' }
+      // Fixed ids: the same template seeded on two computers is the same record.
+      {
+        id: '7a1d5e0c-0000-4000-8000-000000000101',
+        type: 'text',
+        title: 'Vítejte',
+        body: 'Vítejte na bohoslužbě'
+      },
+      { id: '7a1d5e0c-0000-4000-8000-000000000102', type: 'blank' },
+      { id: '7a1d5e0c-0000-4000-8000-000000000103', type: 'text', title: 'Oznámení', body: '' }
     ]
   }
 }

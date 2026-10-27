@@ -37,11 +37,19 @@ Rozhodnutí, která jsem udělal sám, protože je zadání neurčovalo. Každé
 - **Větší výchozí písmo:** vestavěné motivy 108 px (min. 48), patička 38 px s vyšší sytostí – čitelnost ze zadní řady má přednost.
 - **Odebrání položky z plánu** jde vrátit z toastu („Vrátit"), proto se nepotvrzuje dialogem.
 - **„Přidat do plánu" je hlavní akce** u písně a Bible, „Promítnout hned" vedlejší – v přípravě je běžnější přidávat, promítnutí mimo plán je výjimka.
+- **Synchronizace nikdy nezmění, co je na plátně.** Když sync z jiného počítače změní nebo odebere právě promítanou položku, Živě i plátno dál ukazují její verzi z okamžiku promítání (i ve mřížce slajdů); nová verze se projeví, až operátor přejde na jinou položku. Platí i pro lokální úpravy promítané písně během té doby.
+- **Odeslání slajdu ukončí odpočet.** Odpočet zakrývá slajd, proto klik na slajd (nebo klikr) odpočet zastaví – jinak by po „00:00" zůstal na plátně místo písně. Dokud odpočet běží, je promítaný slajd označený „Skryto".
 - **„Promítnout hned"** z Písní/Bible přidá položku do aktuálního plánu za právě promítanou a pošle ji na plátno – plán tak odpovídá tomu, co se opravdu promítalo.
 
 ## Účty a synchronizace (Supabase)
 
 - **Kód připojení místo adresy a klíče.** Správce po založení sboru vidí „Kód pro další počítač" (`PROMITAC-` + base64url JSONu s adresou projektu, veřejným anon klíčem a kódem pozvánky). Na novém počítači stačí vložit tento jeden řádek; kód pozvánky se po přihlášení předvyplní. Kód není tajný (obsahuje jen veřejné údaje, přístup chrání účet + pozvánka + RLS). Ruční zadání URL a klíče zůstává pod „Pokročilé – pro správce" pro první nastavení.
+- **Ukázková data mají pevné časové razítko (1. 1. 2000) a pevná id.** Nesahaná ukázka na nově připojeném počítači proto vždy ustoupí verzi sboru – nikdy nepřepíše připravený plán a nevytvoří konfliktní kopie písní.
+- **Jedna synchronizace najednou.** Časovač, změny i přihlášení sdílejí jeden běh; požadavky během něj se spojí do jednoho dalšího běhu.
+- **Smazaná média se mažou i ze Supabase Storage** (jen ta se záznamem o smazání, ne média zmizelá např. obnovou zálohy), aby se free 1 GB nezaplnil. Médium, které nejde nahrát (plné úložiště), se přeskočí a stav synchronizace to řekne slovy.
+- **Po obnově zálohy se při příští synchronizaci stáhne vše znovu** (od začátku; základ slučování zůstává), aby se vrátilo to, co obnova smazala bez záznamu o smazání.
+- **Ruční úprava souboru písně se synchronizuje.** Aplikace po každém zápisu nastaví čas souboru na `{x_updated}`; novější čas souboru = úprava mimo aplikaci → dostane nové časové razítko. Soubory ve Windows-1250 se přečtou správně a uloží jako UTF-8; soubory s CRLF konci řádků si zachovají identitu.
+- **Otevřený editor písně převezme verzi z jiného počítače**, pokud v něm nejsou rozepsané změny; s rozepsanými změnami mají přednost ty (a aplikace na to upozorní).
 - **Offline není chyba.** Ukazatel synchronizace „Offline" pojmenuje klidně (promítání síť nepotřebuje), jen skutečná chyba synchronizace je zvýrazněná.
 
 - **Jeden sbor na uživatele (v1).** Model sbor → členové s rolemi `admin`/`member`; první uživatel sbor založí, další se připojí pozvánkovým kódem `XXXX-XXXX`. Kód vidí všichni členové (kdokoli z týmu může pozvat dalšího promítače), správce ho může vyměnit a spravovat členy.
@@ -66,6 +74,7 @@ Rozhodnutí, která jsem udělal sám, protože je zadání neurčovalo. Každé
 - **Opakování „(2x)" uprostřed bloku zůstává v textu**, na konci bloku se převede na opakování sekce v pořadí.
 - **Blok jen s akordy bez značky** se stane předehrou (před první slokou), dohrou (na konci) nebo mezihrou (uprostřed).
 - **OpenLyrics:** sloky se stejným jménem v jiném jazyce (překlady) se přeskočí; výsledek má formát „openlyrics", aby rozhraní ukázalo zdroj.
+- **Blok se sloučí s dříve napsaným jen při přesné shodě textu** (liší se jen mezery) a když nemá jiné akordy. Poslední refrén o tón výš nebo s jinými slovy zůstane samostatnou sekcí (např. `C2`) – nic z napsaného se neztratí.
 - **Detekce duplicit:** stejný název nebo stejný první řádek (≥ 12 znaků) bez ohledu na diakritiku a interpunkci → nabídka „Nahradit" / „Uložit jako novou".
 - **Volitelná AI (P2) je vypnutá**: objeví se jen po vložení klíče Google Gemini v Nastavení. Prompt vynucuje doslovný přepis, výsledek prochází stejným parserem a stejnou kontrolou jako OCR. Bez klíče se nic neodesílá na internet.
 
@@ -88,7 +97,7 @@ Rozhodnutí, která jsem udělal sám, protože je zadání neurčovalo. Každé
 
 ## Nastavení
 
-- **Výstupy:** mapa monitorů je informativní, monitor se volí v seznamu; „Automaticky" = první monitor, který není hlavní a není na něm ovládání. Test obrazu trvá 4 s a každé okno ukáže svůj vlastní název (rozlišení více projektorů). Stav „promítá" má krémovou tečku – zelená zůstává vyhrazená pro „Další".
+- **Výstupy:** mapa monitorů je informativní, monitor se volí v seznamu; „Automaticky" = první monitor, který není hlavní a není na něm ovládání; když systém označí projektor jako hlavní, použije se jakýkoli monitor kromě toho s ovládáním. Výstupní okno nejde „odnavigovat" (přetažený soubor ani odkaz ho nezmění). Test obrazu trvá 4 s a každé okno ukáže svůj vlastní název (rozlišení více projektorů). Stav „promítá" má krémovou tečku – zelená zůstává vyhrazená pro „Další".
 - **Motivy:** vestavěné motivy jsou jen ke čtení (editor nabídne „Duplikovat"); vlastní motivy se ukládají samy 300 ms po poslední změně. Náhled reaguje okamžitě bez prolnutí, skutečný přechod přehraje „Vyzkoušet přechod". Výchozí motiv nejde smazat.
 - **Záloha ZIP** zrcadlí datovou složku (manifest, písně, plány, motivy, tombstones, index médií, nastavení bez tajných klíčů; soubory médií jen s volbou „Včetně médií"). **Obnova** nejdřív ověří celý archiv (cesty mimo knihovnu → odmítnout celý), uloží současný stav do `backups/pred-obnovou-<čas>.zip` a připraví soubory ve skryté složce, takže chyba zápisu knihovnu nezmění. Připojení Supabase, AI klíč a název počítače se při obnově zachovají. Obnovený stav se při další synchronizaci chová jako běžná lokální změna (vědomé rozhodnutí: obnova je záměr uživatele).
 - **Import souborů písní:** soubory, které nejsou v UTF-8, se čtou jako Windows-1250 (staré české zpěvníkové soubory); stejná píseň se přeskočí a ohlásí.

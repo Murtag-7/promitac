@@ -29,3 +29,17 @@ describe('directives', () => {
     )
   })
 })
+
+describe('directives in files with Windows line endings', () => {
+  const crlf =
+    '{title: Žehnej, duše má}\r\n{x_id: abc}\r\n\r\n{start_of_verse: V1}\r\nText\r\n{end_of_verse}\r\n'
+  it('reads them', () => {
+    expect(readTitle(crlf)).toBe('Žehnej, duše má')
+    expect(readDirective(crlf, 'x_id')).toBe('abc')
+  })
+  it('replaces and removes them without breaking the line endings', () => {
+    const set = setDirective(crlf, 'x_id', 'def')
+    expect(set).toBe(crlf.replace('{x_id: abc}', '{x_id: def}'))
+    expect(removeDirective(crlf, 'x_id')).toBe(crlf.replace('{x_id: abc}\r\n', ''))
+  })
+})

@@ -4,7 +4,6 @@ import { fileURLToPath } from 'node:url'
 import { serializeChordPro } from '../chordpro/serialize'
 import { lineText } from '../chordpro/text'
 import type { SectionType } from '../chordpro/model'
-import { fold } from '../search/normalize'
 import { expandTabs, normalizeInputText } from '../util/text'
 import { isChordLine } from './chordLine'
 import { importText, type ImportResult } from './importText'
@@ -20,7 +19,7 @@ const CASES = readdirSync(FIXTURES)
 
 const stripBrackets = (s: string): string => s.replace(/\[[^\]]*\]/g, '')
 const isBlank = (s: string | undefined): boolean => s === undefined || s.trim() === ''
-const key = (lines: string[]): string => lines.map((l) => fold(l).replace(/\s+/g, ' ')).join('\n')
+const key = (lines: string[]): string => lines.map((l) => l.normalize('NFC').replace(/\s+/g, ' ')).join('\n')
 
 /** Lyric lines of the result in section-definition order (chords stripped, trimmed, non-empty). */
 function resultLines(result: ImportResult): string[] {

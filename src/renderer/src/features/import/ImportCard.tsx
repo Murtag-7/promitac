@@ -52,6 +52,9 @@ export function ImportCard({
       setDuplicates(null)
       onSaved(saved.id)
       toast(cs.import.added)
+    } catch {
+      // Keep the card (and the recognised text) so the user can try again.
+      toast.error(cs.import.saveFailed)
     } finally {
       setBusy(false)
     }

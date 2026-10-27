@@ -2,7 +2,6 @@ import { isChord } from '../chordpro/chords'
 import { emptySong, type SectionType, type Segment, type Song, type SongLine } from '../chordpro/model'
 import { nextSectionId, SECTION_PREFIX } from '../chordpro/sections'
 import { firstLyricLine, isChordOnlyLine, lineText } from '../chordpro/text'
-import { fold } from '../search/normalize'
 import { expandTabs, normalizeInputText } from '../util/text'
 import { chordOnlyLine, isChordLine, mergeChordLine } from './chordLine'
 import {
@@ -289,11 +288,19 @@ function trimSegments(segments: Segment[]): Segment[] {
   return out
 }
 
+/** Exact text of a block (only whitespace normalised) – two blocks merge only if it is identical. */
 function textKey(lines: SongLine[]): string {
   return lines
-    .map((l) => fold(lineText(l)).replace(/\s+/g, ' ').trim())
+    .map((l) => lineText(l).normalize('NFC').replace(/\s+/g, ' ').trim())
     .filter(Boolean)
     .join('\n')
+}
+
+/** The chords of a block in order; '' when it has none. */
+function chordKey(lines: SongLine[]): string {
+  return lines
+    .flatMap((l) => (l.kind === 'lyrics' ? l.segments.map((g) => g.chord ?? '').filter(Boolean) : []))
+    .join(' ')
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -519,7 +526,15 @@ class BodyBuilder {
     d.key = textKey(d.lines)
     if (d.key) {
       // A section written out again (e.g. the chorus) becomes a repetition, not a copy.
-      const same = this.drafts.find((o) => o.key === d.key && (!d.explicit || o.type === d.type))
+      // Only an exact copy merges: a last chorus with other chords (or other wording) stays a
+      // section of its own, so nothing the author wrote is lost.
+      const chords = chordKey(d.lines)
+      const same = this.drafts.find(
+        (o) =>
+          o.key === d.key &&
+          (!d.explicit || o.type === d.type) &&
+          (chords === '' || chords === chordKey(o.lines))
+      )
       if (same) {
         if (!d.explicit && !same.explicit && same.type === 'verse') same.writtenTwice = true
         this.push(same, d.repeat)

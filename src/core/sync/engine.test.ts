@@ -1,7 +1,7 @@
 import { SyncEngine } from './engine'
 import { AUTH_EXPIRED_MESSAGE, OFFLINE_MESSAGE, SyncRemoteError } from './errors'
 import type { SyncRecord, SyncTable } from './model'
-import { SYNC_TABLES, emptySyncState } from './model'
+import { SEED_UPDATED_AT, SYNC_TABLES, emptySyncState, withoutPullCursors } from './model'
 import { MemoryLocal, MemoryRemote } from './testing'
 
 const T0 = '2026-10-27T08:00:00.000Z'
@@ -565,5 +565,66 @@ describe('SyncEngine', () => {
     b.local.put({ ...p, updatedAt: at(2), data: { extra: undefined, title: 'X', ...rest } })
     await b.engine.syncOnce()
     expect((await a.engine.syncOnce()).conflicts).toBe(0)
+  })
+})
+
+describe('built-in sample data on a second computer', () => {
+  it('an untouched seed record yields to the server without a conflict copy', async () => {
+    const remote = new MemoryRemote()
+    const clock = { now: T0 }
+    const a = device(remote, 'A', clock)
+    // Both computers seeded the same sample song and plan (same ids, seed timestamp).
+    a.local.put(song(SONG_ID, 'Ukázka', SEED_UPDATED_AT))
+    a.local.put(plan(PLAN_ID, 'Ukázková bohoslužba', SEED_UPDATED_AT))
+    await a.engine.syncOnce()
+    // A prepares Sunday inside the sample plan and edits the sample song.
+    clock.now = at(10)
+    a.local.put(plan(PLAN_ID, 'Neděle 1. 11.', at(10)))
+    a.local.put(song(SONG_ID, 'Ukázka', at(10), { body: '[G]Upraveno na A' }))
+    await a.engine.syncOnce()
+
+    // B was set up later, with its own seed (different plan date → different content).
+    clock.now = at(60)
+    const b = device(remote, 'B', clock)
+    const seedPlan = plan(PLAN_ID, 'Ukázková bohoslužba', SEED_UPDATED_AT)
+    ;(seedPlan.data as { date: string }).date = '2026-11-08'
+    b.local.put(seedPlan)
+    b.local.put(song(SONG_ID, 'Ukázka', SEED_UPDATED_AT))
+    const res = await b.engine.syncOnce()
+    expect(res.conflicts).toBe(0)
+    await a.engine.syncOnce()
+
+    for (const d of [a, b]) {
+      expect(titleOf(d.local.get('plans', PLAN_ID))).toBe('Neděle 1. 11.')
+      expect(d.local.records('songs')).toHaveLength(1)
+      expect((d.local.get('songs', SONG_ID)?.data as { content: string }).content).toContain('Upraveno na A')
+    }
+    expect(remote.all('songs')).toHaveLength(1)
+  })
+})
+
+describe('after a backup restore', () => {
+  it('pulling from the start brings back records the restore removed locally', async () => {
+    const remote = new MemoryRemote()
+    const clock = { now: T0 }
+    const a = device(remote, 'A', clock)
+    const b = device(remote, 'B', clock)
+    a.local.put(song(SONG_ID, 'Old', T0))
+    await a.engine.syncOnce()
+    await b.engine.syncOnce()
+    const NEW_ID = '33333333-3333-4333-8333-333333333333'
+    clock.now = at(5)
+    b.local.put(song(NEW_ID, 'Added on B after backup', at(5)))
+    await b.engine.syncOnce()
+    await a.engine.syncOnce()
+    expect(a.local.get('songs', NEW_ID)).toBeDefined()
+
+    // A restores a backup made before B's song: the file is gone, without a tombstone.
+    const restored = new MemoryLocal()
+    restored.put(song(SONG_ID, 'Old', T0))
+    restored.state = withoutPullCursors(a.local.state)
+    const a2 = new SyncEngine({ remote, local: restored, deviceName: 'A', now: () => clock.now })
+    await a2.syncOnce()
+    expect(titleOf(restored.get('songs', NEW_ID))).toBe('Added on B after backup')
   })
 })

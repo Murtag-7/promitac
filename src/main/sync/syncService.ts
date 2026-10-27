@@ -1,16 +1,18 @@
+import { readdir } from 'node:fs/promises'
 import { join } from 'node:path'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { MediaItem } from '@core/media/model'
 import type { ServicePlan } from '@core/plan/model'
 import type { SupabaseConfig } from '@core/settings/model'
 import { SyncEngine } from '@core/sync/engine'
-import { classifySyncError, describeOrgError } from '@core/sync/errors'
+import { classifySyncError, describeOrgError, mediaUploadFailedMessage } from '@core/sync/errors'
 import {
   type LocalStore,
   normalizeSyncState,
   type SyncRecord,
   type SyncState,
-  type SyncTable
+  type SyncTable,
+  withoutPullCursors
 } from '@core/sync/model'
 import type { Theme } from '@core/theme/model'
 import { readTitle } from '@core/chordpro/directives'
@@ -22,6 +24,7 @@ import type { SongsRepo } from '../storage/songsRepo'
 import type { TombstoneStore } from '../storage/tombstones'
 import { FileAuthStorage } from './authStorage'
 import { createSupabase, mediaStoragePath, SupabaseOrgApi, SupabaseRemote } from './supabaseRemote'
+import { SingleFlight, mediaStorageCleanup } from './syncHelpers'
 import { MAX_SYNC_MEDIA_BYTES } from '@core/media/model'
 
 export type SyncedMedia = MediaItem & { storagePath?: string }
@@ -83,6 +86,10 @@ export class SyncService {
   private timer: NodeJS.Timeout | null = null
   private debounce: NodeJS.Timeout | null = null
   private applying = false
+  /** Set after a backup restore: the next sync pulls everything again. */
+  private fullPullPending = false
+  /** One sync at a time – the timer, the debounce and sign-in all go through here. */
+  private readonly flight = new SingleFlight(() => this.runSync())
   private current: SyncStatus = {
     state: 'local',
     lastSyncedAt: null,
@@ -270,13 +277,40 @@ export class SyncService {
     return { ok: r.ok, error: r.error }
   }
 
-  async syncNow(): Promise<SyncStatus> {
+  syncNow(): Promise<SyncStatus> {
+    return this.flight.run()
+  }
+
+  /**
+   * After a backup restore: records the restore removed locally have no tombstones and the pull
+   * cursors are already past them, so the next sync starts pulling from the beginning.
+   */
+  restoreHappened(): void {
+    this.fullPullPending = true
+    this.notifyLocalChange()
+  }
+
+  private async resetPullCursors(): Promise<void> {
+    const names = await readdir(this.deps.syncDir).catch(() => [] as string[])
+    for (const name of names.filter((n) => /^state-.+\.json$/.test(n))) {
+      const file = join(this.deps.syncDir, name)
+      const state = normalizeSyncState(await readJson<Partial<SyncState> | null>(file, null))
+      await writeJsonAtomic(file, withoutPullCursors(state))
+    }
+  }
+
+  private async runSync(): Promise<SyncStatus> {
     const org = this.current.org
     if (!this.client || !this.orgApi || !org || !this.current.user) return this.current
     this.set({ state: 'syncing' })
+    if (this.fullPullPending) {
+      this.fullPullPending = false
+      await this.resetPullCursors()
+    }
     const deviceName = (await this.deps.settings.get()).deviceName
+    let failedUploads = 0
     try {
-      await this.uploadMediaFiles(org.id)
+      failedUploads = await this.uploadMediaFiles(org.id)
     } catch (err) {
       console.warn('[sync] media upload skipped', err)
     }
@@ -294,32 +328,59 @@ export class SyncService {
     } catch (err) {
       console.warn('[sync] media download skipped', err)
     }
+    if (result.status === 'synced') await this.cleanUpDeletedMedia(org.id)
+    const mediaProblem = result.status === 'synced' && failedUploads > 0
     this.set({
-      state: result.status,
-      error: result.error ?? null,
+      state: mediaProblem ? 'error' : result.status,
+      error: mediaProblem ? mediaUploadFailedMessage(failedUploads) : (result.error ?? null),
       lastSyncedAt: result.status === 'synced' ? result.at : this.current.lastSyncedAt,
       changes: result.pulled
     })
     return this.current
   }
 
-  /** Upload files of media that should be shared but are not in Storage yet. */
-  private async uploadMediaFiles(orgId: string): Promise<void> {
+  /**
+   * Upload files of media that should be shared but are not in Storage yet. A file that fails
+   * (e.g. the free quota is full) is skipped so the others still go up; returns how many failed.
+   */
+  private async uploadMediaFiles(orgId: string): Promise<number> {
+    let failed = 0
     for (const item of await this.deps.media.list()) {
       if (item.storagePath || item.localOnly || item.size > MAX_SYNC_MEDIA_BYTES) continue
       if (!(await this.deps.media.hasFile(item))) continue
-      const path = await this.orgApi!.uploadMedia(
-        orgId,
-        item.id,
-        item.fileName,
-        await this.deps.media.readFile(item),
-        item.mime
-      )
-      await this.deps.media.put({
-        ...item,
-        storagePath: path || mediaStoragePath(orgId, item.id, item.fileName),
-        updatedAt: new Date().toISOString()
-      })
+      try {
+        const path = await this.orgApi!.uploadMedia(
+          orgId,
+          item.id,
+          item.fileName,
+          await this.deps.media.readFile(item),
+          item.mime
+        )
+        await this.deps.media.put({
+          ...item,
+          storagePath: path || mediaStoragePath(orgId, item.id, item.fileName),
+          updatedAt: new Date().toISOString()
+        })
+      } catch (err) {
+        failed++
+        console.warn('[sync] media upload failed', item.id, err)
+      }
+    }
+    return failed
+  }
+
+  /** Remove Storage files of shared media that were deleted, so the free quota does not fill up. */
+  private async cleanUpDeletedMedia(orgId: string): Promise<void> {
+    const file = join(this.deps.syncDir, `media-paths-${orgId}.json`)
+    try {
+      const known = await readJson<Record<string, string>>(file, {})
+      const tombstones = (await this.deps.tombstones.all()).media
+      const plan = mediaStorageCleanup(known, await this.deps.media.list(), tombstones)
+      if (plan.remove.length > 0) await this.orgApi!.removeMedia(plan.remove)
+      await writeJsonAtomic(file, plan.known)
+    } catch (err) {
+      // Not removed this time – the entries stay in the file and the next sync tries again.
+      console.warn('[sync] media cleanup skipped', err)
     }
   }
 

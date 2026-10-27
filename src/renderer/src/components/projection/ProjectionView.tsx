@@ -340,7 +340,9 @@ function SlideText({ slide, theme }: { slide: Slide; theme: Theme }) {
       max: t.maxSize,
       paragraph: slide.kind === 'bible'
     })
-    // fontTick: re-measure after the font has loaded
+    // fontTick is not read inside, but a change means the font has loaded and text must be
+    // measured again with the real glyph widths.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     lines,
     measureFont,

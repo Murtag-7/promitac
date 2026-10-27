@@ -94,6 +94,7 @@ export const cs = {
     }
   },
   songs: {
+    changedElsewhere: 'Tuto píseň mezitím upravil jiný počítač. Vaše rozepsané úpravy mají přednost.',
     moreTags: (n: number) => `+ ${n} ${n >= 5 ? 'dalších' : 'další'}`,
     addedToPlan: (t: string) => `„${t}“ je v plánu`,
     title: 'Písně',
@@ -764,6 +765,8 @@ export const cs = {
     withoutChords: 'bez akordů',
     review: 'Upravit',
     addToLibrary: 'Přidat do knihovny',
+    saveFailed:
+      'Píseň se nepodařilo uložit do knihovny. Zkuste to prosím znovu – rozpoznaný text zůstává tady.',
     added: 'Přidáno do knihovny',
     openSong: 'Otevřít píseň',
     duplicate: (t: string) => `V knihovně už je píseň „${t}“.`,

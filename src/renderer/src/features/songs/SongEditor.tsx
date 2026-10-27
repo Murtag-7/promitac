@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { ArrowDown, ArrowUp, Download, FileText, ListPlus, MoreHorizontal, Play, Trash2 } from 'lucide-react'
 import type { Song } from '@core/chordpro/model'
@@ -51,6 +51,26 @@ export function SongEditor({ songId }: { songId: string }) {
 
   const [text, setText] = useState(() => stored ?? (storedSong ? serializeChordPro(storedSong) : ''))
   const [savedText, setSavedText] = useState(text)
+  // The library version the editor text is based on.
+  const [base, setBase] = useState(stored)
+
+  // The song changed outside the editor (pulled from another computer, or the file was edited by
+  // hand): show that version instead of saving the old text over it with the next keystroke.
+  useEffect(() => {
+    if (stored === undefined || stored === base) return
+    setBase(stored)
+    const same = (a: string | undefined, b: string): boolean =>
+      a !== undefined && removeDirective(a, 'x_updated') === removeDirective(b, 'x_updated')
+    if (same(base, stored)) return
+    if (text === savedText) {
+      setText(stored)
+      setSavedText(stored)
+    } else if (!same(text, stored)) {
+      toast(cs.songs.changedElsewhere)
+    }
+    // Only a change of the stored version matters here.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stored])
   const [saving, setSaving] = useState(false)
   const [previewIndex, setPreviewIndex] = useState(0)
   const [confirmDelete, setConfirmDelete] = useState(false)

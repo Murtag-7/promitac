@@ -6,6 +6,7 @@ import { EmptyState } from '@/components/common/EmptyState'
 import { cs } from '@/i18n/cs'
 import { cn } from '@/lib/cn'
 import type { LiveItem } from '@/live/items'
+import { useLive } from '@/store/live'
 import { mediaUrl, useMedia } from '@/store/media'
 
 export function SlideGrid({
@@ -20,6 +21,8 @@ export function SlideGrid({
   onSlide: (index: number) => void
 }) {
   const media = useMedia((s) => s.items)
+  // The countdown covers the slide on the wall just like black/logo/hidden text.
+  const timerOn = useLive((s) => s.timer !== null)
   const gridRef = useRef<HTMLDivElement>(null)
   const isLiveItem = live.itemId === item.id
 
@@ -119,7 +122,7 @@ export function SlideGrid({
                 state={state}
                 showSection={showSection}
                 onClick={() => onSlide(i)}
-                hidden={state === 'live' && live.overlay !== 'none'}
+                hidden={state === 'live' && (live.overlay !== 'none' || timerOn)}
                 mediaUrl={m && m.kind === 'image' ? mediaUrl(m) : undefined}
               />
             )

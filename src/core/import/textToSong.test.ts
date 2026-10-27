@@ -341,7 +341,7 @@ describe('textToSong – sections and markers', () => {
 
   it('turns a written-out repetition of a section into a reference', () => {
     const song = textToSong(
-      lines('P', '', '1. Jdu', '', 'R: Refrén zní', 'dál', '', '2. Noc', '', 'Refrén  zní', 'Dál')
+      lines('P', '', '1. Jdu', '', 'R: Refrén zní', 'dál', '', '2. Noc', '', 'Refrén  zní', 'dál')
     ).song
     expect(song.sections.map((s) => s.id)).toEqual(['V1', 'C', 'V2'])
     expect(song.arrangement).toEqual(['V1', 'C', 'V2', 'C'])
@@ -371,6 +371,43 @@ describe('textToSong – sections and markers', () => {
       ['V2', 'verse']
     ])
     expect(song.arrangement).toEqual(['V1', 'C', 'V2', 'C'])
+  })
+
+  it('keeps a last chorus written with different chords as its own section', () => {
+    const text = lines(
+      'R:',
+      'G        D',
+      'Sláva tobě, Pane,',
+      'C        G',
+      'zpívej celá zem',
+      '',
+      '1. Jdu dál',
+      'cestou',
+      '',
+      'R:',
+      'A        E',
+      'Sláva tobě, Pane,',
+      'D        A',
+      'zpívej celá zem'
+    )
+    const { song } = textToSong(text)
+    expect(song.sections.map((s) => s.type)).toEqual(['chorus', 'verse', 'chorus'])
+    expect(cp(text)).toContain('{start_of_chorus: C2}\n[A]Sláva tob[E]ě, Pane,')
+    expect(cp(text)).toContain('[G]Sláva tob[D]ě, Pane,')
+  })
+
+  it('does not merge blocks that differ only in diacritics or case', () => {
+    const { song } = textToSong(
+      lines('P', '', 'Zpívej celá zem', 'amen', '', 'Jdu', '', 'zpivej cela zem', 'amen')
+    )
+    expect(sectionTexts(song)).toEqual([['Zpívej celá zem', 'amen'], ['Jdu'], ['zpivej cela zem', 'amen']])
+  })
+
+  it('still merges a chorus written out again without chords', () => {
+    const text = lines('R:', 'G     D', 'Haleluja', 'amen', '', '1. Jdu', '', 'R:', 'Haleluja', 'amen')
+    const { song } = textToSong(text)
+    expect(song.sections.map((s) => s.id)).toEqual(['C', 'V1'])
+    expect(song.arrangement).toEqual(['C', 'V1', 'C'])
   })
 
   it('keeps the verse type of a written-out repetition when a chorus is marked', () => {

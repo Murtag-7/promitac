@@ -125,7 +125,7 @@ if (!app.requestSingleInstanceLock()) {
         ctx.media.invalidate()
         void outputs?.refresh()
         watchSongsFolder(ctx)
-        sync?.notifyLocalChange()
+        sync?.restoreHappened()
       }
     })
     registerSyncIpc(sync)

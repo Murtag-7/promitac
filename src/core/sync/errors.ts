@@ -7,6 +7,8 @@ export const OFFLINE_MESSAGE = 'Nelze se spojit se serverem – změny se odešl
 export const AUTH_EXPIRED_MESSAGE = 'Přihlášení vypršelo – přihlaste se znovu.'
 export const NO_ACCESS_MESSAGE =
   'Nemáte přístup ke knihovně sboru – možná vás správce ze sboru odebral. Zkuste se přihlásit znovu.'
+export const mediaUploadFailedMessage = (n: number): string =>
+  `${n === 1 ? 'Jedno médium se' : `${n} médií se`} nepodařilo nahrát do sdílené knihovny (může být plné úložiště Supabase). Ostatní data jsou synchronizovaná.`
 export const UNKNOWN_ERROR_MESSAGE = 'Synchronizace selhala z neznámého důvodu.'
 
 /** Error thrown by remote implementations; keeps the HTTP status so the cause can be classified. */

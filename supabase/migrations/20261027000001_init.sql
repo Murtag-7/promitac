@@ -409,7 +409,8 @@ begin
 
   if (select count(*) from public.org_members m where m.org_id = v_org) = 1 then
     -- The last member leaves: the organisation and its shared library are removed.
-    -- (Files in Storage are not deleted by SQL; the app removes them through the Storage API.)
+    -- (Files in Storage are not deleted by SQL. The app removes files of deleted media through the
+    -- Storage API; files of a dissolved organisation can be removed in the Supabase dashboard.)
     delete from public.orgs where id = v_org;
     return;
   end if;

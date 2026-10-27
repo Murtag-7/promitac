@@ -3,7 +3,7 @@ import { DEFAULT_SETTINGS } from '@core/settings/model'
 import { BUILT_IN_THEMES } from '@core/theme/defaults'
 import type { MediaItem } from '@core/media/model'
 import type { ServicePlan } from '@core/plan/model'
-import { buildFrame, buildLiveItems } from './items'
+import { buildFrame, buildLiveItems, sameOnScreen, withPinnedItem } from './items'
 
 const song = {
   ...parseChordPro('{title: Test}\n{start_of_verse: V1}\n[G]Ahoj [D]světe\n{end_of_verse}\n'),
@@ -85,5 +85,34 @@ describe('buildFrame', () => {
   it('nothing live → empty slide', () => {
     const frame = buildFrame({ ...base, items: [], live: { itemId: null, slideIndex: 0, overlay: 'none' } })
     expect(frame.slide).toBeNull()
+  })
+})
+
+describe('withPinnedItem', () => {
+  const items = buildLiveItems(plan, deps)
+  const live = items[0]!
+  const edited = {
+    ...live,
+    slides: [...live.slides, { id: 'x', kind: 'text' as const, lines: ['Nová sloka'] }]
+  }
+
+  it('keeps the on-screen version when a sync changed the item', () => {
+    const after = items.map((i, n) => (n === 0 ? edited : i))
+    const out = withPinnedItem(after, { item: live, index: 0 })
+    expect(out[0]).toBe(live)
+    expect(out).toHaveLength(items.length)
+  })
+
+  it('puts the item back where it was when a sync removed it from the plan', () => {
+    const after = items.filter((i) => i.id !== live.id)
+    const out = withPinnedItem(after, { item: live, index: 0 })
+    expect(out[0]?.id).toBe(live.id)
+    expect(withPinnedItem([], { item: live, index: 3 })).toEqual([live])
+  })
+
+  it('compares what would be on screen', () => {
+    expect(sameOnScreen(live, { ...live })).toBe(true)
+    expect(sameOnScreen(live, edited)).toBe(false)
+    expect(sameOnScreen(live, undefined)).toBe(false)
   })
 })

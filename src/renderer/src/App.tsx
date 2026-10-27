@@ -5,6 +5,7 @@ import { AppShell } from './components/shell/AppShell'
 import { TooltipProvider } from './components/ui/tooltip'
 import { cs } from './i18n/cs'
 import { startOutputEngine } from './live/engine'
+import { sameOnScreen } from './live/items'
 import { useBible } from './store/bible'
 import { useLibrary } from './store/library'
 import { useMedia } from './store/media'
@@ -12,7 +13,7 @@ import { usePlans } from './store/plans'
 import { useSettings } from './store/settings'
 import { useSync } from './store/sync'
 import { useThemes } from './store/themes'
-import { useLive } from './store/live'
+import { currentLiveItems, planLiveItems, useLive } from './store/live'
 import { sortPlans } from './store/plans'
 
 async function loadAll(): Promise<void> {
@@ -26,14 +27,30 @@ async function loadAll(): Promise<void> {
   ])
 }
 
-/** Reload data after a background sync brought changes (never touches the live state). */
+/**
+ * Reload data after a background sync brought changes. What is on the projector stays exactly as
+ * it is: if the sync changed or removed the live item, that item is pinned in its on-screen
+ * version until the operator moves to another item.
+ */
 async function reloadFromSync(): Promise<void> {
+  const liveId = useLive.getState().live.itemId
+  const before = liveId ? currentLiveItems() : []
+  const index = before.findIndex((i) => i.id === liveId)
+  if (index >= 0 && !useLive.getState().pinned) {
+    useLive.getState().pinLiveItem({ item: before[index]!, index })
+  }
   await Promise.all([
     useLibrary.getState().load(),
     usePlans.getState().load(),
     useThemes.getState().load(),
     useMedia.getState().load()
   ])
+  const { pinned, live } = useLive.getState()
+  if (pinned && pinned.item.id === live.itemId) {
+    const now = planLiveItems().find((i) => i.id === pinned.item.id)
+    // Nothing visible changed – no reason to hold the old version.
+    if (sameOnScreen(now, pinned.item)) useLive.getState().pinLiveItem(null)
+  }
 }
 
 function pickInitialPlan(): void {

@@ -6,7 +6,8 @@
 function directiveRe(name: string, flags = 'im'): RegExp {
   const n = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
   return new RegExp(
-    `^[ \\t]*\\{[ \\t]*${n}[ \\t]*(?::[ \\t]*|[ \\t]+|(?=\\}))([^}\\n]*?)[ \\t]*\\}[ \\t]*$`,
+    // The lookahead `(?=\r?$)` keeps the `\r` of files with Windows line endings.
+    `^[ \\t]*\\{[ \\t]*${n}[ \\t]*(?::[ \\t]*|[ \\t]+|(?=\\}))([^}\\r\\n]*?)[ \\t]*\\}[ \\t]*(?=\\r?$)`,
     flags
   )
 }
@@ -38,7 +39,7 @@ export function setDirective(content: string, name: string, value: string): stri
 }
 
 export function removeDirective(content: string, name: string): string {
-  return content.replace(new RegExp(directiveRe(name).source + '\\n?', 'gim'), '')
+  return content.replace(new RegExp(directiveRe(name).source + '\\r?\\n?', 'gim'), '')
 }
 
 /** Title from `{title}` or `{t}`. */

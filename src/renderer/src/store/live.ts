@@ -3,7 +3,7 @@ import { initialLiveState, liveReducer, type LiveAction, type LiveState } from '
 import type { PlanItem } from '@core/plan/model'
 import type { ThemeBackground } from '@core/theme/model'
 import { cs } from '@/i18n/cs'
-import { buildLiveItems, type LiveItem } from '@/live/items'
+import { buildLiveItems, withPinnedItem, type LiveItem, type PinnedLiveItem } from '@/live/items'
 import { useBible } from './bible'
 import { useLibrary } from './library'
 import { useMedia } from './media'
@@ -21,7 +21,10 @@ interface LiveStore {
   timer: { endsAt: number; label: string } | null
   backgroundOverride: ThemeBackground | null
   identify: { label: string } | null
+  /** The on-screen item frozen against background sync changes (until the operator moves on). */
+  pinned: PinnedLiveItem | null
   setPlan(id: string | null): void
+  pinLiveItem(pinned: PinnedLiveItem | null): void
   select(itemId: string | null): void
   dispatch(action: LiveAction): void
   setPending(p: string | null): void
@@ -32,8 +35,15 @@ interface LiveStore {
   setIdentify(v: { label: string } | null): void
 }
 
-/** Live items of the current live plan, computed from all stores. */
+/** Live items of the current live plan, with the on-screen item pinned against sync changes. */
 export function currentLiveItems(): LiveItem[] {
+  const { pinned, live } = useLive.getState()
+  const items = planLiveItems()
+  return pinned && pinned.item.id === live.itemId ? withPinnedItem(items, pinned) : items
+}
+
+/** Live items of the current live plan exactly as the stores have them now. */
+export function planLiveItems(): LiveItem[] {
   const { planId } = useLive.getState()
   const plan = planId ? usePlans.getState().plans[planId] : null
   return buildLiveItems(plan, {
@@ -54,7 +64,9 @@ export const useLive = create<LiveStore>((set, get) => ({
   timer: null,
   backgroundOverride: null,
   identify: null,
-  setPlan: (planId) => set({ planId, selectedItemId: null }),
+  pinned: null,
+  setPlan: (planId) => set({ planId, selectedItemId: null, pinned: null }),
+  pinLiveItem: (pinned) => set({ pinned }),
   select: (selectedItemId) => set({ selectedItemId }),
   dispatch: (input) => {
     const items = currentLiveItems()
@@ -70,7 +82,15 @@ export const useLive = create<LiveStore>((set, get) => ({
     // Follow the live item in the grid when navigation moves to another item.
     const follow =
       live.itemId !== before.itemId && (get().selectedItemId === before.itemId || !get().selectedItemId)
-    set({ live, ...(follow ? { selectedItemId: live.itemId } : {}) })
+    // Sending a slide ends the countdown – otherwise "00:00" would keep covering the song.
+    const moved = live.itemId !== before.itemId || live.slideIndex !== before.slideIndex
+    set({
+      live,
+      ...(follow ? { selectedItemId: live.itemId } : {}),
+      ...(moved && live.itemId && get().timer ? { timer: null } : {}),
+      // Moving to another item lets the latest version of everything through again.
+      ...(live.itemId !== before.itemId ? { pinned: null } : {})
+    })
   },
   setPending: (pending) => set({ pending }),
   showAlert: (alert) => set({ alert: alert?.trim() ? alert.trim() : null }),

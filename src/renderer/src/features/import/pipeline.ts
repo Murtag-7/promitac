@@ -5,6 +5,7 @@ import { wordsToText } from '@core/import/layout'
 import { parseOpenLyrics } from '@core/import/openlyrics'
 import type { OcrWord } from '@core/import/ocrTypes'
 import { cs } from '@/i18n/cs'
+import { decodeText } from '@shared/decodeText'
 
 export interface ImportedSong {
   result: ImportResult
@@ -140,7 +141,7 @@ async function fromOpenLyrics(file: File): Promise<ImportedSong> {
 }
 
 async function fromTextFile(file: File): Promise<ImportedSong> {
-  const text = await file.text()
+  const text = decodeText(new Uint8Array(await file.arrayBuffer()))
   return {
     ...importFromText(text),
     source: /\.(chordpro|cho|crd|chopro|pro)$/i.test(file.name) ? 'chordpro' : 'text',

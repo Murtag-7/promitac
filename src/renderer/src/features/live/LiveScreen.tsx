@@ -4,7 +4,7 @@ import { liveReducer } from '@core/live/state'
 import { EmptyState } from '@/components/common/EmptyState'
 import { Button } from '@/components/ui/button'
 import { cs } from '@/i18n/cs'
-import { buildLiveItems } from '@/live/items'
+import { buildLiveItems, withPinnedItem } from '@/live/items'
 import { useBible } from '@/store/bible'
 import { useLibrary } from '@/store/library'
 import { useLive } from '@/store/live'
@@ -25,10 +25,13 @@ export function useLiveItems() {
   const bibleFailed = useBible((s) => s.failed)
   const media = useMedia((s) => s.items)
   const settings = useSettings((s) => s.settings)
-  const items = useMemo(
-    () => buildLiveItems(plan, { songs, bibles, bibleFailed, media, settings }),
-    [plan, songs, bibles, bibleFailed, media, settings]
-  )
+  const pinned = useLive((s) => s.pinned)
+  const liveItemId = useLive((s) => s.live.itemId)
+  // Same view as the output: the on-screen item stays pinned against sync changes.
+  const items = useMemo(() => {
+    const all = buildLiveItems(plan, { songs, bibles, bibleFailed, media, settings })
+    return pinned && pinned.item.id === liveItemId ? withPinnedItem(all, pinned) : all
+  }, [plan, songs, bibles, bibleFailed, media, settings, pinned, liveItemId])
   // Bible translations load lazily the first time a plan needs them.
   useEffect(() => {
     for (const it of items) {

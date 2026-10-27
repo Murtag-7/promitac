@@ -43,6 +43,14 @@ export function emptySyncState(): SyncState {
   return { cursors: { songs: null, plans: null, themes: null, media: null }, base: {}, lastSyncedAt: null }
 }
 
+/**
+ * The next sync pulls every record again (the merge base stays). Used after a backup restore:
+ * records the restore removed locally – without tombstones – come back from the server.
+ */
+export function withoutPullCursors(state: SyncState): SyncState {
+  return { ...state, cursors: emptySyncState().cursors }
+}
+
 /** Fill in anything missing from a state file written by an older version (or a corrupted one). */
 export function normalizeSyncState(state: Partial<SyncState> | null | undefined): SyncState {
   const empty = emptySyncState()
@@ -115,6 +123,13 @@ export function jsonEqual(a: unknown, b: unknown): boolean {
 }
 
 /** Same visible content: both deleted, or both alive with equal data. */
+/**
+ * Timestamp of the built-in sample data (songs, the "Neděle" template, the sample plan). A record
+ * that still carries it was never edited on this computer, so it always yields to the server's
+ * version – a newly joined computer must never overwrite what the sbor already prepared.
+ */
+export const SEED_UPDATED_AT = '2000-01-01T00:00:00.000Z'
+
 export function sameContent(a: SyncRecord, b: SyncRecord): boolean {
   if (a.deleted && b.deleted) return true
   return a.deleted === b.deleted && jsonEqual(a.data, b.data)

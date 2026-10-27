@@ -81,6 +81,19 @@ test('alert and countdown appear on the screen', async ({ page }) => {
   await expect(livePreview(page)).not.toContainText('Začínáme za')
 })
 
+test('sending a slide ends the countdown', async ({ page }) => {
+  await page.getByLabel('Minut').fill('1')
+  await page.getByRole('button', { name: 'Spustit odpočet' }).click()
+  await expect(livePreview(page)).toContainText('Začínáme za')
+  await page
+    .getByRole('button', { name: /Světlo nad městem/ })
+    .first()
+    .click()
+  await page.locator('[data-slide-index="0"]').click()
+  await expect(livePreview(page)).not.toContainText('Začínáme za')
+  await expect(livePreview(page)).toContainText('Nad střechami vychází den')
+})
+
 test('the clicker keeps working while typing, Shift+arrows move between items', async ({ page }) => {
   await page
     .getByRole('button', { name: /Světlo nad městem/ })

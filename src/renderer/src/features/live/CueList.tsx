@@ -45,7 +45,7 @@ export function CueList({
 }) {
   const plans = usePlans((s) => s.plans)
   const setPlan = useLive((s) => s.setPlan)
-  const hidden = useLive((s) => s.live.overlay !== 'none')
+  const hidden = useLive((s) => s.live.overlay !== 'none' || s.timer !== null)
   const { upcoming, past } = sortPlans(Object.values(plans))
   const options = [...upcoming, ...past].map((p) => ({
     value: p.id,

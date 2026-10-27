@@ -1,9 +1,16 @@
 import type { OutputConfig } from '@core/settings/model'
 import type { DisplayInfo, OutputStatus, OutputWindowState } from '@shared/api'
 
-/** 'auto' = the first display that is not the primary one (same rule as the main process). */
+/**
+ * 'auto' = the first display that is neither primary nor the control display, else any display
+ * other than the control one (same rule as the main process, src/main/displays.ts).
+ */
 export function autoDisplay(displays: DisplayInfo[]): DisplayInfo | null {
-  return displays.find((d) => !d.primary) ?? null
+  return (
+    displays.find((d) => !d.primary && !d.isControl) ??
+    (displays.length > 1 ? displays.find((d) => !d.isControl) : undefined) ??
+    null
+  )
 }
 
 /** The display an output is configured for (null = not connected / none available). */

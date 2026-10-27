@@ -23,8 +23,12 @@ describe('resolveOutputDisplay', () => {
   it('picks the first non-primary display when there are three', () => {
     expect(resolveOutputDisplay(auto, [d(1, true), d(3, false), d(2, false)], 1)?.id).toBe(3)
   })
-  it('skips the display the control window is on, even if it is not primary', () => {
-    expect(resolveOutputDisplay(auto, [d(1, true), d(2, false)], 2)).toBeNull()
+  it('skips the display the control window is on and uses the primary projector instead', () => {
+    // The system made the projector (1) primary; the operator works on the laptop (2).
+    expect(resolveOutputDisplay(auto, [d(1, true), d(2, false)], 2)?.id).toBe(1)
+  })
+  it('never picks the only display when the control window position is unknown', () => {
+    expect(resolveOutputDisplay(auto, [d(1, true)], null)).toBeNull()
   })
   it('returns null when the chosen display is disconnected and finds it again when reconnected', () => {
     const cfg = { ...auto, displayId: 2 }

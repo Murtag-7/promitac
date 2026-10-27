@@ -158,3 +158,33 @@ export function buildFrame(i: FrameInputs): OutputFrame {
     identify: i.identify ?? null
   }
 }
+
+/** The live item as it was before a background sync changed it (see `pinLiveItem`). */
+export interface PinnedLiveItem {
+  item: LiveItem
+  /** Position in the plan when it was pinned – used if the item was removed from the plan. */
+  index: number
+}
+
+/**
+ * Keep the item that is on screen exactly as it was: a sync from another computer must never
+ * blank the projector or move it to a different slide. The pinned version is used in place of
+ * the current one (or put back where it was, if the item disappeared) until the operator moves
+ * to another item.
+ */
+export function withPinnedItem(items: LiveItem[], pinned: PinnedLiveItem | null): LiveItem[] {
+  if (!pinned) return items
+  const at = items.findIndex((i) => i.id === pinned.item.id)
+  if (at >= 0) return items.map((i, n) => (n === at ? pinned.item : i))
+  const out = [...items]
+  out.splice(Math.min(pinned.index, out.length), 0, pinned.item)
+  return out
+}
+
+/** Whether two versions of a plan item would look the same on screen. */
+export function sameOnScreen(a: LiveItem | undefined, b: LiveItem | undefined): boolean {
+  if (!a || !b) return a === b
+  return (
+    a.title === b.title && a.themeId === b.themeId && JSON.stringify(a.slides) === JSON.stringify(b.slides)
+  )
+}

@@ -19,7 +19,14 @@ import type {
   SyncState,
   SyncTable
 } from './model'
-import { SYNC_TABLES, compareTimestamps, normalizeSyncState, recordKey, sameContent } from './model'
+import {
+  SEED_UPDATED_AT,
+  SYNC_TABLES,
+  compareTimestamps,
+  normalizeSyncState,
+  recordKey,
+  sameContent
+} from './model'
 import { conflictCopyTitle, renameSongContent } from './songConflict'
 
 export interface SyncEngineOptions {
@@ -134,7 +141,7 @@ export class SyncEngine {
       if (remote.updatedAt === base[key]) continue
 
       handled.add(remote.id)
-      if (local.updatedAt === base[key]) {
+      if (local.updatedAt === base[key] || (local.updatedAt === SEED_UPDATED_AT && !local.deleted)) {
         toApply.push(remote)
         baseNow[key] = remote.updatedAt
         pulledCount++

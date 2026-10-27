@@ -202,6 +202,10 @@ export class OutputManager {
     win.webContents.on('did-finish-load', () => {
       if (this.lastFrame) win.webContents.send(IPC.outputFrame, this.lastFrame)
     })
+    // The projector window shows only the output page: a file dropped onto it or a stray link
+    // must never navigate it away or open another window on the wall.
+    win.webContents.on('will-navigate', (e) => e.preventDefault())
+    win.webContents.setWindowOpenHandler(() => ({ action: 'deny' }))
     win.webContents.on('render-process-gone', () => {
       this.errors.add(config.id)
       if (!win.isDestroyed()) win.destroy()

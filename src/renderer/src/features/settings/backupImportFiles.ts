@@ -1,5 +1,6 @@
 import type { Song } from '@core/chordpro/model'
 import { stripDiacritics } from '@core/util/text'
+import { decodeText } from '@shared/decodeText'
 
 /** File types offered by "Importovat soubory písní". */
 export const SONG_FILE_ACCEPT = '.chordpro,.cho,.crd,.chopro,.txt,.xml'
@@ -31,19 +32,7 @@ export function baseName(name: string): string {
   return (dot > 0 ? name.slice(0, dot) : name).trim()
 }
 
-/**
- * Decode a text file: UTF-8 / UTF-16 with BOM, otherwise strict UTF-8, falling back to
- * Windows-1250 (older Czech files from Windows Notepad or Word "plain text").
- */
-export function decodeText(bytes: Uint8Array): string {
-  if (bytes[0] === 0xff && bytes[1] === 0xfe) return new TextDecoder('utf-16le').decode(bytes)
-  if (bytes[0] === 0xfe && bytes[1] === 0xff) return new TextDecoder('utf-16be').decode(bytes)
-  try {
-    return new TextDecoder('utf-8', { fatal: true }).decode(bytes)
-  } catch {
-    return new TextDecoder('windows-1250').decode(bytes)
-  }
-}
+export { decodeText }
 
 function hasLyrics(song: Song): boolean {
   return song.sections.some((s) =>
