@@ -13,7 +13,7 @@ Průběžně aktualizováno po každém milníku. Další session pokračuje odt
 | 5 | Bible + Média + záloha | ✅ |
 | 6 | Účty + sync (Supabase, RLS, migrace, lokální režim, keepalive) | ✅ kód + lokální ověření, ⚠️ bez reálného Supabase |
 | 7 | Design polish + přístupnost + screenshoty | ✅ (review 28/40 → opraveno, viz [design-review.md](design-review.md)) |
-| 8 | Buildy Mac/Win v CI + dokumentace | ⏳ workflow hotový, běh v Actions ověřit |
+| 8 | Buildy Mac/Win v CI + dokumentace | ✅ buildy ověřené v Actions (PR #1), ⚠️ instalace na reálném Macu/Windows neověřena |
 | 9 | P2 – volitelná AI pro import | ✅ (Gemini, vypnuto ve výchozím stavu, test s mockovaným fetch) |
 
 ## Ověřeno (jak)
@@ -39,7 +39,7 @@ Průběžně aktualizováno po každém milníku. Další session pokračuje odt
 
 - **Reálný Supabase projekt** – nemám přístup; ověřeno jen lokálně (SQL + RLS na Postgresu, klient proti falešnému `fetch`, sync engine proti paměťovému serveru). Přihlášení, e-mailové potvrzení a Storage upload proti skutečnému Supabase neproběhly.
 - **Dva fyzické monitory** – v cloudu je jen virtuální obrazovka; logika výběru monitoru a obnovy po odpojení je pokryta unit testy, skutečné připojení/odpojení projektoru neověřeno.
-- **Buildy .dmg/.exe** – workflow připravený; výsledek běhu v GitHub Actions doplním níže.
+- **Buildy .dmg/.exe** – v GitHub Actions (PR #1, běh „Build desktop apps") vznikly `Promitac-0.1.0-mac-x64.dmg`, `Promitac-0.1.0-mac-arm64.dmg` (obě aplikace ad-hoc podepsané, `codesign` hlásí „valid on disk") a `Promitac-0.1.0-win-x64.exe` (artefakty Promitac-macOS ≈ 297 MB, Promitac-Windows ≈ 135 MB). Spuštění a instalaci na skutečném Macu a Windows jsem ověřit nemohl. Pozn.: první pokus macOS jobu se 15 minut nedočkal runneru a GitHub ho zrušil; opakovaný běh prošel – při stejné situaci stačí v Actions dát „Re-run failed jobs".
 - **AI převod (Gemini)** – ověřeno jen s mockovaným API (bez klíče).
 - **„I" vs „|"** – v písmu DejaVu Sans OCR čte samostatné „I" jako „|".
 - **Záloha s médii** se skládá v paměti (fflate `zipSync`); u knihovny s mnoha GB videí může být pomalá. Soubory nad 2 GB se do zálohy nevejdou. V této verzi neřešeno; běžnou zálohu (bez médií) to neovlivňuje.

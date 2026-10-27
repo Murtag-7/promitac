@@ -18,7 +18,8 @@ spuštění varuje, že aplikace „není ověřená". Je to v pořádku – ní
 Pokud je vydaná verze (tag `v…`), najdete stejné soubory i v **Releases** na hlavní stránce repozitáře.
 
 Build se spustí sám u každého pull requestu do `main` a u tagu `v…`. Po sloučení do `main` ho lze spustit i ručně:
-Actions → **Build desktop apps** → **Run workflow** (trvá asi 10–15 minut). Artefakty jsou ke stažení 30 dní (pak build spusťte znovu).
+Actions → **Build desktop apps** → **Run workflow** (trvá asi 10–15 minut). Artefakty jsou ke stažení 30 dní (pak build spusťte znovu). Když macOS build skončí jako
+„Cancelled" bez jediného kroku (GitHub nenašel volný Mac runner), stačí v běhu kliknout **Re-run failed jobs**.
 
 ## macOS
 
