@@ -79,3 +79,17 @@ export function findTheme(themes: Theme[], id: string | undefined): Theme {
     (BUILT_IN_THEMES[0] as Theme)
   )
 }
+
+export function isTheme(v: unknown): v is Theme {
+  const t = v as Theme
+  return (
+    typeof t === 'object' &&
+    t !== null &&
+    typeof t.id === 'string' &&
+    typeof t.name === 'string' &&
+    typeof t.text === 'object' &&
+    t.text !== null &&
+    typeof t.background === 'object' &&
+    t.background !== null
+  )
+}

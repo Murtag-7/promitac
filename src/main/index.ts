@@ -1,14 +1,19 @@
-import { app, ipcMain, type BrowserWindow } from 'electron'
-import { IPC } from '@shared/ipc'
+import { app, type BrowserWindow } from 'electron'
+import { nowIso } from '@core/util/id'
 import { createControlWindow } from './controlWindow'
-import { initUserDataPath } from './paths'
+import { createContext } from './context'
+import { registerCoreIpc } from './ipc'
+import { initUserDataPath, paths } from './paths'
 import { handleAppProtocol, registerSchemes } from './protocol'
+import { seedIfFirstRun } from './storage/seed'
 
 app.setName('Promítač')
 initUserDataPath()
 registerSchemes()
 
 let controlWindow: BrowserWindow | null = null
+
+process.on('unhandledRejection', (reason) => console.error('[main] unhandled rejection', reason))
 
 if (!app.requestSingleInstanceLock()) {
   app.quit()
@@ -20,9 +25,15 @@ if (!app.requestSingleInstanceLock()) {
     }
   })
 
-  void app.whenReady().then(() => {
+  void app.whenReady().then(async () => {
     handleAppProtocol()
-    ipcMain.handle(IPC.appVersion, () => app.getVersion())
+    const ctx = createContext()
+    try {
+      await seedIfFirstRun(paths.library(), ctx.songs, ctx.plans, nowIso())
+    } catch (err) {
+      console.error('[main] seeding failed', err)
+    }
+    registerCoreIpc(ctx, () => undefined)
     controlWindow = createControlWindow()
     controlWindow.on('closed', () => {
       controlWindow = null

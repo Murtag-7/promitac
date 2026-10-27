@@ -8,7 +8,7 @@ export default defineConfig(() => {
   return {
     ...base,
     mode: 'web',
-    define: { 'import.meta.env.VITE_WEB': JSON.stringify('1') },
+    define: { __WEB_MOCK__: 'true' },
     server: { port: 5199, strictPort: true },
     preview: { port: 5199, strictPort: true },
     build: { ...base.build, outDir: resolve(rootDir, 'out/web'), emptyOutDir: true }

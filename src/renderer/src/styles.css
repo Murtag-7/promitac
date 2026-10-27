@@ -1,12 +1,113 @@
 @import 'tailwindcss';
-@import '@fontsource-variable/inter';
+@import '@fontsource-variable/inter/opsz.css';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-@theme {
-  --font-sans: 'Inter Variable', 'Inter', system-ui, sans-serif;
+/* ---------- Tokens (see DESIGN.md) ---------- */
+:root {
+  --bg: #141210;
+  --panel: #1b1916;
+  --raised: #24211d;
+  --raised-2: #2d2924;
+  --line: #34302a;
+  --line-strong: #4a443b;
+  --ink: #eee8de;
+  --ink-2: #a8a093;
+  --ink-3: #7d766b;
+  --light: #f4ead9;
+  --light-ink: #1a1714;
+  --live: #f0584a;
+  --live-soft: rgb(240 88 74 / 0.14);
+  --next: #73c995;
+  --next-soft: rgb(115 201 149 / 0.13);
+  --warn: #e5b45c;
+  --warn-soft: rgb(229 180 92 / 0.14);
+  --danger: #ee7b6d;
+  --sec-verse: #93a9cf;
+  --sec-chorus: #d6a25c;
+  --sec-prechorus: #72bdb3;
+  --sec-bridge: #c39ad6;
+  --sec-other: #a8a093;
+  --shadow-overlay: 0 12px 32px -8px rgb(0 0 0 / 0.55), 0 0 0 1px rgb(255 255 255 / 0.04);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  color-scheme: dark;
 }
 
+:root.light {
+  --bg: #efede8;
+  --panel: #f7f6f3;
+  --raised: #ffffff;
+  --raised-2: #f0eee9;
+  --line: #dedad2;
+  --line-strong: #c9c3b8;
+  --ink: #1d1b18;
+  --ink-2: #5f5950;
+  --ink-3: #8a8378;
+  --light: #1d1b18;
+  --light-ink: #f7f6f3;
+  --live: #d93a2b;
+  --live-soft: rgb(217 58 43 / 0.1);
+  --next: #23885a;
+  --next-soft: rgb(35 136 90 / 0.1);
+  --warn: #a86c00;
+  --warn-soft: rgb(168 108 0 / 0.1);
+  --danger: #c0392b;
+  --sec-verse: #4a6896;
+  --sec-chorus: #9a6413;
+  --sec-prechorus: #2c7f75;
+  --sec-bridge: #835199;
+  --sec-other: #6c665c;
+  --shadow-overlay: 0 12px 32px -8px rgb(40 30 20 / 0.22), 0 0 0 1px rgb(0 0 0 / 0.05);
+  color-scheme: light;
+}
+
+@theme inline {
+  --font-sans: 'Inter Variable', 'Inter', system-ui, sans-serif;
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-raised: var(--raised);
+  --color-raised-2: var(--raised-2);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-light: var(--light);
+  --color-light-ink: var(--light-ink);
+  --color-live: var(--live);
+  --color-live-soft: var(--live-soft);
+  --color-next: var(--next);
+  --color-next-soft: var(--next-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-danger: var(--danger);
+  --color-sec-verse: var(--sec-verse);
+  --color-sec-chorus: var(--sec-chorus);
+  --color-sec-prechorus: var(--sec-prechorus);
+  --color-sec-bridge: var(--sec-bridge);
+  --color-sec-other: var(--sec-other);
+  --radius-chip: 4px;
+  --radius-control: 7px;
+  --radius-card: 10px;
+  --radius-panel: 14px;
+  --shadow-overlay: var(--shadow-overlay);
+  --ease-out: var(--ease-out);
+  --text-meta: 12px;
+  --text-meta--line-height: 16px;
+  --text-small: 13px;
+  --text-small--line-height: 18px;
+  --text-body: 14px;
+  --text-body--line-height: 20px;
+  --text-title: 16px;
+  --text-title--line-height: 22px;
+  --text-screen: 19px;
+  --text-screen--line-height: 26px;
+  --text-hero: 24px;
+  --text-hero--line-height: 30px;
+}
+
+/* ---------- Base ---------- */
 html,
 body,
 #root {
@@ -16,7 +117,120 @@ body,
 body {
   margin: 0;
   font-family: var(--font-sans);
-  background: #0d0e10;
-  color: #e8e6e3;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 450;
+  background: var(--bg);
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
+  font-feature-settings:
+    'cv05' 1,
+    'cv08' 1;
+  overflow: hidden;
+  user-select: none;
+}
+
+input,
+textarea,
+[contenteditable='true'],
+.selectable {
+  user-select: text;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--light) 28%, transparent);
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--light);
+  outline-offset: 2px;
+}
+
+button {
+  cursor: default;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Scrollbars themed from the palette */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 10px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Electron window dragging (macOS hidden title bar) */
+.drag {
+  -webkit-app-region: drag;
+}
+.no-drag {
+  -webkit-app-region: no-drag;
+}
+
+/* Pressable feedback */
+.press {
+  transition:
+    transform 140ms var(--ease-out),
+    background-color 140ms ease,
+    color 140ms ease,
+    border-color 140ms ease;
+}
+.press:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* Overlay entrance (menus, popovers) – origin-aware via Radix CSS variables */
+.overlay-enter {
+  transform-origin: var(
+    --radix-popper-transform-origin,
+    var(--radix-dropdown-menu-content-transform-origin, center)
+  );
+  animation: overlay-in 160ms var(--ease-out);
+}
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+.dialog-enter {
+  animation: dialog-in 200ms var(--ease-out);
+}
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.98);
+  }
+}
+.fade-enter {
+  animation: fade-in 160ms ease;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
 }

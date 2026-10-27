@@ -16,4 +16,6 @@ export interface OutputFrame {
   timer: { endsAt: number; label: string } | null
   /** Test pattern for output identification. */
   identify?: { label: string } | null
+  /** URLs of every media item the frame references (slide, backgrounds, logo). */
+  media: Record<string, { url: string; kind: 'image' | 'video' }>
 }

@@ -28,6 +28,7 @@ export default defineConfig({
   },
   renderer: {
     ...rendererConfig(),
+    define: { __WEB_MOCK__: 'false' },
     build: {
       ...rendererConfig().build,
       outDir: resolve(rootDir, 'out/renderer'),
