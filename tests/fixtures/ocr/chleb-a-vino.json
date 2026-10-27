@@ -1,0 +1,33 @@
+{
+  "title": "Chléb a víno",
+  "style": "photo",
+  "stanzas": [
+    {
+      "marker": "1.",
+      "lines": [
+        "[D]Sedáme ke stolu, [A]chléb se láme,",
+        "[Hmi]víno se nalévá [G]do číší,",
+        "[D]ve jménu tvém se [A]zde scházíme,",
+        "[G]i ten, kdo pláče, [A7]tě uslyší."
+      ]
+    },
+    {
+      "marker": "R:",
+      "lines": [
+        "[G]Buď s námi, [D]Pane, u stolu,",
+        "[Emi]ať nikdo [A]nezůstane sám,",
+        "[G]rozdělme radost i [D]bolest spolu,",
+        "jak [Emi]ty ses roz[A7]dělil [D]nám."
+      ]
+    },
+    {
+      "marker": "2.",
+      "lines": [
+        "[D]Děti se smějí a [A]staří vzpomínají,",
+        "[Hmi]stůl je dlouhý a [G/H]místa je dost,",
+        "[D]kdo přijde pozdě, [A]ten také smí jíst,",
+        "[G]u tebe každý je [A7]vítaný [D]host."
+      ]
+    }
+  ]
+}

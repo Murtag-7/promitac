@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Invented song used to test the OpenLyrics 0.9 importer (chords as root/structure/bass). -->
+<song xmlns="http://openlyrics.info/namespace/2009/song" version="0.9" createdIn="Ukázka" modifiedIn="Ukázka" modifiedDate="2026-10-02T18:00:00" chordNotation="german">
+  <properties>
+    <titles>
+      <title>Večerní modlitba</title>
+    </titles>
+    <authors>
+      <author type="words">Eva Smyšlená</author>
+    </authors>
+    <key>D</key>
+    <verseOrder>v1 c1 v2 c1 e</verseOrder>
+  </properties>
+  <lyrics>
+    <verse name="v1">
+      <lines><chord root="D"/>Den se <chord root="A"/>chýlí k <chord root="H" structure="m"/>spánku,<br/><chord root="G"/>tichne <chord root="A" structure="dom7"/>celý svět.</lines>
+    </verse>
+    <verse name="v1" lang="en">
+      <lines>The day is ending,<br/>the world grows still.</lines>
+    </verse>
+    <verse name="c1">
+      <lines><chord root="G">Pa</chord>ne, <chord root="D" bass="Fis">zů</chord>staň s námi,<br/><chord root="E" structure="m7"/>buď nám <chord root="A" structure="sus4"/>blízko.</lines>
+    </verse>
+    <verse name="v2">
+      <lines><tag name="it">Tiše</tag> <chord root="D"/>zhasínají okna,<br/>noc <chord root="H" structure="m"/>přichází.</lines>
+    </verse>
+    <verse name="e">
+      <lines><chord root="D" structure="maj"/>Amen.</lines>
+    </verse>
+  </lyrics>
+</song>

@@ -79,6 +79,19 @@ const BIBLE_INFO: BibleTranslationInfo[] = [
   }
 ]
 
+function importedInfo(data: BibleData): BibleTranslationInfo {
+  const info: BibleTranslationInfo = {
+    id: data.id,
+    name: data.name,
+    abbreviation: data.abbreviation,
+    language: data.language,
+    builtIn: false
+  }
+  if (data.license) info.license = data.license
+  if (data.source) info.source = data.source
+  return info
+}
+
 /** Fetch JSON that may be gzipped (some servers already decode it via Content-Encoding). */
 async function gunzipJson<T>(url: string): Promise<T> {
   const res = await fetch(url)
@@ -202,6 +215,9 @@ export function createMockApi(): PromitacApi {
         save('media', media)
       },
       remove: async (id) => {
+        const url = mediaUrls.get(id)
+        if (url) URL.revokeObjectURL(url)
+        mediaUrls.delete(id)
         media = media.filter((m) => m.id !== id)
         save('media', media)
       },
@@ -242,16 +258,7 @@ export function createMockApi(): PromitacApi {
       refresh: async () => outputStatus()
     },
     bible: {
-      listTranslations: async () => [
-        ...BIBLE_INFO,
-        ...[...importedBibles.values()].map((b) => ({
-          id: b.id,
-          name: b.name,
-          abbreviation: b.abbreviation,
-          language: b.language,
-          builtIn: false
-        }))
-      ],
+      listTranslations: async () => [...BIBLE_INFO, ...[...importedBibles.values()].map(importedInfo)],
       load: async (id) => {
         const imported = importedBibles.get(id)
         if (imported) return imported
@@ -262,14 +269,13 @@ export function createMockApi(): PromitacApi {
       importTranslation: async (fileName, xml) => {
         const { parseBibleXml } = await import('@core/bible/formats')
         const data = parseBibleXml(fileName, xml)
-        importedBibles.set(data.id, data)
-        return {
-          id: data.id,
-          name: data.name,
-          abbreviation: data.abbreviation,
-          language: data.language,
-          builtIn: false
-        }
+        // Same rule as the desktop BibleRepo: never reuse a built-in or an already imported id.
+        const taken = new Set([...BIBLE_INFO.map((b) => b.id), ...importedBibles.keys()])
+        let id = data.id
+        for (let n = 2; taken.has(id); n++) id = `${data.id}-${n}`
+        data.id = id
+        importedBibles.set(id, data)
+        return importedInfo(data)
       },
       removeTranslation: async (id) => {
         importedBibles.delete(id)
