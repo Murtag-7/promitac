@@ -42,7 +42,7 @@ function fakeFetch(handler: (req: Recorded, index: number) => Canned | Promise<C
     const status = res.status ?? 200
     let body: ConstructorParameters<typeof Response>[0] = null
     if (status !== 204 && res.body !== undefined) {
-      body = res.body instanceof Uint8Array ? new Blob([res.body]) : JSON.stringify(res.body)
+      body = res.body instanceof Uint8Array ? new Blob([new Uint8Array(res.body)]) : JSON.stringify(res.body)
     }
     return new Response(body, {
       status,

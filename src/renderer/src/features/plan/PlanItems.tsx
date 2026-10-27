@@ -1,5 +1,19 @@
-import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core'
-import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import {
+  closestCenter,
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent
+} from '@dnd-kit/core'
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy
+} from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical, TriangleAlert, X } from 'lucide-react'
 import type { PlanItem } from '@core/plan/model'
@@ -79,7 +93,9 @@ function Row({
   onUpdate: (item: PlanItem) => void
   onRemove: () => void
 }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id })
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: item.id
+  })
   const Icon = ITEM_ICON[item.type]
   return (
     <li
@@ -96,17 +112,23 @@ function Row({
           type="button"
           {...attributes}
           {...listeners}
-          aria-label={`${cs.common.more}: ${live?.title ?? ''}`}
+          aria-label={cs.plan.dragItem(live?.title ?? cs.plan.itemKinds[item.type])}
           aria-roledescription="přesunutelná položka"
           className="grid size-8 cursor-grab place-items-center rounded-control text-ink-3 hover:bg-raised-2 hover:text-ink active:cursor-grabbing"
         >
           <GripVertical className="size-4" aria-hidden />
         </button>
-        <button type="button" onClick={onSelect} className="flex min-w-0 flex-1 items-center gap-2.5 py-1 text-left">
+        <button
+          type="button"
+          onClick={onSelect}
+          className="flex min-w-0 flex-1 items-center gap-2.5 py-1 text-left"
+        >
           <span className="w-5 text-right text-meta tabular text-ink-3">{index + 1}</span>
           <Icon className="size-4 shrink-0 text-ink-3" strokeWidth={1.75} aria-hidden />
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-body font-[550] text-ink">{live?.title ?? cs.plan.itemKinds[item.type]}</span>
+            <span className="block truncate text-body font-[550] text-ink">
+              {live?.title ?? cs.plan.itemKinds[item.type]}
+            </span>
             <span className="flex items-center gap-1 text-meta text-ink-3">
               {live?.problem ? (
                 <span className="flex items-center gap-1 text-warn">

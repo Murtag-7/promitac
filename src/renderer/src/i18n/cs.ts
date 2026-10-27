@@ -220,6 +220,7 @@ export const cs = {
     deletePlanText: (t: string) => `Plán „${t}“ bude smazán.`,
     projectPlan: 'Promítat tento plán',
     removeItem: 'Odebrat z plánu',
+    dragItem: (t: string) => `Přesunout: ${t}`,
     pickSong: 'Vyberte píseň',
     pickMedia: 'Vyberte médium',
     noMedia: 'Zatím žádná média. Přidejte je v záložce Média.',
@@ -268,8 +269,6 @@ export const cs = {
     examples: ['J 3,16', 'Ž 23', '1K 13,4-7', 'Mt 5,3-12'] as string[],
     passageLabel: 'Text pasáže',
     selectionHint: 'Kliknutím vyberete verš, se Shiftem výběr rozšíříte.',
-    wholeChapter: 'Celá kapitola',
-    verseCount: (n: number) => `${n} ${n === 1 ? 'verš' : n >= 2 && n <= 4 ? 'verše' : 'veršů'}`,
     preview: 'Náhled na plátně',
     previewEmpty: 'Vyberte pasáž – tady uvidíte, jak bude vypadat na plátně.',
     previewSlides: 'Slajdy pasáže',
@@ -568,7 +567,8 @@ export const cs = {
         empty: 'Soubor neobsahuje text písně.',
         unreadable: 'Soubor se nepodařilo přečíst.'
       },
-      dismiss: 'Skrýt'
+      dismiss: 'Skrýt',
+      showSongs: 'Zobrazit písně'
     },
     ai: {
       title: 'Přesnější převod pomocí AI (volitelné)',
@@ -708,7 +708,8 @@ export const cs = {
     unsupported: (n: string) => `Soubor ${n} neumíme přečíst.`,
     failed: 'Převod se nepovedl.',
     aiOption: 'Přesnější převod pomocí AI',
-    aiOptionHint: 'Fotky se pošlou do Google Gemini (potřebuje internet). Text zkontrolujte stejně jako u OCR.',
+    aiOptionHint:
+      'Fotky se pošlou do Google Gemini (potřebuje internet). Text zkontrolujte stejně jako u OCR.',
     aiProgress: 'Převádím pomocí AI…',
     viaAi: 'Převedeno pomocí AI',
     formats: {

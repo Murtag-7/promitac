@@ -55,3 +55,28 @@ Rozhodnutí, která jsem udělal sám, protože je zadání neurčovalo. Každé
 - **OpenLyrics:** sloky se stejným jménem v jiném jazyce (překlady) se přeskočí; výsledek má formát „openlyrics", aby rozhraní ukázalo zdroj.
 - **Detekce duplicit:** stejný název nebo stejný první řádek (≥ 12 znaků) bez ohledu na diakritiku a interpunkci → nabídka „Nahradit" / „Uložit jako novou".
 - **Volitelná AI (P2) je vypnutá**: objeví se jen po vložení klíče Google Gemini v Nastavení. Prompt vynucuje doslovný přepis, výsledek prochází stejným parserem a stejnou kontrolou jako OCR. Bez klíče se nic neodesílá na internet.
+
+## OCR, PDF, DOCX
+
+- **OCR jen s jazykem `ces`, ne `ces+eng`.** Zadání uvádí `ces` + `eng`; měření ale ukázalo, že s přidaným `eng` Tesseract ztrácí českou diakritiku („Zář nad námi" → „Zar nad nami"): 97,45–99,47 % oproti 99,73–100 % s `ces`. Český model přečetl anglický text (Amazing Grace) stejně dobře jako `eng` (99,2 %). Oba modely jsou v aplikaci přibalené a jazyk je jedna konstanta `OCR_LANGUAGES` v `src/core/ocr/pipeline.ts` – návrat je změna jednoho řádku.
+- **Druhé čtení akordů:** izolované „C" čte OCR jako „c", „Cc" nebo „[0". Takové tokeny na akordových řádcích se znovu přečtou samostatně s abecedou akordů a nahradí se jen platným akordem; opravené akordy se zvýrazní jako nejisté.
+- **Akord se umístí před znak, jehož začátek je nejblíž levému okraji akordu**; akord v mezeře mezi slovy patří k následujícímu slovu. Pozice znaků uvnitř slova: boxy znaků z Tesseractu, jen když jsou konzistentní, jinak odhad podle typických šířek písmen (totéž u PDF).
+- **Hranice slok:** prázdný řádek se vloží, když je mezera > 1,6× medián výšky řádku nebo o 0,75× výšky větší než typická mezera na stránce.
+- **Neznámé tokeny na akordovém řádku** zůstanou jako `[token]` a zvýrazní se ke kontrole; taktové čáry a značky opakování se vynechají.
+- **Naskenované PDF** (bez textové vrstvy) se vykreslí a projde OCR; dekodéry pdf.js (JPX/JBIG2) a standardní písma jsou přibalené offline.
+
+## Bible a Média (UI)
+
+- **Bible – rozložení:** knihy → text kapitoly → náhled na plátně s akcemi. Klik vybere verš, Shift+klik výběr rozšíří a přepíše odkaz v poli. Klik na slajd v náhledu jen přepne náhled – při přípravě se nic omylem nepromítne.
+- **Neplatný odkaz** se ohlásí až po 0,7 s pauzy v psaní nebo po Enteru, aby nápověda neblikala u rozepsaného „J 3,".
+- **Zvolený překlad se pamatuje** (`bibleTranslationId`); po odebrání importovaného překladu se vrátí Bible kralická. Položka plánu s odebraným překladem se v Živě ukáže jako „Chybí v knihovně", ne jako věčné načítání.
+- **Importovaný překlad** nikdy nekoliduje id s přibaleným (`en-kjv` → `en-kjv-2`), ukládá se jako gzip JSON do `bibles/`.
+- **Média:** název = původní název souboru bez přípony, soubor se ukládá jako `<id><přípona>`. Náhledy jsou `object-contain` na černé (loga s průhledností nejsou oříznutá). Všechny akce jsou v menu „⋯", klik na obrázek nic nepromítne. Smazání média, které je logem nebo pozadím na plátně, nejdřív logo/pozadí zruší. „Jen na tomto počítači" je nad 50 MB vynucené.
+
+## Nastavení
+
+- **Výstupy:** mapa monitorů je informativní, monitor se volí v seznamu; „Automaticky" = první monitor, který není hlavní a není na něm ovládání. Test obrazu trvá 4 s a každé okno ukáže svůj vlastní název (rozlišení více projektorů). Stav „promítá" má krémovou tečku – zelená zůstává vyhrazená pro „Další".
+- **Motivy:** vestavěné motivy jsou jen ke čtení (editor nabídne „Duplikovat"); vlastní motivy se ukládají samy 300 ms po poslední změně. Náhled reaguje okamžitě bez prolnutí, skutečný přechod přehraje „Vyzkoušet přechod". Výchozí motiv nejde smazat.
+- **Záloha ZIP** zrcadlí datovou složku (manifest, písně, plány, motivy, tombstones, index médií, nastavení bez tajných klíčů; soubory médií jen s volbou „Včetně médií"). **Obnova** nejdřív ověří celý archiv (cesty mimo knihovnu → odmítnout celý), uloží současný stav do `backups/pred-obnovou-<čas>.zip` a připraví soubory ve skryté složce, takže chyba zápisu knihovnu nezmění. Připojení Supabase, AI klíč a název počítače se při obnově zachovají. Obnovený stav se při další synchronizaci chová jako běžná lokální změna (vědomé rozhodnutí: obnova je záměr uživatele).
+- **Import souborů písní:** soubory, které nejsou v UTF-8, se čtou jako Windows-1250 (staré české zpěvníkové soubory); stejná píseň se přeskočí a ohlásí.
+- **Supabase URL** jen `https://` (výjimka `http://localhost` pro vývoj). **AI klíč** se nikdy nezobrazí celý (jen poslední 4 znaky).

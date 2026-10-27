@@ -16,7 +16,13 @@ function nextSundayIso(): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
-export function PlanList({ selectedId, onSelect }: { selectedId: string | null; onSelect: (id: string) => void }) {
+export function PlanList({
+  selectedId,
+  onSelect
+}: {
+  selectedId: string | null
+  onSelect: (id: string) => void
+}) {
   const plans = usePlans((s) => s.plans)
   const livePlanId = useLive((s) => s.planId)
   const { upcoming, past } = sortPlans(Object.values(plans))
@@ -37,8 +43,20 @@ export function PlanList({ selectedId, onSelect }: { selectedId: string | null; 
             <p className="mt-1 text-small text-ink-2">{cs.plan.noPlansHint}</p>
           </div>
         ) : null}
-        <PlanGroup title={cs.plan.upcoming} plans={upcoming} selectedId={selectedId} liveId={livePlanId} onSelect={onSelect} />
-        <PlanGroup title={cs.plan.past} plans={past} selectedId={selectedId} liveId={livePlanId} onSelect={onSelect} />
+        <PlanGroup
+          title={cs.plan.upcoming}
+          plans={upcoming}
+          selectedId={selectedId}
+          liveId={livePlanId}
+          onSelect={onSelect}
+        />
+        <PlanGroup
+          title={cs.plan.past}
+          plans={past}
+          selectedId={selectedId}
+          liveId={livePlanId}
+          onSelect={onSelect}
+        />
         <PlanGroup
           title={cs.plan.templates}
           plans={templates}
@@ -86,14 +104,22 @@ function PlanGroup({
               {template ? (
                 <LayoutTemplate className="size-4 shrink-0 text-ink-3" strokeWidth={1.75} aria-hidden />
               ) : (
-                <span className="w-[58px] shrink-0 text-small tabular font-[550] text-ink-2">{formatPlanDate(p.date)}</span>
+                <span className="w-[58px] shrink-0 text-small tabular font-[550] text-ink-2">
+                  {formatPlanDate(p.date)}
+                </span>
               )}
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-body font-[550] text-ink">{p.title || cs.plan.defaultTitle}</span>
+                <span className="block truncate text-body font-[550] text-ink">
+                  {p.title || cs.plan.defaultTitle}
+                </span>
                 <span className="block text-meta text-ink-3">{cs.common.items(p.items.length)}</span>
               </span>
               {liveId === p.id ? (
-                <span className="size-2 shrink-0 rounded-full bg-live" aria-label={cs.live.onAir} title={cs.live.onAir} />
+                <span
+                  className="size-2 shrink-0 rounded-full bg-live"
+                  aria-label={cs.live.onAir}
+                  title={cs.live.onAir}
+                />
               ) : null}
             </button>
           </li>
@@ -119,7 +145,8 @@ function NewPlanButton({ onCreated }: { onCreated: (id: string) => void }) {
         ? await fromTemplate(templateId, date || todayIso())
         : await create(date || todayIso(), title.trim() || cs.plan.defaultTitle)
     if (!plan) return
-    if (templateId !== 'none' && title.trim()) await usePlans.getState().save({ ...plan, title: title.trim() })
+    if (templateId !== 'none' && title.trim())
+      await usePlans.getState().save({ ...plan, title: title.trim() })
     setOpen(false)
     onCreated(plan.id)
   }

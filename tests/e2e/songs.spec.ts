@@ -4,7 +4,10 @@ test.beforeEach(async ({ page }) => {
   await page.goto('/')
   await page.evaluate(() => localStorage.clear())
   await page.reload()
-  await page.getByRole('navigation', { name: 'Hlavní navigace' }).getByRole('button', { name: 'Písně' }).click()
+  await page
+    .getByRole('navigation', { name: 'Hlavní navigace' })
+    .getByRole('button', { name: 'Písně' })
+    .click()
 })
 
 test('search ignores diacritics', async ({ page }) => {
@@ -23,7 +26,10 @@ test('editing ChordPro updates the slide preview and survives a reload', async (
   await expect(page.getByTestId('song-slides')).toContainText('Nový most v písni')
   await expect(page.getByText('Uloženo')).toBeVisible({ timeout: 5000 })
   await page.reload()
-  await page.getByRole('navigation', { name: 'Hlavní navigace' }).getByRole('button', { name: 'Písně' }).click()
+  await page
+    .getByRole('navigation', { name: 'Hlavní navigace' })
+    .getByRole('button', { name: 'Písně' })
+    .click()
   await page.getByRole('button', { name: /Ty jsi skála má/ }).click()
   await expect(page.getByTestId('song-slides')).toContainText('Nový most v písni')
 })
@@ -32,7 +38,7 @@ test('arrangement chips add and remove sections', async ({ page }) => {
   await page.getByRole('button', { name: /Ty jsi skála má/ }).click()
   const arrangement = page.getByTestId('arrangement')
   await expect(arrangement.locator('li')).toHaveCount(2)
-  await page.getByRole('button', { name: 'Refrén', exact: true }).click()
+  await page.getByRole('button', { name: 'Refrén', exact: true }).last().click()
   await expect(arrangement.locator('li')).toHaveCount(3)
   await expect(page.getByTestId('song-slides').locator('[data-slide-index]')).toHaveCount(3)
   await arrangement.getByRole('button', { name: /Smazat Sloka 1/ }).click()
@@ -47,7 +53,7 @@ test('chords are kept in the file but never on the slides', async ({ page }) => 
 })
 
 test('a new song can be created and projected', async ({ page }) => {
-  await page.getByRole('button', { name: 'Nová píseň' }).click()
+  await page.getByRole('button', { name: 'Nová píseň' }).first().click()
   await page.getByLabel('Název', { exact: true }).fill('Moje nová píseň')
   const editor = page.getByTestId('chordpro-editor').locator('.cm-content')
   await editor.click()

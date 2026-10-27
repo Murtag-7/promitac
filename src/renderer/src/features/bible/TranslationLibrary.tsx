@@ -48,7 +48,8 @@ export function TranslationImport({ onImported }: { onImported: (t: BibleTransla
         accept={ACCEPT}
         className="sr-only"
         tabIndex={-1}
-        aria-label={cs.bible.importTranslation}
+        aria-hidden
+        data-testid="bible-file-input"
         onChange={(e) => {
           const file = e.target.files?.[0]
           e.target.value = ''

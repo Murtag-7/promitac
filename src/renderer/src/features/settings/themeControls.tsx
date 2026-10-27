@@ -122,7 +122,7 @@ export function SliderRow({
     <div
       role="group"
       aria-labelledby={id}
-      className="grid min-h-12 grid-cols-[minmax(0,1fr)_minmax(112px,1.15fr)_4rem] items-center gap-3 px-3.5 py-1.5"
+      className="grid min-h-12 grid-cols-[minmax(0,1.15fr)_minmax(104px,1fr)_3.5rem] items-center gap-3 px-3.5 py-1.5"
     >
       <span id={id} className={rowLabel}>
         {label}

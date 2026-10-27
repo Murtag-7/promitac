@@ -55,7 +55,10 @@ export function SongEditor({ songId }: { songId: string }) {
   const [previewIndex, setPreviewIndex] = useState(0)
   const [confirmDelete, setConfirmDelete] = useState(false)
 
-  const song = useMemo(() => safeParse(text, songId, storedSong?.updatedAt ?? ''), [text, songId, storedSong?.updatedAt])
+  const song = useMemo(
+    () => safeParse(text, songId, storedSong?.updatedAt ?? ''),
+    [text, songId, storedSong?.updatedAt]
+  )
   const slides = useMemo(
     () => (song ? songToSlides(song, { linesPerSlide: settings.linesPerSlide }) : []),
     [song, settings.linesPerSlide]
@@ -98,7 +101,10 @@ export function SongEditor({ songId }: { songId: string }) {
             {saving ? `${cs.common.save}…` : dirty ? cs.songs.unsaved : cs.common.saved}
           </p>
         </div>
-        <Button variant="secondary" onClick={() => void addToLivePlan({ type: 'song', songId }).then(() => toast(cs.common.addToPlan))}>
+        <Button
+          variant="secondary"
+          onClick={() => void addToLivePlan({ type: 'song', songId }).then(() => toast(cs.common.addToPlan))}
+        >
           <ListPlus aria-hidden />
           {cs.common.addToPlan}
         </Button>
@@ -134,7 +140,9 @@ export function SongEditor({ songId }: { songId: string }) {
               <Download aria-hidden />
               {cs.songs.exportChordPro}
             </MenuItem>
-            <MenuItem onSelect={() => song && downloadText(`${meta?.title || 'pisen'}.txt`, songToPlainText(song))}>
+            <MenuItem
+              onSelect={() => song && downloadText(`${meta?.title || 'pisen'}.txt`, songToPlainText(song))}
+            >
               <FileText aria-hidden />
               {cs.songs.exportText}
             </MenuItem>
@@ -149,13 +157,22 @@ export function SongEditor({ songId }: { songId: string }) {
 
       <div className="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.6fr)] gap-3 border-b border-line px-5 py-3">
         <Field label={cs.songs.meta.title}>
-          <Input value={meta?.title ?? ''} onChange={(e) => edit((t) => setOrRemove(t, 'title', e.target.value))} />
+          <Input
+            value={meta?.title ?? ''}
+            onChange={(e) => edit((t) => setOrRemove(t, 'title', e.target.value))}
+          />
         </Field>
         <Field label={cs.songs.meta.artist}>
-          <Input value={meta?.artist ?? ''} onChange={(e) => edit((t) => setOrRemove(t, 'artist', e.target.value))} />
+          <Input
+            value={meta?.artist ?? ''}
+            onChange={(e) => edit((t) => setOrRemove(t, 'artist', e.target.value))}
+          />
         </Field>
         <Field label={cs.songs.meta.key}>
-          <Input value={meta?.key ?? ''} onChange={(e) => edit((t) => setOrRemove(t, 'key', e.target.value))} />
+          <Input
+            value={meta?.key ?? ''}
+            onChange={(e) => edit((t) => setOrRemove(t, 'key', e.target.value))}
+          />
         </Field>
         <Field label={cs.songs.meta.tags}>
           <Input
@@ -214,7 +231,9 @@ export function SongEditor({ songId }: { songId: string }) {
                 <Select
                   aria-label={cs.songs.linesPerSlide}
                   value={readDirective(text, 'x_lines_per_slide')?.trim() || 'default'}
-                  onValueChange={(v) => edit((t) => setOrRemove(t, 'x_lines_per_slide', v === 'default' ? '' : v))}
+                  onValueChange={(v) =>
+                    edit((t) => setOrRemove(t, 'x_lines_per_slide', v === 'default' ? '' : v))
+                  }
                   options={[
                     { value: 'default', label: cs.songs.linesPerSlideDefault(settings.linesPerSlide) },
                     ...[1, 2, 3, 4, 5, 6, 8].map((n) => ({ value: String(n), label: String(n) }))
@@ -243,7 +262,10 @@ export function SongEditor({ songId }: { songId: string }) {
                 {cs.songs.noSlides}
               </p>
             ) : (
-              <div className="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-2" data-testid="song-slides">
+              <div
+                className="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-2"
+                data-testid="song-slides"
+              >
                 {slides.map((s, i) => {
                   const prev = slides[i - 1]
                   return (
@@ -264,7 +286,10 @@ export function SongEditor({ songId }: { songId: string }) {
       </div>
 
       <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
-        <DialogContent title={cs.songs.deleteTitle} description={cs.songs.deleteText(meta?.title || cs.common.untitled)}>
+        <DialogContent
+          title={cs.songs.deleteTitle}
+          description={cs.songs.deleteText(meta?.title || cs.common.untitled)}
+        >
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="secondary">{cs.common.cancel}</Button>

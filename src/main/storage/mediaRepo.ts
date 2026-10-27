@@ -1,4 +1,4 @@
-import { copyFile, rm, stat } from 'node:fs/promises'
+import { copyFile, readFile, rm, stat } from 'node:fs/promises'
 import { basename, extname, join } from 'node:path'
 import { MAX_SYNC_MEDIA_BYTES, type MediaItem, mediaKindFromName, mimeFromName } from '@core/media/model'
 import { newId, nowIso } from '@core/util/id'
@@ -145,6 +145,43 @@ export class MediaRepo {
       }
       await this.tombstones.add('media', id, deletedAt)
     })
+  }
+
+  /** Forget the cached index (after a backup restore rewrote it). */
+  invalidate(): void {
+    this.items = null
+  }
+
+  // ---- Synchronisation helpers ----
+
+  /** Every index entry, also those whose file has not been downloaded yet. */
+  async all(): Promise<Array<MediaItem & { storagePath?: string }>> {
+    return (await this.serial(() => this.load())).map((item) => ({ ...item }))
+  }
+
+  /** Insert or replace an entry coming from another computer (the file may follow later). */
+  async put(item: MediaItem & { storagePath?: string }): Promise<void> {
+    if (!isMediaItem(item)) return
+    await this.serial(async () => {
+      const items = await this.load()
+      await this.persist([...items.filter((m) => m.id !== item.id), { ...item }])
+      await this.tombstones.clear('media', item.id)
+    })
+  }
+
+  async hasFile(item: Pick<MediaItem, 'fileName'>): Promise<boolean> {
+    return SAFE_FILE_NAME.test(item.fileName) && this.fileExists(item.fileName)
+  }
+
+  async readFile(item: Pick<MediaItem, 'fileName'>): Promise<Uint8Array> {
+    if (!SAFE_FILE_NAME.test(item.fileName)) throw new Error('Invalid media file name')
+    return new Uint8Array(await readFile(join(this.dir, item.fileName)))
+  }
+
+  async writeFile(item: Pick<MediaItem, 'fileName'>, data: Uint8Array): Promise<void> {
+    if (!SAFE_FILE_NAME.test(item.fileName)) throw new Error('Invalid media file name')
+    await ensureDir(this.dir)
+    await writeFileAtomic(join(this.dir, item.fileName), data)
   }
 
   private newItem(sourceName: string, kind: MediaItem['kind'], size: number): MediaItem {

@@ -24,7 +24,11 @@ export const useSync = create<SyncStore>((set, get) => ({
       const prev = get().status
       set({ status })
       // A finished sync that brought data from other computers – reload the library quietly.
-      if (status.state === 'synced' && status.lastSyncedAt !== prev.lastSyncedAt && (status.changes ?? 0) > 0) {
+      if (
+        status.state === 'synced' &&
+        status.lastSyncedAt !== prev.lastSyncedAt &&
+        (status.changes ?? 0) > 0
+      ) {
         onRemoteChange()
       }
     })

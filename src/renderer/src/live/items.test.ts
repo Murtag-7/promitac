@@ -72,7 +72,12 @@ describe('buildFrame', () => {
 
   it('media slide frames carry the media url', () => {
     const items = buildLiveItems(plan, deps)
-    const frame = buildFrame({ ...base, settings: DEFAULT_SETTINGS, items, live: { itemId: 'c', slideIndex: 0, overlay: 'none' } })
+    const frame = buildFrame({
+      ...base,
+      settings: DEFAULT_SETTINGS,
+      items,
+      live: { itemId: 'c', slideIndex: 0, overlay: 'none' }
+    })
     expect(frame.slide?.kind).toBe('media')
     expect(frame.media.m1?.url).toBe('app://media/m1.png')
   })

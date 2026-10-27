@@ -47,65 +47,70 @@ export function ReferenceBar({
   const showError = invalid && errorShown
 
   return (
-    <div className="border-b border-line px-5 py-3">
-      <div className="flex items-end gap-3">
-        <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-          <Label htmlFor="bible-reference">{cs.bible.reference}</Label>
-          <div className="relative">
-            <Search
-              className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-3"
-              aria-hidden
-            />
-            <Input
-              id="bible-reference"
-              value={input}
-              onChange={(e) => change(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') commit()
-              }}
-              onBlur={commit}
-              placeholder={cs.bible.referencePlaceholder}
-              autoComplete="off"
-              spellCheck={false}
-              aria-invalid={showError || undefined}
-              aria-describedby={showError ? 'bible-reference-error' : undefined}
-              className="h-10 pl-9 text-[15px]"
-            />
+    <div className="border-b border-line py-3">
+      {/* Same width as the reading column below, so field, picker and text share one axis. */}
+      <div className="mx-auto w-full max-w-[72ch] px-6">
+        <div className="flex items-end gap-3">
+          <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+            <Label htmlFor="bible-reference">{cs.bible.reference}</Label>
+            <div className="relative">
+              <Search
+                className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-3"
+                aria-hidden
+              />
+              <Input
+                id="bible-reference"
+                value={input}
+                onChange={(e) => change(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') commit()
+                }}
+                onBlur={commit}
+                // Typing a reference is the main way in; the book list would otherwise come first in Tab order.
+                autoFocus
+                placeholder={cs.bible.referencePlaceholder}
+                autoComplete="off"
+                spellCheck={false}
+                aria-invalid={showError || undefined}
+                aria-describedby={showError ? 'bible-reference-error' : undefined}
+                className="h-10 pl-9 text-[15px]"
+              />
+            </div>
+          </div>
+          <div className="flex shrink-0 flex-col gap-1.5">
+            <span className="text-small font-[550] text-ink-2">{cs.bible.translation}</span>
+            <div className="flex items-center gap-1.5">
+              <Select
+                aria-label={cs.bible.translation}
+                value={current?.id}
+                onValueChange={onTranslation}
+                options={translations.map((t) => ({ value: t.id, label: `${t.abbreviation} · ${t.name}` }))}
+                className="h-10 w-[224px] 2xl:w-[260px] [&>span:first-child]:min-w-0 [&>span:first-child]:truncate"
+              />
+              {current && !current.builtIn ? (
+                <Tip label={cs.bible.removeTranslation}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="size-10"
+                    aria-label={cs.bible.removeTranslation}
+                    onClick={() => onRemoveTranslation(current)}
+                  >
+                    <Trash2 aria-hidden />
+                  </Button>
+                </Tip>
+              ) : null}
+            </div>
           </div>
         </div>
-        <div className="flex shrink-0 flex-col gap-1.5">
-          <span className="text-small font-[550] text-ink-2">{cs.bible.translation}</span>
-          <div className="flex items-center gap-1.5">
-            <Select
-              aria-label={cs.bible.translation}
-              value={current?.id}
-              onValueChange={onTranslation}
-              options={translations.map((t) => ({ value: t.id, label: `${t.abbreviation} · ${t.name}` }))}
-              className="h-10 w-[232px] 2xl:w-[300px] [&>span]:min-w-0 [&>span]:truncate"
-            />
-            {current && !current.builtIn ? (
-              <Tip label={cs.bible.removeTranslation}>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="size-10"
-                  aria-label={cs.bible.removeTranslation}
-                  onClick={() => onRemoveTranslation(current)}
-                >
-                  <Trash2 aria-hidden />
-                </Button>
-              </Tip>
-            ) : null}
-          </div>
+        <div aria-live="polite">
+          {showError ? (
+            <p id="bible-reference-error" className="mt-2 flex items-start gap-1.5 text-small text-warn">
+              <TriangleAlert className="mt-px size-4 shrink-0" aria-hidden />
+              {cs.bible.notFound}
+            </p>
+          ) : null}
         </div>
-      </div>
-      <div aria-live="polite">
-        {showError ? (
-          <p id="bible-reference-error" className="mt-2 flex items-start gap-1.5 text-small text-warn">
-            <TriangleAlert className="mt-px size-4 shrink-0" aria-hidden />
-            {cs.bible.notFound}
-          </p>
-        ) : null}
       </div>
     </div>
   )

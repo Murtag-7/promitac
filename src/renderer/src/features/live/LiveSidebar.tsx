@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
-import type {
-  Circle} from 'lucide-react';
+import type { Circle } from 'lucide-react'
 import {
   Eraser,
   Image as ImageIcon,
@@ -377,7 +376,7 @@ function OutputsStatus() {
               aria-hidden
               className={cn(
                 'size-2 rounded-full',
-                state === 'open' ? 'bg-next' : state === 'disabled' ? 'bg-ink-3/60' : 'bg-warn'
+                state === 'open' ? 'bg-light' : state === 'disabled' ? 'bg-ink-3/60' : 'bg-warn'
               )}
             />
             <span className="font-[550] text-ink">{o.name}</span>

@@ -29,7 +29,10 @@ test('typed reference shows the BKR text and adds it to the live plan', async ({
   await preview(page).getByRole('button', { name: 'Přidat do plánu' }).click()
   await expect(page.getByText('Jan 3,16 je v plánu')).toBeVisible()
 
-  await page.getByRole('navigation', { name: 'Hlavní navigace' }).getByRole('button', { name: 'Živě' }).click()
+  await page
+    .getByRole('navigation', { name: 'Hlavní navigace' })
+    .getByRole('button', { name: 'Živě' })
+    .click()
   const cueList = page.getByRole('complementary', { name: 'Plán' })
   await expect(cueList.getByRole('button', { name: /Jan 3,16/ })).toBeVisible()
 })
@@ -38,7 +41,10 @@ test('book browser: Žalmy → 23 shows the six verses of the chapter', async ({
   await openBible(page)
   const books = page.getByRole('complementary', { name: 'Knihy Bible' })
   await books.getByRole('button', { name: /^Žalmy\b/ }).click()
-  await books.getByRole('group', { name: 'Kapitoly – Žalmy' }).getByRole('button', { name: '23', exact: true }).click()
+  await books
+    .getByRole('group', { name: 'Kapitoly – Žalmy' })
+    .getByRole('button', { name: '23', exact: true })
+    .click()
 
   await expect(page.getByLabel('Odkaz')).toHaveValue('Žalmy 23')
   await expect(page.getByRole('heading', { name: 'Žalmy 23' })).toBeVisible()
@@ -55,13 +61,17 @@ test('click and shift-click select a verse range and update the reference', asyn
   await page.getByLabel('Odkaz').fill('Jan 3')
   await passage(page).locator('[data-verse="3:16"]').click()
   await expect(page.getByLabel('Odkaz')).toHaveValue('Jan 3,16')
-  await passage(page).locator('[data-verse="3:18"]').click({ modifiers: ['Shift'] })
+  await passage(page)
+    .locator('[data-verse="3:18"]')
+    .click({ modifiers: ['Shift'] })
   await expect(page.getByLabel('Odkaz')).toHaveValue('Jan 3,16–18')
   await expect(passage(page).locator('[aria-pressed="true"]')).toHaveCount(3)
   await expect(preview(page).getByText('2 slajdy', { exact: true })).toBeVisible()
 
   // Picking another slide of the preview changes the projected look, not the selection.
-  await preview(page).getByRole('button', { name: /Slajd 2/ }).click()
+  await preview(page)
+    .getByRole('button', { name: /Slajd 2/ })
+    .click()
   await expect(preview(page).getByRole('img', { name: /Náhled na plátně/ })).toContainText('Kdož věří v něho')
   await expect(page.getByLabel('Odkaz')).toHaveValue('Jan 3,16–18')
 })
@@ -79,7 +89,7 @@ test('an unknown reference explains what to type', async ({ page }) => {
 
 test('import a Zefania translation, read it, then remove it', async ({ page }) => {
   await openBible(page)
-  await page.getByLabel('Importovat překlad').setInputFiles(ZEFANIA_KJV)
+  await page.getByTestId('bible-file-input').setInputFiles(ZEFANIA_KJV)
   await expect(page.getByText('Překlad King James Version byl přidán.')).toBeVisible()
 
   const select = page.getByRole('combobox', { name: 'Překlad' })
@@ -97,7 +107,7 @@ test('import a Zefania translation, read it, then remove it', async ({ page }) =
 
 test('a file that is not a Bible shows a clear error', async ({ page }) => {
   await openBible(page)
-  await page.getByLabel('Importovat překlad').setInputFiles({
+  await page.getByTestId('bible-file-input').setInputFiles({
     name: 'pisen.xml',
     mimeType: 'text/xml',
     buffer: Buffer.from('<song><title>Píseň</title></song>')

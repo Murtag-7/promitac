@@ -82,9 +82,20 @@ export function AiPanel() {
             void saveKey()
           }}
         >
-          <label htmlFor="ai-key" className="text-body font-[550] text-ink">
-            {hasKey ? t.replaceKey : t.key}
-          </label>
+          <div className="flex min-h-8 items-center justify-between gap-4">
+            <label htmlFor="ai-key" className="text-body font-[550] text-ink">
+              {hasKey ? t.replaceKey : t.key}
+            </label>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="-mr-3"
+              onClick={() => void api().app.openExternal(AI_STUDIO_URL)}
+            >
+              {t.getKey}
+              <ExternalLink aria-hidden />
+            </Button>
+          </div>
           <div className="flex items-center gap-2">
             <div className="relative min-w-0 flex-1">
               <Input
@@ -100,7 +111,11 @@ export function AiPanel() {
                   setDraft(e.target.value)
                   if (error) setError(null)
                 }}
-                className={cn('pr-10 font-mono text-small', error && 'ring-danger/70 hover:ring-danger')}
+                className={cn(
+                  'pr-10 text-small',
+                  draft && 'font-mono',
+                  error && 'ring-danger/70 hover:ring-danger'
+                )}
               />
               <Tip label={visible ? t.hide : t.show}>
                 <button
@@ -128,20 +143,9 @@ export function AiPanel() {
               {error}
             </p>
           ) : null}
-          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
-            <p id="ai-key-privacy" className="text-small text-ink-2">
-              {t.privacy}
-            </p>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="-mr-2"
-              onClick={() => void api().app.openExternal(AI_STUDIO_URL)}
-            >
-              {t.getKey}
-              <ExternalLink aria-hidden />
-            </Button>
-          </div>
+          <p id="ai-key-privacy" className="text-small text-ink-2">
+            {t.privacy}
+          </p>
         </form>
       </SettingsGroup>
     </SettingsPage>

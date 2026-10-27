@@ -58,7 +58,10 @@ export function ImportPanel({ onClose }: { onClose: () => void }) {
     push({
       id: newId(),
       role: 'user',
-      files: files.map((f) => ({ name: f.name, image: classifyFile(f) === 'image' ? URL.createObjectURL(f) : undefined }))
+      files: files.map((f) => ({
+        name: f.name,
+        image: classifyFile(f) === 'image' ? URL.createObjectURL(f) : undefined
+      }))
     })
     const progressId = newId()
     push({ id: progressId, role: 'progress', label: cs.import.processing, fraction: null })
@@ -80,12 +83,18 @@ export function ImportPanel({ onClose }: { onClose: () => void }) {
 
   const updateSong = (id: string, song: Song): void =>
     setMessages((ms) =>
-      ms.map((m) => (m.id === id && m.role === 'result' ? { ...m, imported: { ...m.imported, result: { ...m.imported.result, song } } } : m))
+      ms.map((m) =>
+        m.id === id && m.role === 'result'
+          ? { ...m, imported: { ...m.imported, result: { ...m.imported.result, song } } }
+          : m
+      )
     )
   const markSaved = (id: string, savedId: string): void =>
     setMessages((ms) => ms.map((m) => (m.id === id && m.role === 'result' ? { ...m, savedId } : m)))
 
-  const review = messages.find((m): m is Extract<Message, { role: 'result' }> => m.id === reviewId && m.role === 'result')
+  const review = messages.find(
+    (m): m is Extract<Message, { role: 'result' }> => m.id === reviewId && m.role === 'result'
+  )
 
   return (
     <D.Root open onOpenChange={(o) => !o && onClose()}>
@@ -142,7 +151,11 @@ export function ImportPanel({ onClose }: { onClose: () => void }) {
                             {m.files.map((f) => (
                               <li key={f.name} className="flex items-center gap-2 text-small text-ink">
                                 {f.image ? (
-                                  <img src={f.image} alt="" className="size-12 rounded-[6px] object-cover ring-1 ring-line" />
+                                  <img
+                                    src={f.image}
+                                    alt=""
+                                    className="size-12 rounded-[6px] object-cover ring-1 ring-line"
+                                  />
                                 ) : (
                                   <FileUp className="size-4 text-ink-2" aria-hidden />
                                 )}
@@ -238,19 +251,34 @@ export function ImportPanel({ onClose }: { onClose: () => void }) {
                     e.target.value = ''
                   }}
                 />
-                <Button type="button" variant="ghost" size="sm" onClick={() => fileRef.current?.click()} disabled={busy}>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => fileRef.current?.click()}
+                  disabled={busy}
+                >
                   <Paperclip aria-hidden />
                   {cs.import.attach}
                 </Button>
                 {aiApiKey ? (
-                  <label className="flex items-center gap-2 text-small text-ink-2" title={cs.import.aiOptionHint}>
+                  <label
+                    className="flex items-center gap-2 text-small text-ink-2"
+                    title={cs.import.aiOptionHint}
+                  >
                     <Switch checked={useAi} onCheckedChange={setUseAi} aria-label={cs.import.aiOption} />
                     {cs.import.aiOption}
                   </label>
                 ) : (
                   <span className="hidden text-meta text-ink-3 sm:inline">⌘/Ctrl + Enter</span>
                 )}
-                <Button type="submit" variant="primary" size="sm" className="ml-auto" disabled={!text.trim() || busy}>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="sm"
+                  className="ml-auto"
+                  disabled={!text.trim() || busy}
+                >
                   {cs.import.send}
                 </Button>
               </div>
@@ -282,7 +310,9 @@ export function ImportPanel({ onClose }: { onClose: () => void }) {
 
 function AssistantBubble({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={cn('max-w-[92%] rounded-card bg-raised px-4 py-3 ring-1 ring-inset ring-line', className)}>
+    <div
+      className={cn('max-w-[92%] rounded-card bg-raised px-4 py-3 ring-1 ring-inset ring-line', className)}
+    >
       {children}
     </div>
   )

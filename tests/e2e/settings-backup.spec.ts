@@ -16,7 +16,9 @@ async function openBackup(page: Page): Promise<void> {
 }
 
 test.describe('Nastavení → Import, export, záloha', () => {
-  test('importing a .chordpro and a plain .txt adds the songs to Písně', async ({ page }) => {
+  test('importing a .chordpro, a plain .txt and OpenLyrics .xml adds the songs to Písně', async ({
+    page
+  }) => {
     await page.goto('/')
     await openBackup(page)
     await page
@@ -24,9 +26,10 @@ test.describe('Nastavení → Import, export, záloha', () => {
       .setInputFiles([
         join(FIXTURES, 'svetlo-rana.chordpro'),
         join(FIXTURES, 'most-pres-reku.txt'),
+        join(FIXTURES, 'tichy-pristav.xml'),
         join(FIXTURES, 'prazdny.txt')
       ])
-    await expect(page.getByText('Importovány 2 písně')).toBeVisible()
+    await expect(page.getByText('Importovány 3 písně')).toBeVisible()
     // The empty file is reported with its reason and stays listed until dismissed.
     const report = page.getByTestId('import-report')
     await expect(report).toContainText('1 soubor se nepodařilo načíst')
@@ -39,6 +42,7 @@ test.describe('Nastavení → Import, export, záloha', () => {
       .click()
     await expect(page.getByText('Světlo rána').first()).toBeVisible()
     await expect(page.getByText('Most přes řeku').first()).toBeVisible()
+    await expect(page.getByText('Tichý přístav').first()).toBeVisible()
 
     // Persisted: still there after a reload.
     await page.reload()

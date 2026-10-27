@@ -5,7 +5,10 @@
 
 function directiveRe(name: string, flags = 'im'): RegExp {
   const n = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  return new RegExp(`^[ \\t]*\\{[ \\t]*${n}[ \\t]*(?::[ \\t]*|[ \\t]+|(?=\\}))([^}\\n]*?)[ \\t]*\\}[ \\t]*$`, flags)
+  return new RegExp(
+    `^[ \\t]*\\{[ \\t]*${n}[ \\t]*(?::[ \\t]*|[ \\t]+|(?=\\}))([^}\\n]*?)[ \\t]*\\}[ \\t]*$`,
+    flags
+  )
 }
 
 /** Value of the first `{name: value}` directive, or null. */

@@ -117,7 +117,10 @@ function BackupGroup() {
       <SettingsRow label={t.exportWithMedia} hint={t.exportWithMediaHint}>
         <Switch
           className={SWITCH_HIT}
-          aria-label={t.exportWithMedia} checked={includeMedia} onCheckedChange={setIncludeMedia} />
+          aria-label={t.exportWithMedia}
+          checked={includeMedia}
+          onCheckedChange={setIncludeMedia}
+        />
       </SettingsRow>
       <SettingsRow label={t.importZip} hint={t.importZipHint}>
         <Dialog open={confirmOpen} onOpenChange={(open) => !restoring && setConfirmOpen(open)}>

@@ -31,7 +31,8 @@ export function PlanScreen() {
   useEffect(() => {
     if (selectedPlanId && plans[selectedPlanId]) return
     const { upcoming, past } = sortPlans(Object.values(plans))
-    const fallback = (livePlanId && plans[livePlanId] ? livePlanId : null) ?? upcoming[0]?.id ?? past[0]?.id ?? null
+    const fallback =
+      (livePlanId && plans[livePlanId] ? livePlanId : null) ?? upcoming[0]?.id ?? past[0]?.id ?? null
     if (fallback !== selectedPlanId) openPlan(fallback)
   }, [selectedPlanId, plans, livePlanId, openPlan])
 
@@ -57,6 +58,7 @@ function PlanEditor({ planId }: { planId: string }) {
   const setItems = usePlans((s) => s.setItems)
   const songs = useLibrary((s) => s.songs)
   const bibles = useBible((s) => s.data)
+  const bibleFailed = useBible((s) => s.failed)
   const media = useMedia((s) => s.items)
   const settings = useSettings((s) => s.settings)
   const setLivePlan = useLive((s) => s.setPlan)
@@ -66,12 +68,13 @@ function PlanEditor({ planId }: { planId: string }) {
   const [dialog, setDialog] = useState<'duplicate' | 'template' | 'delete' | null>(null)
 
   const liveItems = useMemo(
-    () => buildLiveItems(plan, { songs, bibles, media, settings }),
-    [plan, songs, bibles, media, settings]
+    () => buildLiveItems(plan, { songs, bibles, bibleFailed, media, settings }),
+    [plan, songs, bibles, bibleFailed, media, settings]
   )
   useEffect(() => {
     for (const it of liveItems) {
-      if (it.problem === 'loading' && it.item.type === 'bible') void useBible.getState().ensure(it.item.translationId)
+      if (it.problem === 'loading' && it.item.type === 'bible')
+        void useBible.getState().ensure(it.item.translationId)
     }
   }, [liveItems])
 
@@ -182,8 +185,12 @@ function PlanEditor({ planId }: { planId: string }) {
 
       <aside className="flex min-h-0 flex-col border-l border-line bg-panel" aria-label={cs.songs.previewTab}>
         <div className="border-b border-line px-4 py-3">
-          <h2 className="truncate text-title font-[650] text-ink">{selected?.title ?? cs.songs.previewTab}</h2>
-          {selected ? <p className="text-meta text-ink-3">{cs.common.slides(selected.slides.length)}</p> : null}
+          <h2 className="truncate text-title font-[650] text-ink">
+            {selected?.title ?? cs.songs.previewTab}
+          </h2>
+          {selected ? (
+            <p className="text-meta text-ink-3">{cs.common.slides(selected.slides.length)}</p>
+          ) : null}
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto p-4">
           {selected ? (

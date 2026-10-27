@@ -18,6 +18,10 @@ export class TombstoneStore {
     return this.cache
   }
 
+  invalidate(): void {
+    this.cache = null
+  }
+
   async add(table: SyncTable, id: string, deletedAt: string): Promise<void> {
     const t = await this.all()
     t[table][id] = deletedAt

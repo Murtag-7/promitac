@@ -14,7 +14,8 @@ export default tseslint.config(
       'playwright-report/**',
       'test-results/**',
       'coverage/**',
-      '.claude/**'
+      '.claude/**',
+      'src/renderer/out/**'
     ]
   },
   js.configs.recommended,
@@ -25,6 +26,11 @@ export default tseslint.config(
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       '@typescript-eslint/consistent-type-imports': 'error'
     }
+  },
+  {
+    files: ['**/*.cjs'],
+    languageOptions: { sourceType: 'commonjs', globals: { ...globals.node } },
+    rules: { '@typescript-eslint/no-require-imports': 'off' }
   },
   {
     files: ['src/renderer/**/*.{ts,tsx}'],

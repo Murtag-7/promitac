@@ -6,6 +6,8 @@ interface BibleState {
   translations: BibleTranslationInfo[]
   data: Record<string, BibleData>
   loading: Record<string, boolean>
+  /** Translations that could not be loaded (e.g. an imported one was removed). */
+  failed: Record<string, boolean>
   loadList(): Promise<void>
   ensure(id: string): Promise<BibleData | null>
   importFile(file: File): Promise<BibleTranslationInfo>
@@ -16,11 +18,12 @@ export const useBible = create<BibleState>((set, get) => ({
   translations: [],
   data: {},
   loading: {},
+  failed: {},
   loadList: async () => set({ translations: await api().bible.listTranslations() }),
   ensure: async (id) => {
     const cached = get().data[id]
     if (cached) return cached
-    if (get().loading[id]) return null
+    if (get().loading[id] || get().failed[id]) return null
     set({ loading: { ...get().loading, [id]: true } })
     try {
       const data = await api().bible.load(id)
@@ -28,6 +31,7 @@ export const useBible = create<BibleState>((set, get) => ({
       return data
     } catch (err) {
       console.error('Bible load failed', err)
+      set({ failed: { ...get().failed, [id]: true } })
       return null
     } finally {
       set({ loading: { ...get().loading, [id]: false } })

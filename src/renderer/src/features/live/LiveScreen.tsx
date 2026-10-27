@@ -23,11 +23,12 @@ export function useLiveItems() {
   const plan = usePlans((s) => (planId ? s.plans[planId] : undefined))
   const songs = useLibrary((s) => s.songs)
   const bibles = useBible((s) => s.data)
+  const bibleFailed = useBible((s) => s.failed)
   const media = useMedia((s) => s.items)
   const settings = useSettings((s) => s.settings)
   const items = useMemo(
-    () => buildLiveItems(plan, { songs, bibles, media, settings }),
-    [plan, songs, bibles, media, settings]
+    () => buildLiveItems(plan, { songs, bibles, bibleFailed, media, settings }),
+    [plan, songs, bibles, bibleFailed, media, settings]
   )
   // Bible translations load lazily the first time a plan needs them.
   useEffect(() => {

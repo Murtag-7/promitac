@@ -4,18 +4,25 @@ test.beforeEach(async ({ page }) => {
   await page.goto('/')
   await page.evaluate(() => localStorage.clear())
   await page.reload()
-  await page.getByRole('navigation', { name: 'Hlavní navigace' }).getByRole('button', { name: 'Plán' }).click()
+  await page
+    .getByRole('navigation', { name: 'Hlavní navigace' })
+    .getByRole('button', { name: 'Plán' })
+    .click()
 })
 
 test('create a plan, add songs and an announcement, reorder, project', async ({ page }) => {
   await page.getByRole('button', { name: 'Nový plán' }).click()
-  await page.getByLabel('Název', { exact: true }).fill('Večer chval')
-  await page.getByRole('button', { name: 'Nový plán' }).last().click()
-  await expect(page.getByLabel('Název', { exact: true })).toHaveValue('Večer chval')
+  const popover = page.getByRole('dialog')
+  await popover.getByLabel('Název', { exact: true }).fill('Večer chval')
+  await popover.getByRole('button', { name: 'Nový plán' }).click()
+  await expect(page.getByRole('textbox', { name: 'Název', exact: true })).toHaveValue('Večer chval')
 
   await page.getByRole('button', { name: 'Píseň', exact: true }).click()
   await page.getByRole('textbox', { name: 'Vyberte píseň' }).fill('svetlo')
-  await page.getByRole('list', { name: 'Vyberte píseň' }).getByRole('button', { name: /Světlo nad městem/ }).click()
+  await page
+    .getByRole('list', { name: 'Vyberte píseň' })
+    .getByRole('button', { name: /Světlo nad městem/ })
+    .click()
 
   await page.getByRole('button', { name: 'Píseň', exact: true }).click()
   await page.getByRole('textbox', { name: 'Vyberte píseň' }).fill('skala')
@@ -30,9 +37,14 @@ test('create a plan, add songs and an announcement, reorder, project', async ({ 
   await expect(items.nth(0)).toContainText('Světlo nad městem')
 
   // keyboard reorder with dnd-kit: focus handle, space, arrow down, space
-  await items.nth(0).getByRole('button', { name: /Další možnosti/ }).focus()
+  await items
+    .nth(0)
+    .getByRole('button', { name: /Přesunout/ })
+    .focus()
   await page.keyboard.press('Space')
+  await page.waitForTimeout(200)
   await page.keyboard.press('ArrowDown')
+  await page.waitForTimeout(300)
   await page.keyboard.press('Space')
   await expect(items.nth(1)).toContainText('Světlo nad městem')
 
@@ -42,7 +54,13 @@ test('create a plan, add songs and an announcement, reorder, project', async ({ 
 })
 
 test('bible passage item shows slides from the bundled Kralice Bible', async ({ page }) => {
-  await page.getByRole('button', { name: /Nedělní bohoslužba/ }).first().click()
-  await page.getByRole('button', { name: /Žalmy 23/ }).click()
+  await page
+    .getByRole('button', { name: /Nedělní bohoslužba/ })
+    .first()
+    .click()
+  await page
+    .getByTestId('plan-items')
+    .getByRole('button', { name: /^\d+\s*Žalmy 23/ })
+    .click()
   await expect(page.getByRole('complementary', { name: 'Náhled slajdů' })).toContainText('Hospodin')
 })

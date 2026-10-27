@@ -76,7 +76,8 @@ async function fromImages(files: File[], progress: ProgressFn): Promise<Imported
 async function blobToBase64(blob: Blob): Promise<string> {
   const bytes = new Uint8Array(await blob.arrayBuffer())
   let binary = ''
-  for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000))
+  for (let i = 0; i < bytes.length; i += 0x8000)
+    binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000))
   return btoa(binary)
 }
 
@@ -100,7 +101,9 @@ async function fromImagesWithAi(files: File[], apiKey: string, progress: Progres
 
 function serializeForReview(result: ImportResult): string {
   return result.song.sections
-    .map((s) => s.lines.map((l) => (l.kind === 'lyrics' ? l.segments.map((g) => g.text).join('') : '')).join('\n'))
+    .map((s) =>
+      s.lines.map((l) => (l.kind === 'lyrics' ? l.segments.map((g) => g.text).join('') : '')).join('\n')
+    )
     .join('\n\n')
 }
 
@@ -138,7 +141,11 @@ async function fromOpenLyrics(file: File): Promise<ImportedSong> {
 
 async function fromTextFile(file: File): Promise<ImportedSong> {
   const text = await file.text()
-  return { ...importFromText(text), source: /\.(chordpro|cho|crd|chopro|pro)$/i.test(file.name) ? 'chordpro' : 'text', fileNames: [file.name] }
+  return {
+    ...importFromText(text),
+    source: /\.(chordpro|cho|crd|chopro|pro)$/i.test(file.name) ? 'chordpro' : 'text',
+    fileNames: [file.name]
+  }
 }
 
 /**
@@ -150,12 +157,18 @@ export async function importFromFiles(
   progress: ProgressFn,
   opts: { aiApiKey?: string } = {}
 ): Promise<{ songs: ImportedSong[]; unsupported: string[] }> {
-  const images = files.filter((f) => classifyFile(f) === 'image').sort((a, b) => a.name.localeCompare(b.name, 'cs', { numeric: true }))
+  const images = files
+    .filter((f) => classifyFile(f) === 'image')
+    .sort((a, b) => a.name.localeCompare(b.name, 'cs', { numeric: true }))
   const others = files.filter((f) => classifyFile(f) !== 'image')
   const songs: ImportedSong[] = []
   const unsupported: string[] = []
   if (images.length > 0) {
-    songs.push(opts.aiApiKey ? await fromImagesWithAi(images, opts.aiApiKey, progress) : await fromImages(images, progress))
+    songs.push(
+      opts.aiApiKey
+        ? await fromImagesWithAi(images, opts.aiApiKey, progress)
+        : await fromImages(images, progress)
+    )
   }
   for (const file of others) {
     const kind = classifyFile(file)

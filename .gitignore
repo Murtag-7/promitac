@@ -16,3 +16,5 @@ blob-report/
 src/renderer/public/ocr/
 .vitest/
 scripts/.shot.tmp.mjs
+src/renderer/public/pdfjs/
+src/renderer/out/

@@ -1,12 +1,15 @@
 import { defineConfig, devices } from '@playwright/test'
+import { resolve } from 'node:path'
 
 // E2E_PORT / E2E_OUTDIR allow several independent runs side by side.
 const port = Number(process.env.E2E_PORT ?? 5199)
-const outDir = process.env.E2E_OUTDIR ?? 'out/web'
+// Absolute: vite resolves a relative --outDir against its root (src/renderer).
+const outDir = resolve(process.env.E2E_OUTDIR ?? 'out/web')
 
 /** UI tests against the renderer running in a plain browser with the mocked API. */
 export default defineConfig({
   testDir: 'tests/e2e',
+  outputDir: `test-results/web-${port}`,
   fullyParallel: true,
   reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
   timeout: 60_000,

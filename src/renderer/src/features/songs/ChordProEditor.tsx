@@ -2,7 +2,14 @@ import { useEffect, useRef } from 'react'
 import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands'
 import { HighlightStyle, StreamLanguage, syntaxHighlighting } from '@codemirror/language'
 import { EditorState } from '@codemirror/state'
-import { drawSelection, EditorView, highlightActiveLine, keymap, lineNumbers, placeholder } from '@codemirror/view'
+import {
+  drawSelection,
+  EditorView,
+  highlightActiveLine,
+  keymap,
+  lineNumbers,
+  placeholder
+} from '@codemirror/view'
 import { tags } from '@lezer/highlight'
 
 /** Tokenizer for ChordPro: directives `{…}`, chords `[…]`, `#` comments and section directives. */
@@ -137,5 +144,7 @@ export function ChordProEditor({
     }
   }, [value])
 
-  return <div ref={hostRef} className="selectable h-full min-h-0 overflow-hidden" data-testid="chordpro-editor" />
+  return (
+    <div ref={hostRef} className="selectable h-full min-h-0 overflow-hidden" data-testid="chordpro-editor" />
+  )
 }

@@ -16,7 +16,8 @@ import type { ImportedSong } from './pipeline'
 function SourceText({ text, imported }: { text: string; imported: ImportedSong }) {
   const byLine = useMemo(() => {
     const map = new Map<number, string[]>()
-    for (const u of imported.result.uncertain) map.set(u.sourceLine, [...(map.get(u.sourceLine) ?? []), u.text])
+    for (const u of imported.result.uncertain)
+      map.set(u.sourceLine, [...(map.get(u.sourceLine) ?? []), u.text])
     return map
   }, [imported.result.uncertain])
   return (
@@ -29,7 +30,10 @@ function SourceText({ text, imported }: { text: string; imported: ImportedSong }
           <div key={i}>
             {parts.map((p, j) =>
               words.includes(p) ? (
-                <mark key={j} className="rounded-[3px] bg-warn-soft px-0.5 text-warn ring-1 ring-inset ring-warn/40">
+                <mark
+                  key={j}
+                  className="rounded-[3px] bg-warn-soft px-0.5 text-warn ring-1 ring-inset ring-warn/40"
+                >
                   {p}
                 </mark>
               ) : (

@@ -135,3 +135,39 @@ describe('MediaRepo', () => {
     expect(existsSync(other.indexFile)).toBe(true)
   })
 })
+
+describe('MediaRepo sync helpers', () => {
+  it('put() stores a remote entry, the file can be written later and is then listed', async () => {
+    const { mkdtempSync } = await import('node:fs')
+    const { tmpdir } = await import('node:os')
+    const { join } = await import('node:path')
+    const { MediaRepo } = await import('./mediaRepo')
+    const { TombstoneStore } = await import('./tombstones')
+    const root = mkdtempSync(join(tmpdir(), 'promitac-media-sync-'))
+    const repo = new MediaRepo(
+      join(root, 'media'),
+      join(root, 'media.json'),
+      new TombstoneStore(join(root, 't.json'))
+    )
+    const item = {
+      id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+      name: 'Logo',
+      kind: 'image' as const,
+      fileName: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa.png',
+      mime: 'image/png',
+      size: 3,
+      localOnly: false,
+      updatedAt: '2026-10-01T00:00:00.000Z',
+      storagePath: 'org/aaaaaaaa-logo.png'
+    }
+    await repo.put(item)
+    expect(await repo.list()).toEqual([])
+    expect((await repo.all())[0]?.storagePath).toBe('org/aaaaaaaa-logo.png')
+    expect(await repo.hasFile(item)).toBe(false)
+    await repo.writeFile(item, new Uint8Array([1, 2, 3]))
+    expect(await repo.hasFile(item)).toBe(true)
+    expect(Array.from(await repo.readFile(item))).toEqual([1, 2, 3])
+    expect((await repo.list()).map((m) => m.id)).toEqual([item.id])
+    await expect(repo.writeFile({ fileName: '../evil.png' }, new Uint8Array())).rejects.toThrow()
+  })
+})

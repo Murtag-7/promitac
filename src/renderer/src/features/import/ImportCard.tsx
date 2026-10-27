@@ -40,7 +40,9 @@ export function ImportCard({
 
   const slides = useMemo(() => songToSlides(song, { linesPerSlide }), [song, linesPerSlide])
   const chordCount = useMemo(() => allChords(song).length, [song])
-  const titleMissing = imported.result.warnings.some((w) => w.code === 'missingTitle' || w.code === 'titleFromFirstLine')
+  const titleMissing = imported.result.warnings.some(
+    (w) => w.code === 'missingTitle' || w.code === 'titleFromFirstLine'
+  )
   const uncertain = imported.result.uncertain
 
   const save = async (id: string): Promise<void> => {
@@ -68,7 +70,10 @@ export function ImportCard({
       aria-label={cs.import.resultTitle}
     >
       <div className="flex flex-col gap-1.5">
-        <label className="text-meta font-[600] text-ink-3" htmlFor={`import-title-${imported.fileNames.join('-')}`}>
+        <label
+          className="text-meta font-[600] text-ink-3"
+          htmlFor={`import-title-${imported.fileNames.join('-')}`}
+        >
           {cs.songs.meta.title}
         </label>
         <Input
@@ -82,22 +87,38 @@ export function ImportCard({
       </div>
 
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-small text-ink-2">
-        <span>{cs.import.formats[imported.source === 'text' || imported.source === 'chordpro' ? imported.result.format : imported.source] ?? imported.result.format}</span>
-        <span aria-hidden className="text-ink-3">·</span>
+        <span>
+          {cs.import.formats[
+            imported.source === 'text' || imported.source === 'chordpro'
+              ? imported.result.format
+              : imported.source
+          ] ?? imported.result.format}
+        </span>
+        <span aria-hidden className="text-ink-3">
+          ·
+        </span>
         <span>{cs.import.sectionsFound(song.sections.length)}</span>
-        <span aria-hidden className="text-ink-3">·</span>
+        <span aria-hidden className="text-ink-3">
+          ·
+        </span>
         <span>{chordCount > 0 ? cs.import.withChords : cs.import.withoutChords}</span>
-        <span aria-hidden className="text-ink-3">·</span>
+        <span aria-hidden className="text-ink-3">
+          ·
+        </span>
         <span>{cs.common.slides(slides.length)}</span>
         {imported.viaAi ? (
           <>
-            <span aria-hidden className="text-ink-3">·</span>
+            <span aria-hidden className="text-ink-3">
+              ·
+            </span>
             <span>{cs.import.viaAi}</span>
           </>
         ) : null}
         {imported.images.length > 1 ? (
           <>
-            <span aria-hidden className="text-ink-3">·</span>
+            <span aria-hidden className="text-ink-3">
+              ·
+            </span>
             <span>{cs.import.pagesNote(imported.images.length)}</span>
           </>
         ) : null}
@@ -172,7 +193,12 @@ export function ImportCard({
               <FileSearch aria-hidden />
               {cs.import.review}
             </Button>
-            <Button variant="primary" className="ml-auto" disabled={busy || !song.meta.title.trim()} onClick={add}>
+            <Button
+              variant="primary"
+              className="ml-auto"
+              disabled={busy || !song.meta.title.trim()}
+              onClick={add}
+            >
               <Library aria-hidden />
               {cs.import.addToLibrary}
             </Button>

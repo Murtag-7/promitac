@@ -49,7 +49,11 @@ function computer(name: string, remote: MemoryRemote) {
     media: memoryMedia(),
     tombstones
   }
-  const engine = new SyncEngine({ remote, local: createRepoLocalStore(deps, join(root, 'state.json'), name), deviceName: name })
+  const engine = new SyncEngine({
+    remote,
+    local: createRepoLocalStore(deps, join(root, 'state.json'), name),
+    deviceName: name
+  })
   return { ...deps, engine }
 }
 

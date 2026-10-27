@@ -120,19 +120,16 @@ export function OutputsPanel() {
   }
 
   return (
-    <SettingsPage
-      title={t.title}
-      hint={t.hint}
-      actions={
-        <Button onClick={add}>
-          <Plus aria-hidden />
-          {t.addOutput}
-        </Button>
-      }
-    >
+    <SettingsPage title={t.title} hint={t.hint}>
       <DisplayMapGroup displays={displays} loaded={loaded} outputs={outputs} status={status} />
       <section className="flex flex-col gap-3" aria-label={t.outputsTitle}>
-        <h3 className="text-title font-[650] text-ink">{t.outputsTitle}</h3>
+        <div className="flex items-center justify-between gap-4">
+          <h3 className="text-title font-[650] text-ink">{t.outputsTitle}</h3>
+          <Button size="sm" onClick={add}>
+            <Plus aria-hidden />
+            {t.addOutput}
+          </Button>
+        </div>
         {outputs.map((o) => (
           <OutputCard
             key={o.id}
@@ -184,7 +181,7 @@ function DisplayMapGroup({
   )
 }
 
-const MAP_HEIGHT = 156
+const MAP_HEIGHT = 132
 const MAP_GAP = 6
 
 function DisplayMap({

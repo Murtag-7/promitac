@@ -39,6 +39,7 @@ export function currentLiveItems(): LiveItem[] {
   return buildLiveItems(plan, {
     songs: useLibrary.getState().songs,
     bibles: useBible.getState().data,
+    bibleFailed: useBible.getState().failed,
     media: useMedia.getState().items,
     settings: useSettings.getState().settings
   })

@@ -69,9 +69,8 @@ function SignedInRow({ email, refresh }: { email: string; refresh: () => Promise
 /** Signed in, not a member of any church yet: create one or join with an invite code. */
 export function NoOrgView({ status, refresh }: AccountViewProps) {
   return (
-    <SettingsPage title={s.title} hint={s.noOrgHint}>
+    <SettingsPage title={s.title} hint={`${s.noOrg} ${s.noOrgHint}`}>
       <SignedInRow email={status.user?.email ?? ''} refresh={refresh} />
-      <p className="-mb-2 text-body font-[550] text-ink">{s.noOrg}</p>
       <div className="grid gap-5 sm:grid-cols-2">
         <OrgForm
           title={s.createOrg}

@@ -18,7 +18,9 @@ export function AddItemBar({ onAdd }: { onAdd: (item: NewItem) => void }) {
   return (
     <div className="flex flex-wrap items-center gap-2" role="toolbar" aria-label={cs.common.add}>
       <SongPicker onPick={(songId) => onAdd({ type: 'song', songId })} />
-      <BiblePicker onPick={(reference, translationId) => onAdd({ type: 'bible', reference, translationId })} />
+      <BiblePicker
+        onPick={(reference, translationId) => onAdd({ type: 'bible', reference, translationId })}
+      />
       <MediaPicker onPick={(mediaId) => onAdd({ type: 'media', mediaId })} />
       <Button onClick={() => onAdd({ type: 'text', title: cs.plan.itemKinds.text, body: '' })}>
         <FileText aria-hidden />
@@ -37,7 +39,10 @@ function SongPicker({ onPick }: { onPick: (songId: string) => void }) {
   const [q, setQ] = useState('')
   const songs = useLibrary((s) => s.songs)
   const order = useLibrary((s) => s.order)
-  const ids = useMemo(() => (q.trim() ? songIndex.search(q, 40).map((r) => r.id) : order.slice(0, 40)), [q, order])
+  const ids = useMemo(
+    () => (q.trim() ? songIndex.search(q, 40).map((r) => r.id) : order.slice(0, 40)),
+    [q, order]
+  )
   return (
     <Popover
       open={open}
@@ -54,7 +59,10 @@ function SongPicker({ onPick }: { onPick: (songId: string) => void }) {
       </PopoverTrigger>
       <PopoverContent className="w-[360px] p-2">
         <div className="relative mb-2">
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-3" aria-hidden />
+          <Search
+            className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-3"
+            aria-hidden
+          />
           <Input
             autoFocus
             value={q}
@@ -84,13 +92,19 @@ function SongPicker({ onPick }: { onPick: (songId: string) => void }) {
                   }}
                   className="flex w-full flex-col rounded-control px-2.5 py-1.5 text-left hover:bg-raised"
                 >
-                  <span className="truncate text-body font-[550] text-ink">{s.meta.title || cs.common.untitled}</span>
-                  {s.meta.artist ? <span className="truncate text-meta text-ink-3">{s.meta.artist}</span> : null}
+                  <span className="truncate text-body font-[550] text-ink">
+                    {s.meta.title || cs.common.untitled}
+                  </span>
+                  {s.meta.artist ? (
+                    <span className="truncate text-meta text-ink-3">{s.meta.artist}</span>
+                  ) : null}
                 </button>
               </li>
             )
           })}
-          {ids.length === 0 ? <li className="px-2.5 py-3 text-small text-ink-2">{cs.songs.noResults(q)}</li> : null}
+          {ids.length === 0 ? (
+            <li className="px-2.5 py-3 text-small text-ink-2">{cs.songs.noResults(q)}</li>
+          ) : null}
         </ul>
       </PopoverContent>
     </Popover>
@@ -128,9 +142,16 @@ function BiblePicker({ onPick }: { onPick: (reference: string, translationId: st
         >
           <Field
             label={cs.bible.title}
-            hint={ref.trim() && !parsed ? cs.plan.invalidReference : parsed ? formatReference(parsed) : undefined}
+            hint={
+              ref.trim() && !parsed ? cs.plan.invalidReference : parsed ? formatReference(parsed) : undefined
+            }
           >
-            <Input autoFocus value={ref} onChange={(e) => setRef(e.target.value)} placeholder={cs.plan.biblePlaceholder} />
+            <Input
+              autoFocus
+              value={ref}
+              onChange={(e) => setRef(e.target.value)}
+              placeholder={cs.plan.biblePlaceholder}
+            />
           </Field>
           <Field label={cs.bible.translation}>
             <Select

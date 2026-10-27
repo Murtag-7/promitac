@@ -39,7 +39,10 @@ test('projects a slide into a real output window and stores songs as .chordpro f
     await expect(control.getByTestId('output-status-main')).toContainText('Promítá na')
 
     // The seeded template plan has a welcome text item → project it.
-    await control.getByRole('button', { name: /Vítejte/ }).first().click()
+    await control
+      .getByRole('button', { name: /Vítejte/ })
+      .first()
+      .click()
     await control.locator('[data-slide-index="0"]').click()
     await expect(output.getByTestId('output-root')).toContainText('Vítejte na bohoslužbě')
 

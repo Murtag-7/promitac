@@ -1,3 +1,4 @@
+/// <reference lib="dom" />
 import { expect, test, type Page } from '@playwright/test'
 
 async function openAccount(page: Page): Promise<void> {

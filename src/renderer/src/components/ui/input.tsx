@@ -37,10 +37,13 @@ export function Field({
   children: React.ReactNode
   className?: string
 }) {
+  // A real <label> wrapping the control gives it an accessible name (screen readers, tests).
   return (
     <div className={cn('flex flex-col gap-1.5', className)}>
-      <span className="text-small font-[550] text-ink-2">{label}</span>
-      {children}
+      <label className="flex flex-col gap-1.5">
+        <span className="text-small font-[550] text-ink-2">{label}</span>
+        {children}
+      </label>
       {hint ? <span className="text-meta text-ink-3">{hint}</span> : null}
     </div>
   )

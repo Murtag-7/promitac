@@ -58,7 +58,10 @@ export function SongList({
           </Button>
         </div>
         <div className="relative">
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-3" aria-hidden />
+          <Search
+            className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-3"
+            aria-hidden
+          />
           <input
             ref={inputRef}
             type="search"
@@ -84,7 +87,11 @@ export function SongList({
           ) : null}
         </div>
         {tags.length > 0 ? (
-          <div className="-mx-1 flex gap-1 overflow-x-auto px-1 pb-0.5" role="group" aria-label={cs.songs.meta.tags}>
+          <div
+            className="-mx-1 flex gap-1 overflow-x-auto px-1 pb-0.5"
+            role="group"
+            aria-label={cs.songs.meta.tags}
+          >
             <TagChip active={tag === null} onClick={() => setTag(null)}>
               {cs.songs.allTags}
             </TagChip>
@@ -99,8 +106,12 @@ export function SongList({
       <div className="min-h-0 flex-1 overflow-y-auto p-2">
         {ids.length === 0 ? (
           <div className="px-3 py-8 text-center">
-            <p className="text-body text-ink">{query ? cs.songs.noResults(query) : cs.songs.emptyLibraryTitle}</p>
-            <p className="mt-1 text-small text-ink-2">{query ? cs.songs.noResultsHint : cs.songs.emptyLibraryText}</p>
+            <p className="text-body text-ink">
+              {query ? cs.songs.noResults(query) : cs.songs.emptyLibraryTitle}
+            </p>
+            <p className="mt-1 text-small text-ink-2">
+              {query ? cs.songs.noResultsHint : cs.songs.emptyLibraryText}
+            </p>
           </div>
         ) : (
           <ul aria-label={cs.common.songsCount(ids.length)}>
@@ -140,12 +151,22 @@ export function SongList({
           </ul>
         )}
       </div>
-      <div className="border-t border-line px-4 py-2 text-meta text-ink-3">{cs.common.songsCount(ids.length)}</div>
+      <div className="border-t border-line px-4 py-2 text-meta text-ink-3">
+        {cs.common.songsCount(ids.length)}
+      </div>
     </aside>
   )
 }
 
-function TagChip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+function TagChip({
+  active,
+  onClick,
+  children
+}: {
+  active: boolean
+  onClick: () => void
+  children: React.ReactNode
+}) {
   return (
     <button
       type="button"

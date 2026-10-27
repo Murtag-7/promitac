@@ -17,7 +17,9 @@ export class FileAuthStorage implements AuthStorage {
     try {
       const raw = await readFile(this.file)
       const json =
-        safeStorage.isEncryptionAvailable() && raw[0] !== 0x7b ? safeStorage.decryptString(raw) : raw.toString('utf8')
+        safeStorage.isEncryptionAvailable() && raw[0] !== 0x7b
+          ? safeStorage.decryptString(raw)
+          : raw.toString('utf8')
       this.cache = JSON.parse(json) as Record<string, string>
     } catch {
       this.cache = {}

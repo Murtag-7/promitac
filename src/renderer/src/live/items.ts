@@ -27,6 +27,8 @@ export interface LiveItem {
 export interface LiveDeps {
   songs: Record<string, Song>
   bibles: Record<string, BibleData>
+  /** Translations that failed to load – shown as missing instead of loading forever. */
+  bibleFailed?: Record<string, boolean>
   media: MediaItem[]
   settings: AppSettings
 }
@@ -51,7 +53,10 @@ export function buildLiveItem(item: PlanItem, deps: LiveDeps): LiveItem {
       if (!ref) return { id: item.id, item, title: item.reference, slides: [], problem: 'invalid' }
       const data = deps.bibles[item.translationId]
       const title = formatReference(ref)
-      if (!data) return { id: item.id, item, title, slides: [], problem: 'loading' }
+      if (!data) {
+        const problem = deps.bibleFailed?.[item.translationId] ? 'missing' : 'loading'
+        return { id: item.id, item, title, slides: [], problem }
+      }
       const slides = passageToSlides(getVerses(data, ref), ref, {
         maxChars: settings.bibleMaxChars,
         verseNumbers: settings.bibleVerseNumbers,
@@ -99,6 +104,7 @@ export function buildLiveItems(plan: ServicePlan | null | undefined, deps: LiveD
       hit &&
       hit.deps.songs === deps.songs &&
       hit.deps.bibles === deps.bibles &&
+      hit.deps.bibleFailed === deps.bibleFailed &&
       hit.deps.media === deps.media &&
       hit.deps.settings === deps.settings
     ) {

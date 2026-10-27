@@ -98,7 +98,8 @@ export function MediaScreen() {
           accept={ACCEPT}
           className="sr-only"
           tabIndex={-1}
-          aria-label={cs.media.import}
+          aria-hidden
+          data-testid="media-file-input"
           onChange={(e) => {
             const files = Array.from(e.target.files ?? [])
             e.target.value = ''

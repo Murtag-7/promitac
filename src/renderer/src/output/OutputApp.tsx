@@ -9,6 +9,7 @@ import { ProjectionView } from '@/components/projection/ProjectionView'
 export function OutputApp({ outputId }: { outputId: string }) {
   const [frame, setFrame] = useState<OutputFrame | null>(null)
   const [override, setOverride] = useState<Theme | null>(null)
+  const [outputName, setOutputName] = useState<string | null>(null)
 
   useEffect(() => {
     document.title = `Promítač – výstup ${outputId}`
@@ -21,7 +22,9 @@ export function OutputApp({ outputId }: { outputId: string }) {
     let alive = true
     const load = async (): Promise<void> => {
       const [settings, themes] = await Promise.all([api().settings.get(), api().themes.list()])
-      const themeId = settings.outputs.find((o) => o.id === outputId)?.themeId
+      const config = settings.outputs.find((o) => o.id === outputId)
+      const themeId = config?.themeId
+      if (alive) setOutputName(config?.name ?? null)
       const all = [...BUILT_IN_THEMES, ...themes]
       if (alive) setOverride(themeId ? (all.find((t) => t.id === themeId) ?? null) : null)
     }
@@ -33,7 +36,15 @@ export function OutputApp({ outputId }: { outputId: string }) {
     }
   }, [outputId])
 
-  const shown = useMemo(() => (frame && override ? { ...frame, theme: override } : frame), [frame, override])
+  // Each window shows its own name in the test pattern, so several projectors can be told apart.
+  const shown = useMemo(() => {
+    if (!frame) return frame
+    return {
+      ...frame,
+      theme: override ?? frame.theme,
+      identify: frame.identify && outputName ? { label: outputName } : frame.identify
+    }
+  }, [frame, override, outputName])
 
   return (
     <div className="h-screen w-screen cursor-none bg-black" data-testid="output-root">

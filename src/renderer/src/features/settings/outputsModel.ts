@@ -29,7 +29,7 @@ export function outputState(output: OutputConfig, status: OutputStatus | undefin
 
 /** Same dot colours as the outputs status in the Live sidebar. */
 export const STATE_DOT: Record<OutputWindowState, string> = {
-  open: 'bg-next',
+  open: 'bg-light',
   disabled: 'bg-ink-3/60',
   'no-display': 'bg-warn',
   error: 'bg-warn'

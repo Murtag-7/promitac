@@ -10,7 +10,10 @@ test.beforeEach(async ({ page }) => {
 })
 
 test('clicking a slide puts it on screen, keys navigate and black out', async ({ page }) => {
-  await page.getByRole('button', { name: /Světlo nad městem/ }).first().click()
+  await page
+    .getByRole('button', { name: /Světlo nad městem/ })
+    .first()
+    .click()
   await page.locator('[data-slide-index="0"]').click()
   await expect(livePreview(page)).toContainText('Nad střechami vychází den')
   await expect(page.getByTestId('live-pill')).toContainText('Světlo nad městem')
@@ -33,7 +36,10 @@ test('clicking a slide puts it on screen, keys navigate and black out', async ({
 })
 
 test('the output window receives the frame and never shows chords', async ({ page, context }) => {
-  await page.getByRole('button', { name: /Světlo nad městem/ }).first().click()
+  await page
+    .getByRole('button', { name: /Světlo nad městem/ })
+    .first()
+    .click()
   await page.locator('[data-slide-index="2"]').click()
   const output = await context.newPage()
   await output.goto('/?output=main')
@@ -50,7 +56,10 @@ test('the output window receives the frame and never shows chords', async ({ pag
 })
 
 test('next on the last slide continues with the next plan item', async ({ page }) => {
-  await page.getByRole('button', { name: /Žehnej, duše má/ }).first().click()
+  await page
+    .getByRole('button', { name: /Žehnej, duše má/ })
+    .first()
+    .click()
   const tiles = page.locator('[data-slide-index]')
   const count = await tiles.count()
   await tiles.nth(count - 1).click()

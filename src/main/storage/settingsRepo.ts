@@ -17,6 +17,11 @@ export class SettingsRepo {
     return this.cache
   }
 
+  /** Forget the cached copy (after a backup restore rewrote the file). */
+  invalidate(): void {
+    this.cache = null
+  }
+
   async update(patch: Partial<AppSettings>): Promise<AppSettings> {
     const next = withDefaults({ ...(await this.get()), ...patch })
     this.cache = next
