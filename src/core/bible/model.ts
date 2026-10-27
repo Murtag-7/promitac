@@ -13,6 +13,8 @@ export interface BibleData {
   abbreviation: string
   language: string
   license?: string
+  /** Where the text comes from (attribution shown next to the license). */
+  source?: string
   books: BibleBook[]
 }
 
@@ -23,4 +25,5 @@ export interface BibleTranslationInfo {
   language: string
   builtIn: boolean
   license?: string
+  source?: string
 }

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "cs-bkr",
+    "name": "Bible kralická (1613)",
+    "abbreviation": "BKR",
+    "language": "cs",
+    "builtIn": true,
+    "license": "Public Domain",
+    "source": "https://github.com/scrollmapper/bible_databases (formats/json/CzeBKR.json, SWORD module CzeBKR)"
+  },
+  {
+    "id": "en-kjv",
+    "name": "King James Version (1769, Pure Cambridge Edition)",
+    "abbreviation": "KJV",
+    "language": "en",
+    "builtIn": true,
+    "license": "Public Domain",
+    "source": "https://github.com/scrollmapper/bible_databases (formats/json/KJVPCE.json, SWORD module KJVPCE)"
+  }
+]

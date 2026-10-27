@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Test fixture: Bible kralická (public domain), OSIS milestone form. -->
+<osis xmlns="http://www.bibletechnologies.net/2003/OSIS/namespace">
+<osisText osisIDWork="CzeBKR" osisRefWork="Bible" xml:lang="cs">
+<header>
+<work osisWork="CzeBKR"><title>Bible kralická</title><language>cs</language></work>
+</header>
+<div type="book" osisID="Gen">
+<chapter sID="Gen.1" osisID="Gen.1" n="1"/>
+<div type="section" sID="gen-s1"/>
+<title>Stvoření světa</title>
+<p>
+<verse sID="Gen.1.1" osisID="Gen.1.1"/>Na počátku stvořil Bůh nebe a zemi.<verse eID="Gen.1.1"/>
+<verse sID="Gen.1.2" osisID="Gen.1.2"/>Země pak byla nesličná a pustá,<note type="explanation" placement="foot">Poznámka pod čarou.</note> a tma byla nad propastí, a Duch Boží vznášel se nad vodami.<verse eID="Gen.1.2"/>
+<verse sID="Gen.1.3" osisID="Gen.1.3"/>I řekl Bůh: Buď světlo! I bylo světlo.<verse eID="Gen.1.3"/>
+</p>
+<div type="section" eID="gen-s1"/>
+<chapter eID="Gen.1"/>
+<chapter sID="Gen.2" osisID="Gen.2" n="2"/>
+<p>
+<verse sID="Gen.2.1" osisID="Gen.2.1"/>A tak dokonána jsou nebesa a země, i všecko vojsko jejich.<verse eID="Gen.2.1"/>
+<verse sID="Gen.2.2" osisID="Gen.2.2"/>A dokonal Bůh dne sedmého dílo své, kteréž dělal;</p>
+<p>a odpočinul v den sedmý ode všeho díla svého, kteréž byl dělal.<verse eID="Gen.2.2"/>
+</p>
+<chapter eID="Gen.2"/>
+</div>
+<div type="book" osisID="John">
+<chapter sID="John.1" osisID="John.1"/>
+<lg>
+<l><verse sID="John.1.1" osisID="John.1.1"/>Na počátku bylo Slovo,</l><l>a to Slovo bylo u Boha,</l><l>a to Slovo byl Bůh.<verse eID="John.1.1"/></l>
+</lg>
+<p>
+<verse sID="John.1.2" osisID="John.1.2"/>To bylo na počátku u Boha.<verse eID="John.1.2"/>
+<verse sID="John.1.3" osisID="John.1.3"/>Všecky věci skrze ně učiněny jsou, a bez něho nic není učiněno, což učiněno jest.<verse eID="John.1.3"/>
+</p>
+<chapter eID="John.1"/>
+<chapter sID="John.3" osisID="John.3"/>
+<p>
+<verse sID="John.3.16" osisID="John.3.16"/>Nebo tak Bůh miloval svět, že Syna svého jednorozeného dal,<lb/>aby každý, kdož věří v něho, nezahynul, ale měl život věčný.<verse eID="John.3.16"/>
+<verse sID="John.3.17" osisID="John.3.17"/>Neboť neposlal Bůh Syna svého na svět, aby odsoudil svět, ale aby spasen byl svět skrze něho.<verse eID="John.3.17"/>
+</p>
+<chapter eID="John.3"/>
+</div>
+</osisText>
+</osis>
