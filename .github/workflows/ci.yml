@@ -25,6 +25,8 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm test
+      - name: Supabase migrations + RLS (local PostgreSQL)
+        run: bash scripts/test-migrations.sh
       - name: OCR accuracy
         run: npm run test:ocr
       - name: Install Playwright Chromium

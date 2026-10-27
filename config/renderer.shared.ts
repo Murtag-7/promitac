@@ -20,7 +20,7 @@ const CSP = [
   "img-src 'self' app: blob: data:",
   "media-src 'self' app: blob: data:",
   "font-src 'self' app: data:",
-  "connect-src 'self' app: blob: data:"
+  "connect-src 'self' app: blob: data: https://generativelanguage.googleapis.com"
 ].join('; ')
 
 /** Production builds get a strict CSP; the dev server needs inline scripts for React refresh. */

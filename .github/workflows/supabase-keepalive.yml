@@ -1,0 +1,35 @@
+name: Supabase keepalive
+
+# Supabase free projects pause after a week without activity. This pings the database once a
+# day. It only does something when the repository has the secrets SUPABASE_URL and
+# SUPABASE_ANON_KEY (see docs/SUPABASE_SETUP.md); otherwise it exits successfully.
+on:
+  schedule:
+    - cron: '17 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+    steps:
+      - name: Skip when Supabase is not configured
+        if: env.SUPABASE_URL == '' || env.SUPABASE_ANON_KEY == ''
+        run: echo "Secrets SUPABASE_URL / SUPABASE_ANON_KEY are not set – nothing to do."
+      - name: Ping the database
+        if: env.SUPABASE_URL != '' && env.SUPABASE_ANON_KEY != ''
+        run: |
+          status=$(curl -sS -o response.txt -w '%{http_code}' -X POST \
+            "${SUPABASE_URL%/}/rest/v1/rpc/keepalive" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
+            -H 'Content-Type: application/json' \
+            -d '{}')
+          echo "HTTP ${status}: $(cat response.txt)"
+          test "${status}" = "200"

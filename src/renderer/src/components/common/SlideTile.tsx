@@ -19,7 +19,7 @@ export function SlideTile({
 }: {
   slide: Slide
   index: number
-  state: 'live' | 'next' | 'idle'
+  state: 'live' | 'next' | 'selected' | 'idle'
   onClick?: () => void
   showSection: boolean
   mediaUrl?: string
@@ -36,7 +36,8 @@ export function SlideTile({
       className={cn(
         'group relative flex aspect-[16/9] w-full flex-col overflow-hidden rounded-card bg-raised p-3 text-left ring-1 ring-inset ring-line transition-[box-shadow,background-color] duration-100 hover:bg-raised-2 hover:ring-line-strong',
         state === 'live' && 'bg-live-soft ring-2 ring-live hover:bg-live-soft hover:ring-live',
-        state === 'next' && 'ring-2 ring-next/80 hover:ring-next'
+        state === 'next' && 'ring-2 ring-next/80 hover:ring-next',
+        state === 'selected' && 'ring-2 ring-light/80 hover:ring-light'
       )}
     >
       <div className="mb-1.5 flex h-5 items-center gap-1.5">

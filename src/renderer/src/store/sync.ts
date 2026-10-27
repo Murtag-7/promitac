@@ -23,8 +23,10 @@ export const useSync = create<SyncStore>((set, get) => ({
     api().sync.onStatus((status) => {
       const prev = get().status
       set({ status })
-      // A finished sync may have brought new data – reload the library quietly.
-      if (status.state === 'synced' && status.lastSyncedAt !== prev.lastSyncedAt) onRemoteChange()
+      // A finished sync that brought data from other computers – reload the library quietly.
+      if (status.state === 'synced' && status.lastSyncedAt !== prev.lastSyncedAt && (status.changes ?? 0) > 0) {
+        onRemoteChange()
+      }
     })
     try {
       set({ status: await api().sync.status() })

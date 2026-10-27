@@ -217,6 +217,15 @@ button {
     transform: translate(-50%, -48%) scale(0.98);
   }
 }
+.sheet-enter {
+  animation: sheet-in 240ms var(--ease-out);
+}
+@keyframes sheet-in {
+  from {
+    transform: translateX(32px);
+    opacity: 0;
+  }
+}
 .fade-enter {
   animation: fade-in 160ms ease;
 }

@@ -21,7 +21,13 @@ function handle(channel: string, fn: Handler): void {
   })
 }
 
-export function registerCoreIpc(ctx: AppContext, onLibraryChanged: () => void): void {
+export interface CoreIpcHooks {
+  onLibraryChanged: () => void
+  onSettingsChanged: (patch: Partial<AppSettings>) => void
+}
+
+export function registerCoreIpc(ctx: AppContext, hooks: CoreIpcHooks): void {
+  const onLibraryChanged = hooks.onLibraryChanged
   handle(IPC.appVersion, () => app.getVersion())
   handle(IPC.appOpenDataFolder, async () => {
     await shell.openPath(dataDir())
@@ -61,5 +67,9 @@ export function registerCoreIpc(ctx: AppContext, onLibraryChanged: () => void): 
   })
 
   handle(IPC.settingsGet, () => ctx.settings.get())
-  handle(IPC.settingsUpdate, (patch: Partial<AppSettings>) => ctx.settings.update(patch))
+  handle(IPC.settingsUpdate, async (patch: Partial<AppSettings>) => {
+    const next = await ctx.settings.update(patch)
+    hooks.onSettingsChanged(patch)
+    return next
+  })
 }

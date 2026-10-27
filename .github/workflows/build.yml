@@ -1,0 +1,77 @@
+name: Build desktop apps
+
+# macOS (.dmg, Apple Silicon + Intel) and Windows (.exe installer).
+# Runs manually (Actions → "Build desktop apps" → Run workflow), on version tags v*,
+# and on pull requests to main so every PR has downloadable test builds.
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build (${{ matrix.name }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macOS
+            os: macos-latest
+            command: npx electron-builder --mac --arm64 --x64 --publish never
+            artifact: Promitac-macOS
+            files: |
+              release/*.dmg
+          - name: Windows
+            os: windows-latest
+            command: npx electron-builder --win --x64 --publish never
+            artifact: Promitac-Windows
+            files: |
+              release/*.exe
+    env:
+      # Optional: bake a Supabase project into the build so users only sign in.
+      PROMITAC_SUPABASE_URL: ${{ secrets.PROMITAC_SUPABASE_URL }}
+      PROMITAC_SUPABASE_ANON_KEY: ${{ secrets.PROMITAC_SUPABASE_ANON_KEY }}
+      # No paid certificates: never try to find a signing identity / notarize.
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Package
+        run: ${{ matrix.command }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.files }}
+          if-no-files-found: error
+          retention-days: 30
+
+  release:
+    name: GitHub Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist-artifacts
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist-artifacts/**/*
+          draft: false
+          generate_release_notes: true

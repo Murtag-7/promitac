@@ -5,6 +5,8 @@ export interface OutputConfig {
   name: string
   /** Electron display id, or 'auto' = first display that is not the primary one. */
   displayId: number | 'auto'
+  /** Label of the chosen display – used to find it again when the OS assigns a new id after reconnect. */
+  displayLabel?: string
   enabled: boolean
   /** Show in a normal window instead of fullscreen (testing with one monitor). */
   windowed: boolean

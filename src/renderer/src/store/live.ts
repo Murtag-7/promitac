@@ -1,11 +1,13 @@
 import { create } from 'zustand'
 import { initialLiveState, liveReducer, type LiveAction, type LiveState } from '@core/live/state'
+import type { PlanItem } from '@core/plan/model'
 import type { ThemeBackground } from '@core/theme/model'
+import { cs } from '@/i18n/cs'
 import { buildLiveItems, type LiveItem } from '@/live/items'
 import { useBible } from './bible'
 import { useLibrary } from './library'
 import { useMedia } from './media'
-import { usePlans } from './plans'
+import { todayIso, usePlans } from './plans'
 import { useSettings } from './settings'
 
 interface LiveStore {
@@ -76,3 +78,34 @@ export const useLive = create<LiveStore>((set, get) => ({
   setBackgroundOverride: (backgroundOverride) => set({ backgroundOverride }),
   setIdentify: (identify) => set({ identify })
 }))
+
+type NewPlanItem = PlanItem extends infer T ? (T extends unknown ? Omit<T, 'id'> : never) : never
+
+/** The plan used for live projection; creates today's plan when there is none. */
+export async function ensureLivePlan(): Promise<string> {
+  const existing = useLive.getState().planId
+  if (existing && usePlans.getState().plans[existing]) return existing
+  const plan = await usePlans.getState().create(todayIso(), cs.plan.defaultTitle)
+  useLive.getState().setPlan(plan.id)
+  return plan.id
+}
+
+/** Append an item to the live plan (used by "Přidat do plánu" in Songs, Bible, Media). */
+export async function addToLivePlan(item: NewPlanItem): Promise<PlanItem | null> {
+  const planId = await ensureLivePlan()
+  return usePlans.getState().addItem(planId, item)
+}
+
+/**
+ * "Promítnout hned": insert the item right after what is live now and put its first slide on
+ * screen, so the plan keeps a record of what was actually projected.
+ */
+export async function projectNow(item: NewPlanItem): Promise<void> {
+  const planId = await ensureLivePlan()
+  const plan = usePlans.getState().plans[planId]
+  const liveIdx = plan ? plan.items.findIndex((i) => i.id === useLive.getState().live.itemId) : -1
+  const added = await usePlans.getState().addItem(planId, item, liveIdx >= 0 ? liveIdx + 1 : undefined)
+  if (!added) return
+  useLive.getState().select(added.id)
+  useLive.getState().dispatch({ type: 'goto', itemId: added.id, slideIndex: 0 })
+}

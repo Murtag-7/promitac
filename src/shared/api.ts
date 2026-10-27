@@ -38,6 +38,10 @@ export interface SyncStatus {
   org: OrgInfo | null
   /** True when URL + key were baked into the build (user only signs in). */
   builtInConfig: boolean
+  /** Records changed locally by the last sync (the UI reloads its data when > 0). */
+  changes?: number
+  /** Supabase project URL in use (shown in settings). */
+  url?: string | null
 }
 
 export interface OrgMember {
