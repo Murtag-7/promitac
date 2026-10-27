@@ -1,4 +1,4 @@
-import { AI_PROMPT, extractWithGemini, stripCodeFences } from './aiExtractor'
+import { AI_PROMPT, extractWithGemini, stripCodeFences, type FetchLike } from './aiExtractor'
 
 const CHORDPRO = '{title: Píseň z fotky}\n\n{start_of_verse: V1}\n[G]Text první [D]sloky\n{end_of_verse}\n'
 
@@ -12,7 +12,7 @@ function fakeFetch(text: string, status = 200) {
       json: async () => ({ candidates: [{ content: { parts: [{ text }] } }] }),
       text: async () => text
     }
-  }) as unknown as typeof fetch
+  }) as unknown as FetchLike
   return { fn, calls }
 }
 

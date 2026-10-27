@@ -19,10 +19,16 @@ export const AI_PROMPT = [
   '- Vrať pouze ChordPro text, bez vysvětlování a bez markdownu.'
 ].join('\n')
 
+/** Minimal fetch shape (src/core has no DOM types; Node, Electron and browsers all provide fetch). */
+export type FetchLike = (
+  url: string,
+  init: { method: string; headers: Record<string, string>; body: string }
+) => Promise<{ ok: boolean; status: number; json(): Promise<unknown> }>
+
 export interface GeminiOptions {
   apiKey: string
   model?: string
-  fetchImpl?: typeof fetch
+  fetchImpl?: FetchLike
 }
 
 export function stripCodeFences(text: string): string {
@@ -39,7 +45,7 @@ export async function extractWithGemini(
   images: Array<{ mime: string; base64: string }>,
   opts: GeminiOptions
 ): Promise<ImportResult> {
-  const doFetch = opts.fetchImpl ?? fetch
+  const doFetch = opts.fetchImpl ?? ((globalThis as unknown as { fetch: FetchLike }).fetch as FetchLike)
   const model = opts.model ?? DEFAULT_GEMINI_MODEL
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(opts.apiKey)}`
   const body = {
@@ -54,7 +60,7 @@ export async function extractWithGemini(
     ],
     generationConfig: { temperature: 0, topP: 0.1 }
   }
-  let res: Response
+  let res: Awaited<ReturnType<FetchLike>>
   try {
     res = await doFetch(url, {
       method: 'POST',

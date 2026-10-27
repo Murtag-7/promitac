@@ -40,3 +40,18 @@ Rozhodnutí, která jsem udělal sám, protože je zadání neurčovalo. Každé
 - **Média ve Storage** jako `<org_id>/<media_id>-<název bez diakritiky>` (Storage nepovoluje všechny znaky), limit 50 MB na soubor (free tier) – větší soubory zůstávají „jen na tomto počítači".
 - **Chybové hlášky:** 401 → „Přihlášení vypršelo – přihlaste se znovu."; odmítnutí přes RLS při platném přihlášení → „Nemáte přístup ke knihovně sboru…".
 - **Migrace ověřené lokálně** na PostgreSQL 16 se stubem Supabase schémat `auth`/`storage` (`scripts/test-migrations.sh`), migrace jsou idempotentní (spouští se 2×).
+
+## Asistent importu (text → ChordPro)
+
+- **Text se nemění** – smí zmizet jen značky sekcí (`1.`, `R:`, `Ref.`…), značky opakování, řádky akordů (převedou se na inline `[G]`) a hlavička (název, autor, tónina, CCLI, ©). Golden testy navíc u každého vstupu ověřují, že všechny řádky textu prošly beze změny.
+- **Odsazení řádků se při importu odstraňuje.** Mezery na začátku řádku jsou jen rozložení (zarovnání pod „1." nebo pod akordy), ne text; na plátně by dělaly nesmyslné odsazení. Ostatní znaky řádku zůstávají beze změny.
+- **Neoznačený blok, který se v textu opakuje, je refrén.** Když píseň nemá označený refrén a stejný blok je vypsaný dvakrát, druhý výskyt se stane opakováním v pořadí a blok dostane typ refrén (C), aby v Živě fungovala klávesa R.
+- **Samotná značka (např. „R:") před prázdným řádkem** je odkaz na už definovanou sekci; pokud ještě neexistuje, platí pro následující neoznačený blok.
+- **Název písně** je první řádek jen tehdy, když za ním následuje prázdný řádek a další text, meta řádky nebo značka sekce (nekončí čárkou/středníkem, max. 80 znaků). Jinak se název vezme z prvního řádku textu s varováním „doplňte název" – žádný řádek textu se tak neztratí.
+- **Meta řádky** (autor, tónina, CCLI, ©) se čtou v hlavičce i na konci textu; více autorů se spojí čárkou, role („Hudba:", „Text:") se zachovají. Copyright se ukládá bez „©".
+- **Značka „B" (most) vyžaduje dvojtečku nebo tečku**, protože „B", „B2" i „B (2x)" jsou zároveň akordy; samotné „R"/„V" nikdy nejsou značkou.
+- **Opakování „(2x)" uprostřed bloku zůstává v textu**, na konci bloku se převede na opakování sekce v pořadí.
+- **Blok jen s akordy bez značky** se stane předehrou (před první slokou), dohrou (na konci) nebo mezihrou (uprostřed).
+- **OpenLyrics:** sloky se stejným jménem v jiném jazyce (překlady) se přeskočí; výsledek má formát „openlyrics", aby rozhraní ukázalo zdroj.
+- **Detekce duplicit:** stejný název nebo stejný první řádek (≥ 12 znaků) bez ohledu na diakritiku a interpunkci → nabídka „Nahradit" / „Uložit jako novou".
+- **Volitelná AI (P2) je vypnutá**: objeví se jen po vložení klíče Google Gemini v Nastavení. Prompt vynucuje doslovný přepis, výsledek prochází stejným parserem a stejnou kontrolou jako OCR. Bez klíče se nic neodesílá na internet.
