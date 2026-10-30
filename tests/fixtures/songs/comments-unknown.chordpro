@@ -1,0 +1,46 @@
+# Invented song used to test comments, unknown directives and tab blocks.
+{title: Hvězda nad polem}
+{subtitle: Vánoční}
+{composer: Vymyšlený skladatel}
+{capo: 2}
+{tempo: 72}
+{x_custom_flag: ano}
+{x_lines_per_slide: 2}
+{x_theme: warm-light}
+{x_id: 7d7c9f62-3c1b-4c55-9d8e-0d4b6a1e2f10}
+{x_updated: 2026-10-20T08:30:00.000Z}
+
+{c: Začíná kytara sama}
+{start_of_intro: I}
+[C] [G] [Am] [F]
+{end_of_intro}
+
+{start_of_verse: V1}
+{comment_italic: tiše}
+[C]Hvězda nad [G]polem
+[Am]svítí pro [F]všechny,
+# This line is a ChordPro comment and must be dropped.
+[C]pastýři [G]vstávají
+[F]z trávy [C]zmrzlé
+
+[C]Jdou přes [G]kopec,
+[Am]nesou [F]chléb
+{end_of_verse}
+
+{start_of_chorus}
+{highlight: Všichni}
+[F]Gloria, [C]gloria
+[G]světlo je [C]tady
+{end_of_chorus}
+
+{start_of_tab}
+e|-----0-----|
+B|---1---1---|
+G|-0-------0-|
+{end_of_tab}
+
+{start_of_interlude}
+[F] [G] [C]
+{end_of_interlude}
+
+{cb: Na konci zpomalit}

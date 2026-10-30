@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Test fixture: Bible kralická (public domain), USFX. -->
+<usfx xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="usfx.xsd">
+<languageCode>ces</languageCode>
+<book id="FRT">
+<id id="FRT">Úvodní strany</id>
+<p>Úvod, který se nemá importovat.</p>
+</book>
+<book id="GEN">
+<id id="GEN">Bible kralická</id>
+<ide charset="UTF-8"/>
+<h>Genesis</h>
+<toc level="1">První kniha Mojžíšova</toc>
+<toc level="2">Genesis</toc>
+<p sfm="mt">GENESIS</p>
+<c id="1"/>
+<s>Stvoření světa</s>
+<p><v id="1" bcv="GEN.1.1"/>Na počátku stvořil Bůh nebe a zemi.<ve/>
+<v id="2" bcv="GEN.1.2"/>Země pak byla nesličná a pustá,<f caller="+"><fr>1:2 </fr><ft>Poznámka pod čarou.</ft></f> a tma byla nad propastí, a Duch Boží vznášel se nad vodami.<ve/>
+<v id="3" bcv="GEN.1.3"/>I řekl Bůh: Buď světlo! I bylo světlo.<ve/></p>
+<c id="2"/>
+<p><v id="1"/>A tak dokonána jsou nebesa a země, i všecko vojsko jejich.<ve/>
+<v id="2"/>A dokonal Bůh dne sedmého dílo své, kteréž dělal;<x caller="-"><xo>2:2 </xo><xt>Ex 20,11</xt></x> a odpočinul v den sedmý ode všeho díla svého, kteréž byl dělal.</p>
+</book>
+<book id="JHN">
+<id id="JHN">Bible kralická</id>
+<h>Jan</h>
+<c id="1"/>
+<p><v id="1"/>Na počátku bylo Slovo, a to Slovo bylo u <nd>Boha</nd>, a to Slovo byl Bůh.<ve/><v id="2"/>To bylo na počátku u Boha.
+<v id="3"/>Všecky věci skrze ně učiněny jsou, a bez něho nic není učiněno, což učiněno jest.<ve/></p>
+<c id="3"/>
+<s>Rozmluva s Nikodémem</s>
+<p><v id="16"/><wj>Nebo tak Bůh miloval svět, že Syna svého jednorozeného dal, aby každý, kdož věří v něho, nezahynul, ale měl život věčný.</wj><ve/>
+<v id="17"/><wj>Neboť neposlal Bůh Syna svého na svět, aby odsoudil svět, ale aby spasen byl svět skrze něho.</wj><ve/></p>
+</book>
+<book id="TOB">
+<c id="1"/>
+<p><v id="1"/>Deuterokanonické knihy se ignorují.<ve/></p>
+</book>
+</usfx>

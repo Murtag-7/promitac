@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main, 'claude/**']
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Lint, typecheck & tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - name: Supabase migrations + RLS (local PostgreSQL)
+        run: bash scripts/test-migrations.sh
+      - name: OCR accuracy
+        run: npm run test:ocr
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: UI tests (browser, mocked API)
+        run: npm run test:e2e
+      - name: Electron end-to-end (xvfb)
+        run: npm run test:electron
+      - uses: actions/upload-artifact@v5
+        if: failure()
+        with:
+          name: test-results
+          path: |
+            test-results
+            playwright-report
+          retention-days: 7

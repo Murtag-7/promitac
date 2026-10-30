@@ -1,0 +1,14 @@
+out
+dist
+release
+node_modules
+package-lock.json
+src/renderer/public
+resources
+tests/fixtures
+playwright-report
+test-results
+coverage
+.claude
+docs
+*.md

@@ -1,0 +1,15 @@
+{title: Píseň o kameni}
+{artist: Vymyšlený autor}
+{key: D}
+{arrangement: V1 C V1}
+{x_id: 11111111-2222-3333-4444-555555555555}
+
+{start_of_verse: V1}
+[D]Kámen leží [G]u cesty,
+[A]nikdo ho [D]nezvedá.
+{end_of_verse}
+
+{start_of_chorus}
+[G]Zvedni [D]kámen,
+[A]postav [D]dům.
+{end_of_chorus}

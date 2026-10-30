@@ -1,0 +1,33 @@
+{title Hrubý soubor}
+{TITLE: Druhý název se ignoruje}
+{Key:Emi}
+{tags: , zkouška ,, test }
+{arrangement: V1, C,V1 X C}
+{unknown_directive}
+
+Volný text před první sekcí,
+patří do automatické sloky.
+
+{start_of_verse: V1}
+
+
+	[Emi]Řádek s tabulátorem [H7]a mezerami
+
+
+[C]po prázdných [G]řádcích
+{end_of_verse}
+
+{start_of_chorus: C}
+[Ami]První refrén
+{end_of_chorus}
+
+{start_of_chorus: C}
+[Ami]Druhý refrén se stejným id
+{end_of_chorus}
+
+Text mezi sekcemi.
+
+{start_of_verse: label="Neuzavřená"}
+[Emi]Tato sekce nemá konec
+{start_of_bridge: B}
+[C]Most začíná, [D]i když sloka nekončí

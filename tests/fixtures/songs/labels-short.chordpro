@@ -1,0 +1,31 @@
+{t: Cesta domů}
+{artist: Vymyšlený autor}
+{key: D}
+
+{sov: label="Sloka 1"}
+[D]Po cestě domů [A]jdu,
+[Bm]v kapse mám [G]jen tichou píseň
+{eov}
+
+{soc: Refrén}
+[G]Domů, [D]domů,
+[A]tam, kde svítí [D]okno
+{eoc}
+
+{start_of_prechorus: P label="Předrefrén"}
+[Em]Už je to [A]blízko
+{end_of_prechorus}
+
+{start_of_verse: V2 label="Sloka 2"}
+[D]Za kopcem [A]zvon,
+[Bm]v údolí [G]stoupá kouř
+{end_of_verse}
+
+{sob}
+[Bm]Krok a [G]krok,
+[D]dech a [A]dech
+{eob}
+
+{start_of_ending}
+[G]Domů [A]jdu[D]
+{end_of_ending}
