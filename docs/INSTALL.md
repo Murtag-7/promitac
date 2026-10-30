@@ -5,21 +5,27 @@ spuštění varuje, že aplikace „není ověřená". Je to v pořádku – ní
 
 ## Kde stáhnout
 
-1. Otevřete repozitář na GitHubu → záložka **Actions** → workflow **Build desktop apps**.
-2. Klikněte na poslední úspěšný běh (zelená fajfka).
-3. Dole v části **Artifacts** stáhněte:
-   - **Promitac-macOS** – obsahuje dva soubory `.dmg`:
-     - `…-mac-arm64.dmg` pro Macy s čipem Apple (M1, M2, M3, M4 – většina Maců od roku 2021),
-     - `…-mac-x64.dmg` pro starší Macy s procesorem Intel.
-       (Nevíte? Menu  → O tomto Macu → „Čip: Apple…" = arm64, „Procesor: Intel…" = x64.)
-   - **Promitac-Windows** – obsahuje instalátor `…-win-x64.exe`.
-4. Artefakty jsou zabalené v ZIPu – po stažení ho rozbalte dvojklikem.
+Nejnovější verze je vždy na **https://github.com/Murtag-7/promitac/releases/latest**. Dole v části
+**Assets** stáhněte soubor pro svůj počítač:
 
-Pokud je vydaná verze (tag `v…`), najdete stejné soubory i v **Releases** na hlavní stránce repozitáře.
+- **Windows:** `Promitac-…-win-x64.exe`
+- **Mac s čipem Apple** (M1 a novější, většina Maců od roku 2021): `Promitac-…-mac-arm64.dmg`
+- **Mac s procesorem Intel** (starší): `Promitac-…-mac-x64.dmg`
 
-Build se spustí sám u každého pull requestu do `main` a u tagu `v…`. Po sloučení do `main` ho lze spustit i ručně:
-Actions → **Build desktop apps** → **Run workflow** (trvá asi 10–15 minut). Artefakty jsou ke stažení 30 dní (pak build spusťte znovu). Když macOS build skončí jako
-„Cancelled" bez jediného kroku (GitHub nenašel volný Mac runner), stačí v běhu kliknout **Re-run failed jobs**.
+(Nevíte, jaký máte Mac? Menu  → O tomto Macu → „Čip: Apple…" = arm64, „Procesor: Intel…" = x64.)
+
+### Pro správce: nová verze
+
+1. Změny sloučit do `main`.
+2. Na GitHubu **Releases → Draft a new release** → **Choose a tag** → napsat novou verzi (např. `v0.2.0`) →
+   **Create new tag** → **Publish release**.
+3. Workflow **Build desktop apps** sám sestaví `.dmg` a `.exe` (asi 10–15 minut) a přidá je k vydání.
+   Když macOS build skončí jako „Cancelled" bez jediného kroku (GitHub nenašel volný Mac runner), stačí
+   v běhu kliknout **Re-run failed jobs**; soubory se k vydání přidají po doběhnutí.
+
+Testovací buildy vznikají i u každého pull requestu do `main` (Actions → **Build desktop apps** → běh →
+**Artifacts**, ke stažení 30 dní). Pozor: po **Re-run failed jobs** ukazuje stránka běhu jen artefakty
+posledního pokusu – ostatní najdete po přepnutí na **Attempt #1** vpravo nahoře.
 
 ## macOS
 

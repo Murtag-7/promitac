@@ -8,6 +8,8 @@ na druhý monitor, motivy, Bible (kralická + KJV), média, sdílená knihovna s
 
 ## Pro uživatele
 
+**Stáhnout:** [nejnovější verze pro Windows a Mac](https://github.com/Murtag-7/promitac/releases/latest)
+
 - [Instalace na Mac a Windows](docs/INSTALL.md)
 - [Návod pro promítače](docs/NAVOD.md)
 - [Sdílená knihovna přes Supabase](docs/SUPABASE_SETUP.md)
