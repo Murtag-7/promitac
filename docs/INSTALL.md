@@ -17,11 +17,12 @@ Nejnovější verze je vždy na **https://github.com/Murtag-7/promitac/releases/
 ### Pro správce: nová verze
 
 1. Změny sloučit do `main`.
-2. Na GitHubu **Releases → Draft a new release** → **Choose a tag** → napsat novou verzi (např. `v0.2.0`) →
-   **Create new tag** → **Publish release**.
-3. Workflow **Build desktop apps** sám sestaví `.dmg` a `.exe` (asi 10–15 minut) a přidá je k vydání.
-   Když macOS build skončí jako „Cancelled" bez jediného kroku (GitHub nenašel volný Mac runner), stačí
-   v běhu kliknout **Re-run failed jobs**; soubory se k vydání přidají po doběhnutí.
+2. Na GitHubu **Actions → Build desktop apps → Run workflow** → do pole „Vydat verzi" napsat novou verzi
+   (např. `v0.2.0`, vždy vyšší než minulá) → **Run workflow**.
+3. Asi za 10–15 minut je na stránce **Releases** nové vydání s `.dmg` a `.exe` (číslo verze se propíše
+   i do názvů souborů a do aplikace). Když macOS build skončí jako „Cancelled" bez jediného kroku
+   (GitHub nenašel volný Mac runner), stačí v běhu kliknout **Re-run failed jobs** – vydání vznikne po
+   doběhnutí.
 
 Testovací buildy vznikají i u každého pull requestu do `main` (Actions → **Build desktop apps** → běh →
 **Artifacts**, ke stažení 30 dní). Pozor: po **Re-run failed jobs** ukazuje stránka běhu jen artefakty
