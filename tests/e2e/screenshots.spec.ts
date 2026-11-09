@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test'
+import { expect, test, type Locator, type Page } from '@playwright/test'
 import { resolve } from 'node:path'
 
 // Generates docs/screenshots/*.png (run with `npm run screenshots`). Skipped in the normal e2e run.
@@ -181,7 +181,78 @@ test('help dialog', async ({ page }) => {
   await expect(page.getByRole('dialog', { name: 'Nápověda' })).toBeVisible()
   await page.waitForTimeout(400)
   await page.screenshot({ path: OUT('napoveda') })
-  await page.getByRole('radio', { name: 'Podrobný návod' }).click()
+  await page.getByRole('radio', { name: 'Návod', exact: true }).click()
   await page.waitForTimeout(300)
   await page.screenshot({ path: OUT('napoveda-navod') })
+})
+
+/** Live screen with numbered outlines for the short operator guide (docs/NAVOD.md). */
+test('guide: numbered live screen', async ({ page }) => {
+  await fresh(page)
+  await page
+    .getByRole('button', { name: /Světlo nad městem/ })
+    .first()
+    .click()
+  await page.locator('[data-slide-index="2"]').click()
+  await page.waitForTimeout(500)
+
+  const box = async (...locators: Locator[]) => {
+    const boxes = (await Promise.all(locators.map((l) => l.boundingBox()))).filter(
+      (b): b is NonNullable<typeof b> => b !== null
+    )
+    const x = Math.min(...boxes.map((b) => b.x))
+    const y = Math.min(...boxes.map((b) => b.y))
+    const r = Math.max(...boxes.map((b) => b.x + b.width))
+    const btm = Math.max(...boxes.map((b) => b.y + b.height))
+    return { x, y, w: r - x, h: btm - y }
+  }
+  const tiles = page.locator('[data-slide-index]')
+  const regions = [
+    await box(page.getByRole('complementary', { name: 'Plán' })),
+    await box(tiles.first(), tiles.last()),
+    await box(page.getByRole('img', { name: 'Živě', exact: true })),
+    await box(page.getByRole('button', { name: /^Promítnout další/ })),
+    await box(page.getByRole('button', { name: /^Černá/ }), page.getByRole('button', { name: /^Pozadí/ }))
+  ]
+  await page.evaluate((list) => {
+    list.forEach((r, i) => {
+      // Keep outlines and badges inside the window (the plan list starts at the left edge).
+      const left = Math.max(3, r.x - 4)
+      const top = Math.max(3, r.y - 4)
+      const right = Math.min(window.innerWidth - 3, r.x + r.w + 4)
+      const bottom = Math.min(window.innerHeight - 3, r.y + r.h + 4)
+      const frame = document.createElement('div')
+      Object.assign(frame.style, {
+        position: 'fixed',
+        left: `${left}px`,
+        top: `${top}px`,
+        width: `${right - left}px`,
+        height: `${bottom - top}px`,
+        boxSizing: 'border-box',
+        border: '3px solid #ffd23f',
+        borderRadius: '12px',
+        boxShadow: '0 0 0 2px rgba(0,0,0,.55)',
+        pointerEvents: 'none',
+        zIndex: '9999'
+      })
+      const badge = document.createElement('div')
+      badge.textContent = String(i + 1)
+      Object.assign(badge.style, {
+        position: 'fixed',
+        left: `${Math.max(6, left - 12)}px`,
+        top: `${Math.max(6, top - 12)}px`,
+        width: '34px',
+        height: '34px',
+        borderRadius: '50%',
+        background: '#ffd23f',
+        color: '#111',
+        font: '800 19px/34px system-ui, sans-serif',
+        textAlign: 'center',
+        boxShadow: '0 0 0 3px #111',
+        zIndex: '10000'
+      })
+      document.body.append(frame, badge)
+    })
+  }, regions)
+  await page.screenshot({ path: OUT('navod-zive') })
 })

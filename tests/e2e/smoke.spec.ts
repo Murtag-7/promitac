@@ -18,8 +18,15 @@ test('help opens from the top bar and with F1', async ({ page }) => {
   await expect(dialog).toBeHidden()
   await page.keyboard.press('F1')
   await expect(dialog).toBeVisible()
-  // The full operator guide is bundled and readable offline.
-  await dialog.getByRole('button', { name: 'Otevřít podrobný návod' }).click()
-  await expect(dialog.getByTestId('guide')).toContainText('Během bohoslužby: záložka Živě')
-  await expect(dialog.getByTestId('guide').getByRole('table').first()).toBeVisible()
+  // The short operator guide is bundled and readable offline; its screenshot is left out in the app
+  // and the link to the detailed guide points to GitHub.
+  await dialog.getByRole('button', { name: 'Otevřít návod' }).click()
+  const guide = dialog.getByTestId('guide')
+  await expect(guide).toContainText('Tři věci, které musíte vědět')
+  await expect(guide.getByRole('table').first()).toBeVisible()
+  await expect(guide.locator('img')).toHaveCount(0)
+  await expect(guide.getByRole('link', { name: 'podrobném návodu' })).toHaveAttribute(
+    'href',
+    'https://github.com/Murtag-7/promitac/blob/main/docs/NAVOD-PODROBNY.md'
+  )
 })

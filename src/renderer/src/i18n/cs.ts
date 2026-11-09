@@ -36,9 +36,9 @@ export const cs = {
     importTitle: 'Nová píseň',
     importText:
       'Tlačítko Import písně převede text, fotku ze zpěvníku, PDF nebo Word na píseň s akordy. Text se nemění – nejistá místa jsou zvýrazněná ke kontrole.',
-    more: 'Otevřít podrobný návod',
+    more: 'Otevřít návod',
     quickTab: 'Rychlý přehled',
-    guideTab: 'Podrobný návod'
+    guideTab: 'Návod'
   },
   common: {
     save: 'Uložit',
