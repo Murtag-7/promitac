@@ -11,7 +11,8 @@ na druhý monitor, motivy, Bible (kralická + KJV), média, sdílená knihovna s
 **Stáhnout:** [nejnovější verze pro Windows a Mac](https://github.com/Murtag-7/promitac/releases/latest)
 
 - [Instalace na Mac a Windows](docs/INSTALL.md)
-- [Návod pro promítače](docs/NAVOD.md)
+- [Jak na Promítač](docs/NAVOD.md) – krátký návod pro každého, kdo promítá (5 minut čtení)
+- [Podrobný návod](docs/NAVOD-PODROBNY.md) – všechny funkce, pro správce
 - [Sdílená knihovna přes Supabase](docs/SUPABASE_SETUP.md)
 - [Stav projektu, co je ověřené](docs/STATUS.md) · [Rozhodnutí](docs/DECISIONS.md)
 - Screenshoty: [docs/screenshots](docs/screenshots)

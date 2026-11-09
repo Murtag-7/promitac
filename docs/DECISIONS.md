@@ -9,7 +9,8 @@ Rozhodnutí, která jsem udělal sám, protože je zadání neurčovalo. Každé
 - **shadcn/ui komponenty píšu ručně ve stylu shadcn nad balíčkem `radix-ui`** (CLI shadcn stahuje z internetu; výsledek je stejný – zdrojáky komponent v repu).
 - **Vlastní protokol `app://` místo `file://`.** Tesseract.js i pdf.js načítají soubory přes `fetch`, což s `file://` v Chromiu nefunguje; `app://` navíc umí HTTP Range pro přehrávání videí na pozadí.
 - **Main proces je ESM bundle (`out/main/index.js`), preload je CJS (`index.cjs`)**, protože sandboxovaný preload ESM nepodporuje.
-- **Nápověda v aplikaci** (tlačítko „?" v horní liště a F1): čtyři kroky bohoslužby a všechny klávesové zkratky. Podrobný návod zůstává v `docs/NAVOD.md`.
+- **Nápověda v aplikaci** (tlačítko „?" v horní liště a F1): čtyři kroky bohoslužby, všechny klávesové zkratky a krátký návod `docs/NAVOD.md`.
+- **Dva návody.** `docs/NAVOD.md` je krátký („Jak na Promítač", 5 minut, jen to, co potřebuje každý promítač, s očíslovaným screenshotem) – původní podrobný návod byl pro nové lidi příliš dlouhý. Všechny funkce pro správce jsou v `docs/NAVOD-PODROBNY.md`; v aplikaci na něj vede odkaz na GitHub.
 
 ## Formát písní (ChordPro)
 
