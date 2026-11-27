@@ -40,7 +40,7 @@ posledního pokusu – ostatní najdete po přepnutí na **Attempt #1** vpravo n
    bez certifikátu), otevřete **Terminál** (Aplikace → Utility → Terminál), vložte tento řádek a stiskněte Enter:
 
    ```
-   xattr -dr com.apple.quarantine "/Applications/Promítač.app"
+   xattr -dr com.apple.quarantine "/Applications/Promitac.app"
    ```
 
    Pak aplikaci spusťte znovu. Příkaz jen odstraní značku „staženo z internetu", nic jiného nemění.

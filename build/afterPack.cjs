@@ -6,6 +6,11 @@ const path = require('node:path')
 
 exports.default = async function afterPack(context) {
   if (context.electronPlatformName !== 'darwin') return
+  if (process.platform !== 'darwin') {
+    // codesign exists only on macOS; a macOS package built elsewhere is just for inspection.
+    console.warn('[afterPack] not on macOS – skipping the ad-hoc signature')
+    return
+  }
   const appName = `${context.packager.appInfo.productFilename}.app`
   const appPath = path.join(context.appOutDir, appName)
   console.log(`[afterPack] ad-hoc signing ${appPath}`)

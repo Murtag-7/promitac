@@ -1,5 +1,8 @@
 appId: cz.promitac.app
-productName: Promítač
+# The bundle name stays ASCII: on macOS the .dmg stores file names in decomposed Unicode while
+# Info.plist keeps them composed, and Electron then cannot find its own helper apps and crashes at
+# start (0.1.1). The Czech name is shown through CFBundleDisplayName, shortcuts and the window title.
+productName: Promitac
 artifactName: Promitac-${version}-${os}-${arch}.${ext}
 copyright: Promítač
 directories:
@@ -25,11 +28,14 @@ mac:
   hardenedRuntime: false
   gatekeeperAssess: false
   extendInfo:
+    CFBundleDisplayName: Promítač
     NSCameraUsageDescription: Promítač nepoužívá kameru.
     NSMicrophoneUsageDescription: Promítač nepoužívá mikrofon.
 dmg:
-  title: Promítač ${version}
+  title: Promitac ${version}
 win:
+  # Windows keeps the name it had since 0.1.0 (no problem there, and upgrades stay seamless).
+  executableName: Promítač
   target:
     - target: nsis
       arch: [x64]
@@ -41,6 +47,7 @@ nsis:
   createDesktopShortcut: true
   createStartMenuShortcut: true
   shortcutName: Promítač
+  uninstallDisplayName: Promítač ${version}
   installerLanguages: [cs_CZ]
   language: '1029'
 linux:

@@ -1,13 +1,16 @@
 import { app } from 'electron'
 import { join } from 'node:path'
 
+/** Name of the data folder since 0.1.0 – independent of the (ASCII) application bundle name. */
+const DATA_FOLDER = 'Promítač'
+
 /**
  * All user data lives below one folder so it is easy to back up.
  * PROMITAC_USER_DATA overrides the location (tests, portable use).
  */
 export function initUserDataPath(): void {
   const override = process.env.PROMITAC_USER_DATA
-  if (override) app.setPath('userData', override)
+  app.setPath('userData', override || join(app.getPath('appData'), DATA_FOLDER))
 }
 
 export function dataDir(): string {
