@@ -5,6 +5,7 @@ import { Dialog, DialogClose, DialogContent, DialogFooter } from '@/components/u
 import { Input } from '@/components/ui/input'
 import { cs } from '@/i18n/cs'
 import { cn } from '@/lib/cn'
+import { supabaseProjectUrl } from '@shared/supabaseUrl'
 
 /** Button that shows a spinner (only inside itself) while its action runs. */
 export const BusyButton = forwardRef<HTMLButtonElement, ButtonProps & { busy?: boolean; icon?: LucideIcon }>(
@@ -167,14 +168,7 @@ export function errorText(e: unknown): string {
 
 /** Validates the Supabase project URL (https; plain http only for a local development server). */
 export function isValidSupabaseUrl(input: string): boolean {
-  try {
-    const u = new URL(input.trim())
-    if (!u.hostname) return false
-    if (u.protocol === 'https:') return true
-    return u.protocol === 'http:' && ['localhost', '127.0.0.1'].includes(u.hostname)
-  } catch {
-    return false
-  }
+  return supabaseProjectUrl(input) !== null
 }
 
 export function isValidEmail(input: string): boolean {

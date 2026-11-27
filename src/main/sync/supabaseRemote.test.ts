@@ -483,4 +483,16 @@ describe('createSupabase', () => {
     expect(setItem).toHaveBeenCalled()
     await sb.auth.stopAutoRefresh()
   })
+
+  it('talks to the project even when the address was pasted with /rest/v1/ from the dashboard', async () => {
+    const { fetchImpl, calls } = fakeFetch(() => ({ body: { user: null, session: null } }))
+    const sb = createSupabase(
+      { url: 'https://demo-project.supabase.co/rest/v1/', anonKey: 'anon-key' },
+      memoryStorage(),
+      fetchImpl
+    )
+    await sb.auth.signUp({ email: 'a@example.com', password: 'heslo123' })
+    expect(calls[0]?.url.href).toBe('https://demo-project.supabase.co/auth/v1/signup')
+    await sb.auth.stopAutoRefresh()
+  })
 })

@@ -19,6 +19,7 @@ import {
 } from './accountUi'
 import { decodeConnectionCode, setPendingInvite } from './connectionCode'
 import { SettingsGroup, SettingsPage } from './layout'
+import { supabaseProjectUrl } from '@shared/supabaseUrl'
 
 const s = cs.sync
 
@@ -135,7 +136,7 @@ function ManualConnectGroup({ onStatus }: { onStatus: (s: SyncStatus) => void })
     setTried(true)
     if (!isValidSupabaseUrl(url) || !key.trim()) return
     void act.run(async () => {
-      const next = await connect({ url: url.trim().replace(/\/+$/, ''), anonKey: key.trim() })
+      const next = await connect({ url: supabaseProjectUrl(url) ?? url.trim(), anonKey: key.trim() })
       onStatus(next)
       return connectError(next)
     })

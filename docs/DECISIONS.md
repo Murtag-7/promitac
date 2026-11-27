@@ -52,6 +52,7 @@ Rozhodnutí, která jsem udělal sám, protože je zadání neurčovalo. Každé
 - **Po obnově zálohy se při příští synchronizaci stáhne vše znovu** (od začátku; základ slučování zůstává), aby se vrátilo to, co obnova smazala bez záznamu o smazání.
 - **Ruční úprava souboru písně se synchronizuje.** Aplikace po každém zápisu nastaví čas souboru na `{x_updated}`; novější čas souboru = úprava mimo aplikaci → dostane nové časové razítko. Soubory ve Windows-1250 se přečtou správně a uloží jako UTF-8; soubory s CRLF konci řádků si zachovají identitu.
 - **Otevřený editor písně převezme verzi z jiného počítače**, pokud v něm nejsou rozepsané změny; s rozepsanými změnami mají přednost ty (a aplikace na to upozorní).
+- **Z adresy Supabase se bere jen základ** (`https://….supabase.co`). Dashboard ukazuje i adresu `…/rest/v1/`; s ní šlo přihlášení na špatnou cestu („Invalid path specified in request URL"). Ořízne se při zadání, v kódu připojení i u už uložené adresy.
 - **Offline není chyba.** Ukazatel synchronizace „Offline" pojmenuje klidně (promítání síť nepotřebuje), jen skutečná chyba synchronizace je zvýrazněná.
 
 - **Jeden sbor na uživatele (v1).** Model sbor → členové s rolemi `admin`/`member`; první uživatel sbor založí, další se připojí pozvánkovým kódem `XXXX-XXXX`. Kód vidí všichni členové (kdokoli z týmu může pozvat dalšího promítače), správce ho může vyměnit a spravovat členy.
