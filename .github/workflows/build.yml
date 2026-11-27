@@ -74,6 +74,32 @@ jobs:
       - run: npm run build
       - name: Package
         run: ${{ matrix.command }}
+      # Start the app the way a user does: copy it out of the .dmg and launch it. The .dmg stores
+      # file names in decomposed Unicode, which is exactly what broke 0.1.1 on every Mac.
+      - name: Smoke test (start the app copied from the .dmg)
+        if: matrix.name == 'macOS'
+        shell: bash
+        run: |
+          set -euo pipefail
+          arch=$(uname -m); [ "$arch" = x86_64 ] && arch=x64
+          dmg=$(ls release/*-mac-"$arch".dmg)
+          mnt=$(mktemp -d)
+          hdiutil attach -nobrowse -readonly -mountpoint "$mnt" "$dmg"
+          dest=$(mktemp -d)
+          cp -R "$mnt"/*.app "$dest"/
+          hdiutil detach "$mnt"
+          bin=$(ls "$dest"/*.app/Contents/MacOS/*)
+          export PROMITAC_USER_DATA=$(mktemp -d)
+          "$bin" > smoke.log 2>&1 &
+          pid=$!
+          sleep 25
+          if ! kill -0 "$pid" 2>/dev/null; then
+            echo "::error::Aplikace zkopírovaná z .dmg spadla při startu"
+            cat smoke.log
+            exit 1
+          fi
+          echo "The app is still running after 25 s"
+          kill "$pid" || true
       - uses: actions/upload-artifact@v5
         with:
           name: ${{ matrix.artifact }}

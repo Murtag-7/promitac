@@ -30,8 +30,10 @@ posledního pokusu – ostatní najdete po přepnutí na **Attempt #1** vpravo n
 
 ## macOS
 
-1. Otevřete stažený `.dmg` a přetáhněte ikonu **Promítač** do složky **Aplikace**.
-2. První spuštění: ve Finderu otevřete **Aplikace**, na **Promítač** klikněte **pravým tlačítkem** → **Otevřít** →
+1. Otevřete stažený `.dmg` a přetáhněte ikonu **Promitac** do složky **Aplikace**. (Na Macu se aplikace
+   jmenuje bez háčků – s háčky v názvu verze 0.1.0 a 0.1.1 na Macu padaly. Pokud máte v Aplikacích starou
+   „Promítač", přesuňte ji do Koše; písně a plány zůstanou.)
+2. První spuštění: ve Finderu otevřete **Aplikace**, na **Promitac** klikněte **pravým tlačítkem** → **Otevřít** →
    v dialogu znovu **Otevřít**. Příště už se spouští normálně.
 3. Pokud se místo toho objeví „Promítač nelze otevřít, protože nebyl ověřen":
    **Nastavení systému → Soukromí a zabezpečení** → dole u hlášky o Promítači klikněte **Přesto otevřít**
@@ -40,7 +42,7 @@ posledního pokusu – ostatní najdete po přepnutí na **Attempt #1** vpravo n
    bez certifikátu), otevřete **Terminál** (Aplikace → Utility → Terminál), vložte tento řádek a stiskněte Enter:
 
    ```
-   xattr -dr com.apple.quarantine "/Applications/Promítač.app"
+   xattr -dr com.apple.quarantine "/Applications/Promitac.app"
    ```
 
    Pak aplikaci spusťte znovu. Příkaz jen odstraní značku „staženo z internetu", nic jiného nemění.

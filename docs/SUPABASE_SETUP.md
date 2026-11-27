@@ -74,6 +74,18 @@ Každý člověk má vlastní účet:
 Správce může ve stejné obrazovce měnit role (Správce / Člen), odebírat členy a vygenerovat nový kód
 (starý tím přestane platit).
 
+### Další správce
+
+Je dobré mít aspoň dva správce, aby sbor nezůstal bez přístupu.
+
+- **V aplikaci** (správa členů a kódu pozvánky): **Nastavení → Sdílená knihovna → Členové** → u člověka **⋯ →
+  Udělat správcem**. Písně, plány a motivy mohou upravovat všichni členové, správce navíc přidává a odebírá
+  lidi a mění kód pozvánky.
+- **V Supabase** (projekt, hesla, zálohy databáze): v dashboardu **Organization settings → Team → Invite**
+  zadejte jeho e-mail a roli **Owner** nebo **Administrator**.
+- **Na GitHubu** (nové verze aplikace, úpravy kódu): v repozitáři **Settings → Collaborators → Add people**.
+  Spolupracovník může vydávat verze (**Run workflow**); GitHub secrets ale mění jen vlastník repozitáře.
+
 ## 7. Aby se projekt neuspal (GitHub keepalive)
 
 Free projekt Supabase se po týdnu bez aktivity uspí. Repozitář obsahuje workflow **Supabase keepalive**,
