@@ -4,6 +4,7 @@
  */
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import type { OrgInfo, OrgMember } from '@shared/api'
+import { supabaseProjectUrl } from '@shared/supabaseUrl'
 import { SyncRemoteError } from '@core/sync/errors'
 import type { RemoteStore, SongSyncData, SyncRecord, SyncTable } from '@core/sync/model'
 import { slugify } from '@core/util/slug'
@@ -30,7 +31,8 @@ export function createSupabase(
   storage: AuthStorage,
   fetchImpl?: typeof fetch
 ): SupabaseClient {
-  return createClient(config.url, config.anonKey, {
+  // Settings saved before 0.1.3 may hold the address with /rest/v1/ – the client needs the origin.
+  return createClient(supabaseProjectUrl(config.url) ?? config.url, config.anonKey, {
     auth: {
       persistSession: true,
       autoRefreshToken: true,

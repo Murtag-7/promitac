@@ -25,6 +25,11 @@ describe('connection code', () => {
     expect(decodeConnectionCode(code)).toEqual({ ...config, invite: 'ABCD-1234' })
   })
 
+  it('keeps only the project address when it was copied with /rest/v1/', () => {
+    const code = encodeConnectionCode({ ...config, url: 'https://abcd.supabase.co/rest/v1/' })
+    expect(decodeConnectionCode(code)?.url).toBe('https://abcd.supabase.co')
+  })
+
   it('drops a trailing slash from the address', () => {
     const code = encodeConnectionCode({ ...config, url: 'https://abcd.supabase.co/' })
     expect(decodeConnectionCode(code)?.url).toBe('https://abcd.supabase.co')

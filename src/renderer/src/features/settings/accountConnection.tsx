@@ -5,6 +5,7 @@ import { cs } from '@/i18n/cs'
 import { useSettings } from '@/store/settings'
 import { InlineError } from './accountUi'
 import { encodeConnectionCode } from './connectionCode'
+import { supabaseProjectUrl } from '@shared/supabaseUrl'
 
 const s = cs.sync
 
@@ -19,7 +20,11 @@ export function ShareCodeRow({ invite, builtIn }: { invite?: string | null; buil
   const timer = useRef<number | undefined>(undefined)
   useEffect(() => () => window.clearTimeout(timer.current), [])
   if (builtIn || !config?.url || !config.anonKey) return null
-  const code = encodeConnectionCode({ url: config.url, anonKey: config.anonKey, invite: invite ?? undefined })
+  const code = encodeConnectionCode({
+    url: supabaseProjectUrl(config.url) ?? config.url,
+    anonKey: config.anonKey,
+    invite: invite ?? undefined
+  })
 
   const copy = async (): Promise<void> => {
     try {

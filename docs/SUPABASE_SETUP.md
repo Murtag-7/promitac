@@ -41,7 +41,8 @@ jen data svého sboru), funkce pro pozvánky a úložiště souborů `media`.
 
 1. **Project Settings → API** (případně **Data API** / **API Keys**).
 2. Zkopírujte:
-   - **Project URL** – vypadá jako `https://abcdefgh.supabase.co`,
+   - **Project URL** – vypadá jako `https://abcdefgh.supabase.co` (adresa končící `/rest/v1/` je něco jiného;
+     aplikace si z ní od verze 0.1.3 vezme jen začátek),
    - **anon public** klíč (u novějších projektů **Publishable key**, začíná `sb_publishable_`).
 3. ⚠️ **Nikdy** nepoužívejte klíč `service_role` / **Secret key** – ten do aplikace nepatří.
    Anon/publishable klíč je veřejný a bezpečný, data chrání pravidla RLS.
@@ -128,3 +129,4 @@ Aby lidé nemuseli vkládat ani kód připojení, lze je vložit přímo do buil
 | „Nesprávný e-mail nebo heslo." | Překontrolujte údaje; heslo lze obnovit v Supabase (Authentication → Users). |
 | „Nemáte přístup ke knihovně sboru…" | Nejste členem sboru – připojte se kódem nebo požádejte správce. |
 | Chyba hned po připojení | Spustili jste migraci (krok 2)? Je URL ve tvaru `https://….supabase.co`? |
+| „Invalid path specified in request URL" | Adresa projektu byla vložená i s `/rest/v1/`. Od verze 0.1.3 to aplikace opraví sama; ve starší verzi **Odpojit** a zadat jen `https://….supabase.co`. |

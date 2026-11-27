@@ -68,6 +68,8 @@ export function authErrorMessage(err: unknown): string | null {
   if (code === 'over_email_send_rate_limit' || msg.includes('rate limit'))
     return 'Příliš mnoho pokusů – zkuste to prosím za chvíli.'
   if (code === 'validation_failed' || msg.includes('invalid email')) return 'Zkontrolujte e-mailovou adresu.'
+  if (msg.includes('invalid path specified'))
+    return 'Adresa projektu Supabase není správně. Zadejte jen https://….supabase.co (bez /rest/v1).'
   return null
 }
 
